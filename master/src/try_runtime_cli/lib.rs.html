@@ -836,6 +836,10 @@
 <span id="830">830</span>
 <span id="831">831</span>
 <span id="832">832</span>
+<span id="833">833</span>
+<span id="834">834</span>
+<span id="835">835</span>
+<span id="836">836</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2021-2022 Parity Technologies (UK) Ltd.</span>
@@ -1131,7 +1135,7 @@
 	<span class="ident">traits</span>::{<span class="ident">Block</span> <span class="kw">as</span> <span class="ident">BlockT</span>, <span class="ident">NumberFor</span>},
 	<span class="ident">DeserializeOwned</span>,
 };
-<span class="kw">use</span> <span class="ident">sp_state_machine</span>::{<span class="ident">InMemoryProvingBackend</span>, <span class="ident">OverlayedChanges</span>, <span class="ident">StateMachine</span>};
+<span class="kw">use</span> <span class="ident">sp_state_machine</span>::{<span class="ident">OverlayedChanges</span>, <span class="ident">StateMachine</span>, <span class="ident">TrieBackendBuilder</span>};
 <span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">fmt::Debug</span>, <span class="ident">path::PathBuf</span>, <span class="ident">str::FromStr</span>};
 
 <span class="kw">mod</span> <span class="ident">commands</span>;
@@ -1584,9 +1588,11 @@
 
 	<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">changes</span> <span class="op">=</span> <span class="ident">Default::default</span>();
 	<span class="kw">let</span> <span class="ident">backend</span> <span class="op">=</span> <span class="ident">ext</span>.<span class="ident">backend</span>.<span class="ident">clone</span>();
-	<span class="kw">let</span> <span class="ident">proving_backend</span> <span class="op">=</span> <span class="ident">InMemoryProvingBackend::new</span>(<span class="kw-2">&amp;</span><span class="ident">backend</span>);
+	<span class="kw">let</span> <span class="ident">runtime_code_backend</span> <span class="op">=</span> <span class="ident">sp_state_machine::backend::BackendRuntimeCode::new</span>(<span class="kw-2">&amp;</span><span class="ident">backend</span>);
 
-	<span class="kw">let</span> <span class="ident">runtime_code_backend</span> <span class="op">=</span> <span class="ident">sp_state_machine::backend::BackendRuntimeCode::new</span>(<span class="kw-2">&amp;</span><span class="ident">proving_backend</span>);
+	<span class="kw">let</span> <span class="ident">proving_backend</span> <span class="op">=</span>
+		<span class="ident">TrieBackendBuilder::wrap</span>(<span class="kw-2">&amp;</span><span class="ident">backend</span>).<span class="ident">with_recorder</span>(<span class="ident">Default::default</span>()).<span class="ident">build</span>();
+
 	<span class="kw">let</span> <span class="ident">runtime_code</span> <span class="op">=</span> <span class="ident">runtime_code_backend</span>.<span class="ident">runtime_code</span>()<span class="question-mark">?</span>;
 
 	<span class="kw">let</span> <span class="ident">pre_root</span> <span class="op">=</span> <span class="kw-2">*</span><span class="ident">backend</span>.<span class="ident">root</span>();
@@ -1605,7 +1611,9 @@
 	.<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="macro">format!</span>(<span class="string">&quot;failed to execute {}: {}&quot;</span>, <span class="ident">method</span>, <span class="ident">e</span>))
 	.<span class="ident">map_err</span>::<span class="op">&lt;</span><span class="ident">sc_cli::Error</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="ident">Into::into</span>)<span class="question-mark">?</span>;
 
-	<span class="kw">let</span> <span class="ident">proof</span> <span class="op">=</span> <span class="ident">proving_backend</span>.<span class="ident">extract_proof</span>();
+	<span class="kw">let</span> <span class="ident">proof</span> <span class="op">=</span> <span class="ident">proving_backend</span>
+		.<span class="ident">extract_proof</span>()
+		.<span class="ident">expect</span>(<span class="string">&quot;A recorder was set and thus, a storage proof can be extracted; qed&quot;</span>);
 	<span class="kw">let</span> <span class="ident">proof_size</span> <span class="op">=</span> <span class="ident">proof</span>.<span class="ident">encoded_size</span>();
 	<span class="kw">let</span> <span class="ident">compact_proof</span> <span class="op">=</span> <span class="ident">proof</span>
 		.<span class="ident">clone</span>()

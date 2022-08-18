@@ -3662,17 +3662,6 @@
 <span id="3656">3656</span>
 <span id="3657">3657</span>
 <span id="3658">3658</span>
-<span id="3659">3659</span>
-<span id="3660">3660</span>
-<span id="3661">3661</span>
-<span id="3662">3662</span>
-<span id="3663">3663</span>
-<span id="3664">3664</span>
-<span id="3665">3665</span>
-<span id="3666">3666</span>
-<span id="3667">3667</span>
-<span id="3668">3668</span>
-<span id="3669">3669</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2017-2022 Parity Technologies (UK) Ltd.</span>
@@ -3709,8 +3698,8 @@
 
 <span class="kw">mod</span> <span class="ident">children</span>;
 <span class="kw">mod</span> <span class="ident">parity_db</span>;
+<span class="kw">mod</span> <span class="ident">record_stats_state</span>;
 <span class="kw">mod</span> <span class="ident">stats</span>;
-<span class="kw">mod</span> <span class="ident">storage_cache</span>;
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;rocksdb&quot;</span>, <span class="ident">test</span>))]</span>
 <span class="kw">mod</span> <span class="ident">upgrade</span>;
 <span class="kw">mod</span> <span class="ident">utils</span>;
@@ -3726,8 +3715,8 @@
 };
 
 <span class="kw">use</span> <span class="kw">crate</span>::{
+	<span class="ident">record_stats_state::RecordStatsState</span>,
 	<span class="ident">stats::StateUsageStats</span>,
-	<span class="ident">storage_cache</span>::{<span class="ident">new_shared_cache</span>, <span class="ident">CachingState</span>, <span class="ident">SharedCache</span>, <span class="ident">SyncingCachingState</span>},
 	<span class="ident">utils</span>::{<span class="ident">meta_keys</span>, <span class="ident">read_db</span>, <span class="ident">read_meta</span>, <span class="ident">DatabaseType</span>, <span class="ident">Meta</span>},
 };
 <span class="kw">use</span> <span class="ident">codec</span>::{<span class="ident">Decode</span>, <span class="ident">Encode</span>};
@@ -3758,10 +3747,11 @@
 	<span class="ident">Justification</span>, <span class="ident">Justifications</span>, <span class="ident">StateVersion</span>, <span class="ident">Storage</span>,
 };
 <span class="kw">use</span> <span class="ident">sp_state_machine</span>::{
-	<span class="ident">backend::Backend</span> <span class="kw">as</span> <span class="ident">StateBackend</span>, <span class="ident">ChildStorageCollection</span>, <span class="ident">DBValue</span>, <span class="ident">IndexOperation</span>,
-	<span class="ident">OffchainChangesCollection</span>, <span class="ident">StateMachineStats</span>, <span class="ident">StorageCollection</span>, <span class="ident">UsageInfo</span> <span class="kw">as</span> <span class="ident">StateUsageInfo</span>,
+	<span class="ident">backend</span>::{<span class="ident">AsTrieBackend</span>, <span class="ident">Backend</span> <span class="kw">as</span> <span class="ident">StateBackend</span>},
+	<span class="ident">ChildStorageCollection</span>, <span class="ident">DBValue</span>, <span class="ident">IndexOperation</span>, <span class="ident">OffchainChangesCollection</span>, <span class="ident">StateMachineStats</span>,
+	<span class="ident">StorageCollection</span>, <span class="ident">UsageInfo</span> <span class="kw">as</span> <span class="ident">StateUsageInfo</span>,
 };
-<span class="kw">use</span> <span class="ident">sp_trie</span>::{<span class="ident">prefixed_key</span>, <span class="ident">MemoryDB</span>, <span class="ident">PrefixedMemoryDB</span>};
+<span class="kw">use</span> <span class="ident">sp_trie</span>::{<span class="ident">cache::SharedTrieCache</span>, <span class="ident">prefixed_key</span>, <span class="ident">MemoryDB</span>, <span class="ident">PrefixedMemoryDB</span>};
 
 <span class="comment">// Re-export the Database trait so that one can pass an implementation of it.</span>
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">sc_state_db::PruningMode</span>;
@@ -3771,12 +3761,15 @@
 
 <span class="kw">const</span> <span class="ident">CACHE_HEADERS</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">8</span>;
 
-<span class="doccomment">/// Default value for storage cache child ratio.</span>
-<span class="kw">const</span> <span class="ident">DEFAULT_CHILD_RATIO</span>: (<span class="ident">usize</span>, <span class="ident">usize</span>) <span class="op">=</span> (<span class="number">1</span>, <span class="number">10</span>);
-
 <span class="doccomment">/// DB-backed patricia trie state, transaction type is an overlay of changes to commit.</span>
 <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">DbState</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span> <span class="op">=</span>
 	<span class="ident">sp_state_machine::TrieBackend</span><span class="op">&lt;</span><span class="ident">Arc</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">sp_state_machine::Storage</span><span class="op">&lt;</span><span class="ident">HashFor</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>, <span class="ident">HashFor</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span><span class="op">&gt;</span>;
+
+<span class="doccomment">/// Builder for [`DbState`].</span>
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">DbStateBuilder</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">sp_state_machine::TrieBackendBuilder</span><span class="op">&lt;</span>
+	<span class="ident">Arc</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">sp_state_machine::Storage</span><span class="op">&lt;</span><span class="ident">HashFor</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+	<span class="ident">HashFor</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>,
+<span class="op">&gt;</span>;
 
 <span class="doccomment">/// Length of a [`DbHash`].</span>
 <span class="kw">const</span> <span class="ident">DB_HASH_LEN</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">32</span>;
@@ -3847,6 +3840,14 @@
 		<span class="ident">key</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>],
 	) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span><span class="op">&gt;</span>, <span class="ident"><span class="self">Self</span>::Error</span><span class="op">&gt;</span> {
 		<span class="self">self</span>.<span class="ident">state</span>.<span class="ident">child_storage</span>(<span class="ident">child_info</span>, <span class="ident">key</span>)
+	}
+
+	<span class="kw">fn</span> <span class="ident">child_storage_hash</span>(
+		<span class="kw-2">&amp;</span><span class="self">self</span>,
+		<span class="ident">child_info</span>: <span class="kw-2">&amp;</span><span class="ident">ChildInfo</span>,
+		<span class="ident">key</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>],
+	) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">B::Hash</span><span class="op">&gt;</span>, <span class="ident"><span class="self">Self</span>::Error</span><span class="op">&gt;</span> {
+		<span class="self">self</span>.<span class="ident">state</span>.<span class="ident">child_storage_hash</span>(<span class="ident">child_info</span>, <span class="ident">key</span>)
 	}
 
 	<span class="kw">fn</span> <span class="ident">exists_storage</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">key</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">bool</span>, <span class="ident"><span class="self">Self</span>::Error</span><span class="op">&gt;</span> {
@@ -3947,12 +3948,6 @@
 		<span class="self">self</span>.<span class="ident">state</span>.<span class="ident">child_keys</span>(<span class="ident">child_info</span>, <span class="ident">prefix</span>)
 	}
 
-	<span class="kw">fn</span> <span class="ident">as_trie_backend</span>(
-		<span class="kw-2">&amp;</span><span class="self">self</span>,
-	) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">sp_state_machine::TrieBackend</span><span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::TrieBackendStorage</span>, <span class="ident">HashFor</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span> {
-		<span class="self">self</span>.<span class="ident">state</span>.<span class="ident">as_trie_backend</span>()
-	}
-
 	<span class="kw">fn</span> <span class="ident">register_overlay_stats</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">stats</span>: <span class="kw-2">&amp;</span><span class="ident">StateMachineStats</span>) {
 		<span class="self">self</span>.<span class="ident">state</span>.<span class="ident">register_overlay_stats</span>(<span class="ident">stats</span>);
 	}
@@ -3962,12 +3957,22 @@
 	}
 }
 
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">B</span>: <span class="ident">BlockT</span><span class="op">&gt;</span> <span class="ident">AsTrieBackend</span><span class="op">&lt;</span><span class="ident">HashFor</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">RefTrackingState</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span> {
+	<span class="kw">type</span> <span class="ident">TrieBackendStorage</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">DbState</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span> <span class="kw">as</span> <span class="ident">StateBackend</span><span class="op">&lt;</span><span class="ident">HashFor</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::TrieBackendStorage</span>;
+
+	<span class="kw">fn</span> <span class="ident">as_trie_backend</span>(
+		<span class="kw-2">&amp;</span><span class="self">self</span>,
+	) -&gt; <span class="kw-2">&amp;</span><span class="ident">sp_state_machine::TrieBackend</span><span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::TrieBackendStorage</span>, <span class="ident">HashFor</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+		<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">state</span>.<span class="ident">as_trie_backend</span>()
+	}
+}
+
 <span class="doccomment">/// Database settings.</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">DatabaseSettings</span> {
-	<span class="doccomment">/// State cache size.</span>
-	<span class="kw">pub</span> <span class="ident">state_cache_size</span>: <span class="ident">usize</span>,
-	<span class="doccomment">/// Ratio of cache size dedicated to child tries.</span>
-	<span class="kw">pub</span> <span class="ident">state_cache_child_ratio</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span>(<span class="ident">usize</span>, <span class="ident">usize</span>)<span class="op">&gt;</span>,
+	<span class="doccomment">/// The maximum trie cache size in bytes.</span>
+	<span class="doccomment">///</span>
+	<span class="doccomment">/// If `None` is given, the cache is disabled.</span>
+	<span class="kw">pub</span> <span class="ident">trie_cache_maximum_size</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>,
 	<span class="doccomment">/// Requested state pruning mode.</span>
 	<span class="kw">pub</span> <span class="ident">state_pruning</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PruningMode</span><span class="op">&gt;</span>,
 	<span class="doccomment">/// Where to find the database.</span>
@@ -4405,7 +4410,7 @@
 
 <span class="doccomment">/// Database transaction</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">BlockImportOperation</span><span class="op">&lt;</span><span class="ident">Block</span>: <span class="ident">BlockT</span><span class="op">&gt;</span> {
-	<span class="ident">old_state</span>: <span class="ident">SyncingCachingState</span><span class="op">&lt;</span><span class="ident">RefTrackingState</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span>, <span class="ident">Block</span><span class="op">&gt;</span>,
+	<span class="ident">old_state</span>: <span class="ident">RecordStatsState</span><span class="op">&lt;</span><span class="ident">RefTrackingState</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span>, <span class="ident">Block</span><span class="op">&gt;</span>,
 	<span class="ident">db_updates</span>: <span class="ident">PrefixedMemoryDB</span><span class="op">&lt;</span><span class="ident">HashFor</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 	<span class="ident">storage_updates</span>: <span class="ident">StorageCollection</span>,
 	<span class="ident">child_storage_updates</span>: <span class="ident">ChildStorageCollection</span>,
@@ -4475,7 +4480,7 @@
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">Block</span>: <span class="ident">BlockT</span><span class="op">&gt;</span> <span class="ident">sc_client_api::backend::BlockImportOperation</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span>
 	<span class="kw">for</span> <span class="ident">BlockImportOperation</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span>
 {
-	<span class="kw">type</span> <span class="ident">State</span> <span class="op">=</span> <span class="ident">SyncingCachingState</span><span class="op">&lt;</span><span class="ident">RefTrackingState</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span>, <span class="ident">Block</span><span class="op">&gt;</span>;
+	<span class="kw">type</span> <span class="ident">State</span> <span class="op">=</span> <span class="ident">RecordStatsState</span><span class="op">&lt;</span><span class="ident">RefTrackingState</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span>, <span class="ident">Block</span><span class="op">&gt;</span>;
 
 	<span class="kw">fn</span> <span class="ident">state</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">ClientResult</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident"><span class="self">Self</span>::State</span><span class="op">&gt;</span><span class="op">&gt;</span> {
 		<span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">old_state</span>))
@@ -4624,7 +4629,7 @@
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">root</span> <span class="op">=</span> <span class="ident">Block::Hash::default</span>();
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">mdb</span> <span class="op">=</span> <span class="ident">MemoryDB</span>::<span class="op">&lt;</span><span class="ident">HashFor</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::default</span>();
 		<span class="comment">// both triedbmut are the same on empty storage.</span>
-		<span class="ident">sp_state_machine::TrieDBMutV1</span>::<span class="op">&lt;</span><span class="ident">HashFor</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="kw-2">&amp;mut</span> <span class="ident">mdb</span>, <span class="kw-2">&amp;mut</span> <span class="ident">root</span>);
+		<span class="ident">sp_trie::trie_types::TrieDBMutBuilderV1</span>::<span class="op">&lt;</span><span class="ident">HashFor</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="kw-2">&amp;mut</span> <span class="ident">mdb</span>, <span class="kw-2">&amp;mut</span> <span class="ident">root</span>).<span class="ident">build</span>();
 		<span class="ident">EmptyStorage</span>(<span class="ident">root</span>)
 	}
 }
@@ -4684,13 +4689,13 @@
 	<span class="ident">offchain_storage</span>: <span class="ident">offchain::LocalStorage</span>,
 	<span class="ident">blockchain</span>: <span class="ident">BlockchainDb</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span>,
 	<span class="ident">canonicalization_delay</span>: <span class="ident">u64</span>,
-	<span class="ident">shared_cache</span>: <span class="ident">SharedCache</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span>,
 	<span class="ident">import_lock</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">RwLock</span><span class="op">&lt;</span>()<span class="op">&gt;</span><span class="op">&gt;</span>,
 	<span class="ident">is_archive</span>: <span class="ident">bool</span>,
 	<span class="ident">blocks_pruning</span>: <span class="ident">BlocksPruning</span>,
 	<span class="ident">io_stats</span>: <span class="ident">FrozenForDuration</span><span class="op">&lt;</span>(<span class="ident">kvdb::IoStats</span>, <span class="ident">StateUsageInfo</span>)<span class="op">&gt;</span>,
 	<span class="ident">state_usage</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">StateUsageStats</span><span class="op">&gt;</span>,
 	<span class="ident">genesis_state</span>: <span class="ident">RwLock</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">DbGenesisStorage</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+	<span class="ident">shared_trie_cache</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">sp_trie::cache::SharedTrieCache</span><span class="op">&lt;</span><span class="ident">HashFor</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">Block</span>: <span class="ident">BlockT</span><span class="op">&gt;</span> <span class="ident">Backend</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span> {
@@ -4728,8 +4733,7 @@
 		<span class="kw">let</span> <span class="ident">db</span> <span class="op">=</span> <span class="ident">kvdb_memorydb::create</span>(<span class="ident"><span class="kw">crate</span>::utils::NUM_COLUMNS</span>);
 		<span class="kw">let</span> <span class="ident">db</span> <span class="op">=</span> <span class="ident">sp_database::as_database</span>(<span class="ident">db</span>);
 		<span class="kw">let</span> <span class="ident">db_setting</span> <span class="op">=</span> <span class="ident">DatabaseSettings</span> {
-			<span class="ident">state_cache_size</span>: <span class="number">16777216</span>,
-			<span class="ident">state_cache_child_ratio</span>: <span class="prelude-val">Some</span>((<span class="number">50</span>, <span class="number">100</span>)),
+			<span class="ident">trie_cache_maximum_size</span>: <span class="prelude-val">Some</span>(<span class="number">16</span> <span class="op">*</span> <span class="number">1024</span> <span class="op">*</span> <span class="number">1024</span>),
 			<span class="ident">state_pruning</span>: <span class="prelude-val">Some</span>(<span class="ident">PruningMode::blocks_pruning</span>(<span class="ident">blocks_pruning</span>)),
 			<span class="ident">source</span>: <span class="ident">DatabaseSource::Custom</span> { <span class="ident">db</span>, <span class="ident">require_create_flag</span>: <span class="bool-val">true</span> },
 			<span class="ident">blocks_pruning</span>: <span class="ident">BlocksPruning::Some</span>(<span class="ident">blocks_pruning</span>),
@@ -4791,16 +4795,15 @@
 			<span class="ident">offchain_storage</span>,
 			<span class="ident">blockchain</span>,
 			<span class="ident">canonicalization_delay</span>,
-			<span class="ident">shared_cache</span>: <span class="ident">new_shared_cache</span>(
-				<span class="ident">config</span>.<span class="ident">state_cache_size</span>,
-				<span class="ident">config</span>.<span class="ident">state_cache_child_ratio</span>.<span class="ident">unwrap_or</span>(<span class="ident">DEFAULT_CHILD_RATIO</span>),
-			),
 			<span class="ident">import_lock</span>: <span class="ident">Default::default</span>(),
 			<span class="ident">is_archive</span>: <span class="ident">is_archive_pruning</span>,
 			<span class="ident">io_stats</span>: <span class="ident">FrozenForDuration::new</span>(<span class="ident">std::time::Duration::from_secs</span>(<span class="number">1</span>)),
 			<span class="ident">state_usage</span>: <span class="ident">Arc::new</span>(<span class="ident">StateUsageStats::new</span>()),
 			<span class="ident">blocks_pruning</span>: <span class="ident">config</span>.<span class="ident">blocks_pruning</span>,
 			<span class="ident">genesis_state</span>: <span class="ident">RwLock::new</span>(<span class="prelude-val">None</span>),
+			<span class="ident">shared_trie_cache</span>: <span class="ident">config</span>.<span class="ident">trie_cache_maximum_size</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">maximum_size</span><span class="op">|</span> {
+				<span class="ident">SharedTrieCache::new</span>(<span class="ident">sp_trie::cache::CacheSize::Maximum</span>(<span class="ident">maximum_size</span>))
+			}),
 		};
 
 		<span class="comment">// Older DB versions have no last state key. Check if the state is available and set it.</span>
@@ -4869,7 +4872,7 @@
 						(<span class="kw-2">&amp;</span><span class="ident">r</span>.<span class="ident">number</span>, <span class="kw-2">&amp;</span><span class="ident">r</span>.<span class="ident">hash</span>)
 					);
 
-					<span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">::sp_blockchain::Error::NotInFinalizedChain</span>)
+					<span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">sp_blockchain::Error::NotInFinalizedChain</span>)
 				}
 
 				<span class="ident">retracted</span>.<span class="ident">push</span>(<span class="ident">r</span>.<span class="ident">hash</span>);
@@ -5033,10 +5036,8 @@
 			<span class="comment">// blocks are keyed by number + hash.</span>
 			<span class="kw">let</span> <span class="ident">lookup_key</span> <span class="op">=</span> <span class="ident">utils::number_and_hash_to_lookup_key</span>(<span class="ident">number</span>, <span class="ident">hash</span>)<span class="question-mark">?</span>;
 
-			<span class="kw">let</span> (<span class="ident">enacted</span>, <span class="ident">retracted</span>) <span class="op">=</span> <span class="kw">if</span> <span class="ident">pending_block</span>.<span class="ident">leaf_state</span>.<span class="ident">is_best</span>() {
-				<span class="self">self</span>.<span class="ident">set_head_with_transaction</span>(<span class="kw-2">&amp;mut</span> <span class="ident">transaction</span>, <span class="ident">parent_hash</span>, (<span class="ident">number</span>, <span class="ident">hash</span>))<span class="question-mark">?</span>
-			} <span class="kw">else</span> {
-				(<span class="ident">Default::default</span>(), <span class="ident">Default::default</span>())
+			<span class="kw">if</span> <span class="ident">pending_block</span>.<span class="ident">leaf_state</span>.<span class="ident">is_best</span>() {
+				<span class="self">self</span>.<span class="ident">set_head_with_transaction</span>(<span class="kw-2">&amp;mut</span> <span class="ident">transaction</span>, <span class="ident">parent_hash</span>, (<span class="ident">number</span>, <span class="ident">hash</span>))<span class="question-mark">?</span>;
 			};
 
 			<span class="ident">utils::insert_hash_to_key_mapping</span>(<span class="kw-2">&amp;mut</span> <span class="ident">transaction</span>, <span class="ident">columns::KEY_LOOKUP</span>, <span class="ident">number</span>, <span class="ident">hash</span>)<span class="question-mark">?</span>;
@@ -5163,14 +5164,22 @@
 
 			<span class="kw">let</span> <span class="ident">header</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">pending_block</span>.<span class="ident">header</span>;
 			<span class="kw">let</span> <span class="ident">is_best</span> <span class="op">=</span> <span class="ident">pending_block</span>.<span class="ident">leaf_state</span>.<span class="ident">is_best</span>();
-			<span class="macro">debug!</span>(<span class="ident">target</span>: <span class="string">&quot;db&quot;</span>,
+			<span class="macro">debug!</span>(
+				<span class="ident">target</span>: <span class="string">&quot;db&quot;</span>,
 				<span class="string">&quot;DB Commit {:?} ({}), best={}, state={}, existing={}, finalized={}&quot;</span>,
-				<span class="ident">hash</span>, <span class="ident">number</span>, <span class="ident">is_best</span>, <span class="ident">operation</span>.<span class="ident">commit_state</span>, <span class="ident">existing_header</span>, <span class="ident">finalized</span>,
+				<span class="ident">hash</span>,
+				<span class="ident">number</span>,
+				<span class="ident">is_best</span>,
+				<span class="ident">operation</span>.<span class="ident">commit_state</span>,
+				<span class="ident">existing_header</span>,
+				<span class="ident">finalized</span>,
 			);
 
 			<span class="self">self</span>.<span class="ident">state_usage</span>.<span class="ident">merge_sm</span>(<span class="ident">operation</span>.<span class="ident">old_state</span>.<span class="ident">usage_info</span>());
+
 			<span class="comment">// release state reference so that it can be finalized</span>
-			<span class="kw">let</span> <span class="ident">cache</span> <span class="op">=</span> <span class="ident">operation</span>.<span class="ident">old_state</span>.<span class="ident">into_cache_changes</span>();
+			<span class="comment">// VERY IMPORTANT</span>
+			<span class="ident">drop</span>(<span class="ident">operation</span>.<span class="ident">old_state</span>);
 
 			<span class="kw">if</span> <span class="ident">finalized</span> {
 				<span class="comment">// TODO: ensure best chain contains this block.</span>
@@ -5259,20 +5268,20 @@
 				<span class="ident">is_finalized</span>: <span class="ident">finalized</span>,
 				<span class="ident">with_state</span>: <span class="ident">operation</span>.<span class="ident">commit_state</span>,
 			});
-			<span class="prelude-val">Some</span>((<span class="ident">pending_block</span>.<span class="ident">header</span>, <span class="ident">number</span>, <span class="ident">hash</span>, <span class="ident">enacted</span>, <span class="ident">retracted</span>, <span class="ident">is_best</span>, <span class="ident">cache</span>))
+			<span class="prelude-val">Some</span>((<span class="ident">pending_block</span>.<span class="ident">header</span>, <span class="ident">hash</span>))
 		} <span class="kw">else</span> {
 			<span class="prelude-val">None</span>
 		};
 
-		<span class="kw">let</span> <span class="ident">cache_update</span> <span class="op">=</span> <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">set_head</span>) <span class="op">=</span> <span class="ident">operation</span>.<span class="ident">set_head</span> {
+		<span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">set_head</span>) <span class="op">=</span> <span class="ident">operation</span>.<span class="ident">set_head</span> {
 			<span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">header</span>) <span class="op">=</span>
 				<span class="ident">sc_client_api::blockchain::HeaderBackend::header</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">blockchain</span>, <span class="ident">set_head</span>)<span class="question-mark">?</span>
 			{
 				<span class="kw">let</span> <span class="ident">number</span> <span class="op">=</span> <span class="ident">header</span>.<span class="ident">number</span>();
 				<span class="kw">let</span> <span class="ident">hash</span> <span class="op">=</span> <span class="ident">header</span>.<span class="ident">hash</span>();
 
-				<span class="kw">let</span> (<span class="ident">enacted</span>, <span class="ident">retracted</span>) <span class="op">=</span>
-					<span class="self">self</span>.<span class="ident">set_head_with_transaction</span>(<span class="kw-2">&amp;mut</span> <span class="ident">transaction</span>, <span class="ident">hash</span>, (<span class="kw-2">*</span><span class="ident">number</span>, <span class="ident">hash</span>))<span class="question-mark">?</span>;
+				<span class="self">self</span>.<span class="ident">set_head_with_transaction</span>(<span class="kw-2">&amp;mut</span> <span class="ident">transaction</span>, <span class="ident">hash</span>, (<span class="kw-2">*</span><span class="ident">number</span>, <span class="ident">hash</span>))<span class="question-mark">?</span>;
+
 				<span class="ident">meta_updates</span>.<span class="ident">push</span>(<span class="ident">MetaUpdate</span> {
 					<span class="ident">hash</span>,
 					<span class="ident">number</span>: <span class="kw-2">*</span><span class="ident">number</span>,
@@ -5280,40 +5289,24 @@
 					<span class="ident">is_finalized</span>: <span class="bool-val">false</span>,
 					<span class="ident">with_state</span>: <span class="bool-val">false</span>,
 				});
-				<span class="prelude-val">Some</span>((<span class="ident">enacted</span>, <span class="ident">retracted</span>))
 			} <span class="kw">else</span> {
 				<span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">sp_blockchain::Error::UnknownBlock</span>(<span class="macro">format!</span>(
 					<span class="string">&quot;Cannot set head {:?}&quot;</span>,
 					<span class="ident">set_head</span>
 				)))
 			}
-		} <span class="kw">else</span> {
-			<span class="prelude-val">None</span>
-		};
+		}
 
 		<span class="self">self</span>.<span class="ident">storage</span>.<span class="ident">db</span>.<span class="ident">commit</span>(<span class="ident">transaction</span>)<span class="question-mark">?</span>;
 
 		<span class="comment">// Apply all in-memory state changes.</span>
 		<span class="comment">// Code beyond this point can&#39;t fail.</span>
 
-		<span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>((<span class="ident">header</span>, <span class="ident">number</span>, <span class="ident">hash</span>, <span class="ident">enacted</span>, <span class="ident">retracted</span>, <span class="ident">is_best</span>, <span class="kw-2">mut</span> <span class="ident">cache</span>)) <span class="op">=</span> <span class="ident">imported</span> {
+		<span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>((<span class="ident">header</span>, <span class="ident">hash</span>)) <span class="op">=</span> <span class="ident">imported</span> {
 			<span class="macro">trace!</span>(<span class="ident">target</span>: <span class="string">&quot;db&quot;</span>, <span class="string">&quot;DB Commit done {:?}&quot;</span>, <span class="ident">hash</span>);
 			<span class="kw">let</span> <span class="ident">header_metadata</span> <span class="op">=</span> <span class="ident">CachedHeaderMetadata::from</span>(<span class="kw-2">&amp;</span><span class="ident">header</span>);
 			<span class="self">self</span>.<span class="ident">blockchain</span>.<span class="ident">insert_header_metadata</span>(<span class="ident">header_metadata</span>.<span class="ident">hash</span>, <span class="ident">header_metadata</span>);
 			<span class="ident">cache_header</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>.<span class="ident">blockchain</span>.<span class="ident">header_cache</span>.<span class="ident">lock</span>(), <span class="ident">hash</span>, <span class="prelude-val">Some</span>(<span class="ident">header</span>));
-			<span class="ident">cache</span>.<span class="ident">sync_cache</span>(
-				<span class="kw-2">&amp;</span><span class="ident">enacted</span>,
-				<span class="kw-2">&amp;</span><span class="ident">retracted</span>,
-				<span class="ident">operation</span>.<span class="ident">storage_updates</span>,
-				<span class="ident">operation</span>.<span class="ident">child_storage_updates</span>,
-				<span class="prelude-val">Some</span>(<span class="ident">hash</span>),
-				<span class="prelude-val">Some</span>(<span class="ident">number</span>),
-				<span class="ident">is_best</span>,
-			);
-		}
-
-		<span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>((<span class="ident">enacted</span>, <span class="ident">retracted</span>)) <span class="op">=</span> <span class="ident">cache_update</span> {
-			<span class="self">self</span>.<span class="ident">shared_cache</span>.<span class="ident">write</span>().<span class="ident">sync</span>(<span class="kw-2">&amp;</span><span class="ident">enacted</span>, <span class="kw-2">&amp;</span><span class="ident">retracted</span>);
 		}
 
 		<span class="kw">for</span> <span class="ident">m</span> <span class="kw">in</span> <span class="ident">meta_updates</span> {
@@ -5445,17 +5438,13 @@
 		<span class="prelude-val">Ok</span>(())
 	}
 
-	<span class="kw">fn</span> <span class="ident">empty_state</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">ClientResult</span><span class="op">&lt;</span><span class="ident">SyncingCachingState</span><span class="op">&lt;</span><span class="ident">RefTrackingState</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span>, <span class="ident">Block</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+	<span class="kw">fn</span> <span class="ident">empty_state</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">ClientResult</span><span class="op">&lt;</span><span class="ident">RecordStatsState</span><span class="op">&lt;</span><span class="ident">RefTrackingState</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span>, <span class="ident">Block</span><span class="op">&gt;</span><span class="op">&gt;</span> {
 		<span class="kw">let</span> <span class="ident">root</span> <span class="op">=</span> <span class="ident">EmptyStorage</span>::<span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span><span class="ident">::new</span>().<span class="number">0</span>; <span class="comment">// Empty trie</span>
-		<span class="kw">let</span> <span class="ident">db_state</span> <span class="op">=</span> <span class="ident">DbState</span>::<span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="self">self</span>.<span class="ident">storage</span>.<span class="ident">clone</span>(), <span class="ident">root</span>);
+		<span class="kw">let</span> <span class="ident">db_state</span> <span class="op">=</span> <span class="ident">DbStateBuilder</span>::<span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="self">self</span>.<span class="ident">storage</span>.<span class="ident">clone</span>(), <span class="ident">root</span>)
+			.<span class="ident">with_optional_cache</span>(<span class="self">self</span>.<span class="ident">shared_trie_cache</span>.<span class="ident">as_ref</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">c</span><span class="op">|</span> <span class="ident">c</span>.<span class="ident">local_cache</span>()))
+			.<span class="ident">build</span>();
 		<span class="kw">let</span> <span class="ident">state</span> <span class="op">=</span> <span class="ident">RefTrackingState::new</span>(<span class="ident">db_state</span>, <span class="self">self</span>.<span class="ident">storage</span>.<span class="ident">clone</span>(), <span class="prelude-val">None</span>);
-		<span class="kw">let</span> <span class="ident">caching_state</span> <span class="op">=</span> <span class="ident">CachingState::new</span>(<span class="ident">state</span>, <span class="self">self</span>.<span class="ident">shared_cache</span>.<span class="ident">clone</span>(), <span class="prelude-val">None</span>);
-		<span class="prelude-val">Ok</span>(<span class="ident">SyncingCachingState::new</span>(
-			<span class="ident">caching_state</span>,
-			<span class="self">self</span>.<span class="ident">state_usage</span>.<span class="ident">clone</span>(),
-			<span class="self">self</span>.<span class="ident">blockchain</span>.<span class="ident">meta</span>.<span class="ident">clone</span>(),
-			<span class="self">self</span>.<span class="ident">import_lock</span>.<span class="ident">clone</span>(),
-		))
+		<span class="prelude-val">Ok</span>(<span class="ident">RecordStatsState::new</span>(<span class="ident">state</span>, <span class="prelude-val">None</span>, <span class="self">self</span>.<span class="ident">state_usage</span>.<span class="ident">clone</span>()))
 	}
 }
 
@@ -5577,16 +5566,13 @@
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">Block</span>: <span class="ident">BlockT</span><span class="op">&gt;</span> <span class="ident">sc_client_api::backend::Backend</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Backend</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span> {
 	<span class="kw">type</span> <span class="ident">BlockImportOperation</span> <span class="op">=</span> <span class="ident">BlockImportOperation</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span>;
 	<span class="kw">type</span> <span class="ident">Blockchain</span> <span class="op">=</span> <span class="ident">BlockchainDb</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span>;
-	<span class="kw">type</span> <span class="ident">State</span> <span class="op">=</span> <span class="ident">SyncingCachingState</span><span class="op">&lt;</span><span class="ident">RefTrackingState</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span>, <span class="ident">Block</span><span class="op">&gt;</span>;
+	<span class="kw">type</span> <span class="ident">State</span> <span class="op">=</span> <span class="ident">RecordStatsState</span><span class="op">&lt;</span><span class="ident">RefTrackingState</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span>, <span class="ident">Block</span><span class="op">&gt;</span>;
 	<span class="kw">type</span> <span class="ident">OffchainStorage</span> <span class="op">=</span> <span class="ident">offchain::LocalStorage</span>;
 
 	<span class="kw">fn</span> <span class="ident">begin_operation</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">ClientResult</span><span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::BlockImportOperation</span><span class="op">&gt;</span> {
-		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">old_state</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">empty_state</span>()<span class="question-mark">?</span>;
-		<span class="ident">old_state</span>.<span class="ident">disable_syncing</span>();
-
 		<span class="prelude-val">Ok</span>(<span class="ident">BlockImportOperation</span> {
 			<span class="ident">pending_block</span>: <span class="prelude-val">None</span>,
-			<span class="ident">old_state</span>,
+			<span class="ident">old_state</span>: <span class="self">self</span>.<span class="ident">empty_state</span>()<span class="question-mark">?</span>,
 			<span class="ident">db_updates</span>: <span class="ident">PrefixedMemoryDB::default</span>(),
 			<span class="ident">storage_updates</span>: <span class="ident">Default::default</span>(),
 			<span class="ident">child_storage_updates</span>: <span class="ident">Default::default</span>(),
@@ -5609,7 +5595,6 @@
 		} <span class="kw">else</span> {
 			<span class="ident">operation</span>.<span class="ident">old_state</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">state_at</span>(<span class="ident">block</span>)<span class="question-mark">?</span>;
 		}
-		<span class="ident">operation</span>.<span class="ident">old_state</span>.<span class="ident">disable_syncing</span>();
 
 		<span class="ident">operation</span>.<span class="ident">commit_state</span> <span class="op">=</span> <span class="bool-val">true</span>;
 		<span class="prelude-val">Ok</span>(())
@@ -5710,8 +5695,9 @@
 			)
 		});
 		<span class="kw">let</span> <span class="ident">database_cache</span> <span class="op">=</span> <span class="ident">MemorySize::from_bytes</span>(<span class="number">0</span>);
-		<span class="kw">let</span> <span class="ident">state_cache</span> <span class="op">=</span>
-			<span class="ident">MemorySize::from_bytes</span>(<span class="self">self</span>.<span class="ident">shared_cache</span>.<span class="ident">read</span>().<span class="ident">used_storage_cache_size</span>());
+		<span class="kw">let</span> <span class="ident">state_cache</span> <span class="op">=</span> <span class="ident">MemorySize::from_bytes</span>(
+			<span class="self">self</span>.<span class="ident">shared_trie_cache</span>.<span class="ident">as_ref</span>().<span class="ident">map_or</span>(<span class="number">0</span>, <span class="op">|</span><span class="ident">c</span><span class="op">|</span> <span class="ident">c</span>.<span class="ident">used_memory_size</span>()),
+		);
 		<span class="kw">let</span> <span class="ident">state_db</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">storage</span>.<span class="ident">state_db</span>.<span class="ident">memory_info</span>();
 
 		<span class="prelude-val">Some</span>(<span class="ident">UsageInfo</span> {
@@ -5953,17 +5939,13 @@
 		};
 		<span class="kw">if</span> <span class="ident">is_genesis</span> {
 			<span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">genesis_state</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="self">self</span>.<span class="ident">genesis_state</span>.<span class="ident">read</span>() {
-				<span class="kw">let</span> <span class="ident">db_state</span> <span class="op">=</span> <span class="ident">DbState</span>::<span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="ident">genesis_state</span>.<span class="ident">clone</span>(), <span class="ident">genesis_state</span>.<span class="ident">root</span>);
+				<span class="kw">let</span> <span class="ident">root</span> <span class="op">=</span> <span class="ident">genesis_state</span>.<span class="ident">root</span>;
+				<span class="kw">let</span> <span class="ident">db_state</span> <span class="op">=</span> <span class="ident">DbStateBuilder</span>::<span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="ident">genesis_state</span>.<span class="ident">clone</span>(), <span class="ident">root</span>)
+					.<span class="ident">with_optional_cache</span>(<span class="self">self</span>.<span class="ident">shared_trie_cache</span>.<span class="ident">as_ref</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">c</span><span class="op">|</span> <span class="ident">c</span>.<span class="ident">local_cache</span>()))
+					.<span class="ident">build</span>();
+
 				<span class="kw">let</span> <span class="ident">state</span> <span class="op">=</span> <span class="ident">RefTrackingState::new</span>(<span class="ident">db_state</span>, <span class="self">self</span>.<span class="ident">storage</span>.<span class="ident">clone</span>(), <span class="prelude-val">None</span>);
-				<span class="kw">let</span> <span class="ident">caching_state</span> <span class="op">=</span> <span class="ident">CachingState::new</span>(<span class="ident">state</span>, <span class="self">self</span>.<span class="ident">shared_cache</span>.<span class="ident">clone</span>(), <span class="prelude-val">None</span>);
-				<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">state</span> <span class="op">=</span> <span class="ident">SyncingCachingState::new</span>(
-					<span class="ident">caching_state</span>,
-					<span class="self">self</span>.<span class="ident">state_usage</span>.<span class="ident">clone</span>(),
-					<span class="self">self</span>.<span class="ident">blockchain</span>.<span class="ident">meta</span>.<span class="ident">clone</span>(),
-					<span class="self">self</span>.<span class="ident">import_lock</span>.<span class="ident">clone</span>(),
-				);
-				<span class="ident">state</span>.<span class="ident">disable_syncing</span>();
-				<span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">state</span>)
+				<span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">RecordStatsState::new</span>(<span class="ident">state</span>, <span class="prelude-val">None</span>, <span class="self">self</span>.<span class="ident">state_usage</span>.<span class="ident">clone</span>()))
 			}
 		}
 
@@ -5984,16 +5966,13 @@
 				}
 				<span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(()) <span class="op">=</span> <span class="self">self</span>.<span class="ident">storage</span>.<span class="ident">state_db</span>.<span class="ident">pin</span>(<span class="kw-2">&amp;</span><span class="ident">hash</span>) {
 					<span class="kw">let</span> <span class="ident">root</span> <span class="op">=</span> <span class="ident">hdr</span>.<span class="ident">state_root</span>;
-					<span class="kw">let</span> <span class="ident">db_state</span> <span class="op">=</span> <span class="ident">DbState</span>::<span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="self">self</span>.<span class="ident">storage</span>.<span class="ident">clone</span>(), <span class="ident">root</span>);
+					<span class="kw">let</span> <span class="ident">db_state</span> <span class="op">=</span> <span class="ident">DbStateBuilder</span>::<span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="self">self</span>.<span class="ident">storage</span>.<span class="ident">clone</span>(), <span class="ident">root</span>)
+						.<span class="ident">with_optional_cache</span>(
+							<span class="self">self</span>.<span class="ident">shared_trie_cache</span>.<span class="ident">as_ref</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">c</span><span class="op">|</span> <span class="ident">c</span>.<span class="ident">local_cache</span>()),
+						)
+						.<span class="ident">build</span>();
 					<span class="kw">let</span> <span class="ident">state</span> <span class="op">=</span> <span class="ident">RefTrackingState::new</span>(<span class="ident">db_state</span>, <span class="self">self</span>.<span class="ident">storage</span>.<span class="ident">clone</span>(), <span class="prelude-val">Some</span>(<span class="ident">hash</span>));
-					<span class="kw">let</span> <span class="ident">caching_state</span> <span class="op">=</span>
-						<span class="ident">CachingState::new</span>(<span class="ident">state</span>, <span class="self">self</span>.<span class="ident">shared_cache</span>.<span class="ident">clone</span>(), <span class="prelude-val">Some</span>(<span class="ident">hash</span>));
-					<span class="prelude-val">Ok</span>(<span class="ident">SyncingCachingState::new</span>(
-						<span class="ident">caching_state</span>,
-						<span class="self">self</span>.<span class="ident">state_usage</span>.<span class="ident">clone</span>(),
-						<span class="self">self</span>.<span class="ident">blockchain</span>.<span class="ident">meta</span>.<span class="ident">clone</span>(),
-						<span class="self">self</span>.<span class="ident">import_lock</span>.<span class="ident">clone</span>(),
-					))
+					<span class="prelude-val">Ok</span>(<span class="ident">RecordStatsState::new</span>(<span class="ident">state</span>, <span class="prelude-val">Some</span>(<span class="ident">hash</span>), <span class="self">self</span>.<span class="ident">state_usage</span>.<span class="ident">clone</span>()))
 				} <span class="kw">else</span> {
 					<span class="prelude-val">Err</span>(<span class="ident">sp_blockchain::Error::UnknownBlock</span>(<span class="macro">format!</span>(
 						<span class="string">&quot;State already discarded for {:?}&quot;</span>,
@@ -6169,8 +6148,7 @@
 
 		<span class="kw">let</span> <span class="ident">backend</span> <span class="op">=</span> <span class="ident">Backend</span>::<span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span><span class="ident">::new</span>(
 			<span class="ident">DatabaseSettings</span> {
-				<span class="ident">state_cache_size</span>: <span class="number">16777216</span>,
-				<span class="ident">state_cache_child_ratio</span>: <span class="prelude-val">Some</span>((<span class="number">50</span>, <span class="number">100</span>)),
+				<span class="ident">trie_cache_maximum_size</span>: <span class="prelude-val">Some</span>(<span class="number">16</span> <span class="op">*</span> <span class="number">1024</span> <span class="op">*</span> <span class="number">1024</span>),
 				<span class="ident">state_pruning</span>: <span class="prelude-val">Some</span>(<span class="ident">PruningMode::blocks_pruning</span>(<span class="number">1</span>)),
 				<span class="ident">source</span>: <span class="ident">DatabaseSource::Custom</span> { <span class="ident">db</span>: <span class="ident">backing</span>, <span class="ident">require_create_flag</span>: <span class="bool-val">false</span> },
 				<span class="ident">blocks_pruning</span>: <span class="ident">BlocksPruning::All</span>,

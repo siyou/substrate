@@ -1070,6 +1070,15 @@
 <span id="1064">1064</span>
 <span id="1065">1065</span>
 <span id="1066">1066</span>
+<span id="1067">1067</span>
+<span id="1068">1068</span>
+<span id="1069">1069</span>
+<span id="1070">1070</span>
+<span id="1071">1071</span>
+<span id="1072">1072</span>
+<span id="1073">1073</span>
+<span id="1074">1074</span>
+<span id="1075">1075</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2018-2022 Parity Technologies (UK) Ltd.</span>
@@ -1927,10 +1936,18 @@
 			.<span class="ident">expect</span>(<span class="string">&quot;header get error&quot;</span>)
 			.<span class="ident">expect</span>(<span class="string">&quot;there should be header&quot;</span>);
 
-		<span class="kw">let</span> <span class="ident">extrinsics_num</span> <span class="op">=</span> <span class="number">4</span>;
-		<span class="kw">let</span> <span class="ident">extrinsics</span> <span class="op">=</span> (<span class="number">0</span>..<span class="ident">extrinsics_num</span>)
-			.<span class="ident">map</span>(<span class="op">|</span><span class="ident">v</span><span class="op">|</span> <span class="ident">Extrinsic::IncludeData</span>(<span class="macro">vec!</span>[<span class="ident">v</span> <span class="kw">as</span> <span class="ident">u8</span>; <span class="number">10</span>]))
-			.<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>();
+		<span class="kw">let</span> <span class="ident">extrinsics_num</span> <span class="op">=</span> <span class="number">5</span>;
+		<span class="kw">let</span> <span class="ident">extrinsics</span> <span class="op">=</span> <span class="ident">std::iter::once</span>(
+			<span class="ident">Transfer</span> {
+				<span class="ident">from</span>: <span class="ident">AccountKeyring::Alice</span>.<span class="ident">into</span>(),
+				<span class="ident">to</span>: <span class="ident">AccountKeyring::Bob</span>.<span class="ident">into</span>(),
+				<span class="ident">amount</span>: <span class="number">100</span>,
+				<span class="ident">nonce</span>: <span class="number">0</span>,
+			}
+			.<span class="ident">into_signed_tx</span>(),
+		)
+		.<span class="ident">chain</span>((<span class="number">0</span>..<span class="ident">extrinsics_num</span> <span class="op">-</span> <span class="number">1</span>).<span class="ident">map</span>(<span class="op">|</span><span class="ident">v</span><span class="op">|</span> <span class="ident">Extrinsic::IncludeData</span>(<span class="macro">vec!</span>[<span class="ident">v</span> <span class="kw">as</span> <span class="ident">u8</span>; <span class="number">10</span>])))
+		.<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>();
 
 		<span class="kw">let</span> <span class="ident">block_limit</span> <span class="op">=</span> <span class="ident">genesis_header</span>.<span class="ident">encoded_size</span>() <span class="op">+</span>
 			<span class="ident">extrinsics</span>
@@ -1994,8 +2011,9 @@
 		.<span class="ident">unwrap</span>();
 
 		<span class="comment">// The block limit didn&#39;t changed, but we now include the proof in the estimation of the</span>
-		<span class="comment">// block size and thus, one less transaction should fit into the limit.</span>
-		<span class="macro">assert_eq!</span>(<span class="ident">block</span>.<span class="ident">extrinsics</span>().<span class="ident">len</span>(), <span class="ident">extrinsics_num</span> <span class="op">-</span> <span class="number">2</span>);
+		<span class="comment">// block size and thus, only the `Transfer` will fit into the block. It reads more data</span>
+		<span class="comment">// than we have reserved in the block limit.</span>
+		<span class="macro">assert_eq!</span>(<span class="ident">block</span>.<span class="ident">extrinsics</span>().<span class="ident">len</span>(), <span class="number">1</span>);
 	}
 
 	<span class="attribute">#[<span class="ident">test</span>]</span>

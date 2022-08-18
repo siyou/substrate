@@ -106,7 +106,6 @@
 <span id="100">100</span>
 <span id="101">101</span>
 <span id="102">102</span>
-<span id="103">103</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2022 Parity Technologies (UK) Ltd.</span>
@@ -182,8 +181,7 @@
 		<span class="ident">B</span>: <span class="ident">BlockT</span>,
 	{
 		<span class="kw">let</span> <span class="ident">db_config</span> <span class="op">=</span> <span class="ident">sc_client_db::DatabaseSettings</span> {
-			<span class="ident">state_cache_size</span>: <span class="ident">config</span>.<span class="ident">state_cache_size</span>,
-			<span class="ident">state_cache_child_ratio</span>: <span class="ident">config</span>.<span class="ident">state_cache_child_ratio</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">v</span><span class="op">|</span> (<span class="ident">v</span>, <span class="number">100</span>)),
+			<span class="ident">trie_cache_maximum_size</span>: <span class="ident">config</span>.<span class="ident">trie_cache_maximum_size</span>,
 			<span class="ident">state_pruning</span>: <span class="ident">config</span>.<span class="ident">state_pruning</span>.<span class="ident">clone</span>(),
 			<span class="ident">source</span>: <span class="ident">config</span>.<span class="ident">database</span>.<span class="ident">clone</span>(),
 			<span class="ident">blocks_pruning</span>: <span class="ident">config</span>.<span class="ident">blocks_pruning</span>,

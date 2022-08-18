@@ -398,10 +398,10 @@
 	<span class="kw">pub</span> <span class="ident">keystore_remote</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
 	<span class="doccomment">/// Configuration for the database.</span>
 	<span class="kw">pub</span> <span class="ident">database</span>: <span class="ident">DatabaseSource</span>,
-	<span class="doccomment">/// Size of internal state cache in Bytes</span>
-	<span class="kw">pub</span> <span class="ident">state_cache_size</span>: <span class="ident">usize</span>,
-	<span class="doccomment">/// Size in percent of cache size dedicated to child tries</span>
-	<span class="kw">pub</span> <span class="ident">state_cache_child_ratio</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>,
+	<span class="doccomment">/// Maximum size of internal trie cache in bytes.</span>
+	<span class="doccomment">///</span>
+	<span class="doccomment">/// If `None` is given the cache is disabled.</span>
+	<span class="kw">pub</span> <span class="ident">trie_cache_maximum_size</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>,
 	<span class="doccomment">/// State pruning settings.</span>
 	<span class="kw">pub</span> <span class="ident">state_pruning</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PruningMode</span><span class="op">&gt;</span>,
 	<span class="doccomment">/// Number of blocks to keep in the db.</span>

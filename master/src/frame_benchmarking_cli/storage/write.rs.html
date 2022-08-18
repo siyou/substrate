@@ -270,7 +270,7 @@
 
 <span class="kw">use</span> <span class="ident">sc_cli::Result</span>;
 <span class="kw">use</span> <span class="ident">sc_client_api</span>::{<span class="ident">Backend</span> <span class="kw">as</span> <span class="ident">ClientBackend</span>, <span class="ident">StorageProvider</span>, <span class="ident">UsageProvider</span>};
-<span class="kw">use</span> <span class="ident">sc_client_db</span>::{<span class="ident">DbHash</span>, <span class="ident">DbState</span>};
+<span class="kw">use</span> <span class="ident">sc_client_db</span>::{<span class="ident">DbHash</span>, <span class="ident">DbState</span>, <span class="ident">DbStateBuilder</span>};
 <span class="kw">use</span> <span class="ident">sp_api::StateBackend</span>;
 <span class="kw">use</span> <span class="ident">sp_blockchain::HeaderBackend</span>;
 <span class="kw">use</span> <span class="ident">sp_database</span>::{<span class="ident">ColumnId</span>, <span class="ident">Transaction</span>};
@@ -313,7 +313,7 @@
 		<span class="kw">let</span> <span class="ident">block</span> <span class="op">=</span> <span class="ident">BlockId::Number</span>(<span class="ident">client</span>.<span class="ident">usage_info</span>().<span class="ident">chain</span>.<span class="ident">best_number</span>);
 		<span class="kw">let</span> <span class="ident">header</span> <span class="op">=</span> <span class="ident">client</span>.<span class="ident">header</span>(<span class="ident">block</span>)<span class="question-mark">?</span>.<span class="ident">ok_or</span>(<span class="string">&quot;Header not found&quot;</span>)<span class="question-mark">?</span>;
 		<span class="kw">let</span> <span class="ident">original_root</span> <span class="op">=</span> <span class="kw-2">*</span><span class="ident">header</span>.<span class="ident">state_root</span>();
-		<span class="kw">let</span> <span class="ident">trie</span> <span class="op">=</span> <span class="ident">DbState</span>::<span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="ident">storage</span>.<span class="ident">clone</span>(), <span class="ident">original_root</span>);
+		<span class="kw">let</span> <span class="ident">trie</span> <span class="op">=</span> <span class="ident">DbStateBuilder</span>::<span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="ident">storage</span>.<span class="ident">clone</span>(), <span class="ident">original_root</span>).<span class="ident">build</span>();
 
 		<span class="macro">info!</span>(<span class="string">&quot;Preparing keys from block {}&quot;</span>, <span class="ident">block</span>);
 		<span class="comment">// Load all KV pairs and randomly shuffle them.</span>

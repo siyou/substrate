@@ -570,7 +570,6 @@
 <span id="564">564</span>
 <span id="565">565</span>
 <span id="566">566</span>
-<span id="567">567</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2018-2022 Parity Technologies (UK) Ltd.</span>
@@ -805,8 +804,7 @@
 		<span class="ident">keystore_remote</span>: <span class="ident">Default::default</span>(),
 		<span class="ident">keystore</span>: <span class="ident">KeystoreConfig::Path</span> { <span class="ident">path</span>: <span class="ident">root</span>.<span class="ident">join</span>(<span class="string">&quot;key&quot;</span>), <span class="ident">password</span>: <span class="prelude-val">None</span> },
 		<span class="ident">database</span>: <span class="ident">DatabaseSource::RocksDb</span> { <span class="ident">path</span>: <span class="ident">root</span>.<span class="ident">join</span>(<span class="string">&quot;db&quot;</span>), <span class="ident">cache_size</span>: <span class="number">128</span> },
-		<span class="ident">state_cache_size</span>: <span class="number">16777216</span>,
-		<span class="ident">state_cache_child_ratio</span>: <span class="prelude-val">None</span>,
+		<span class="ident">trie_cache_maximum_size</span>: <span class="prelude-val">Some</span>(<span class="number">16</span> <span class="op">*</span> <span class="number">1024</span> <span class="op">*</span> <span class="number">1024</span>),
 		<span class="ident">state_pruning</span>: <span class="ident">Default::default</span>(),
 		<span class="ident">blocks_pruning</span>: <span class="ident">BlocksPruning::All</span>,
 		<span class="ident">chain_spec</span>: <span class="ident">Box::new</span>((<span class="kw-2">*</span><span class="ident">spec</span>).<span class="ident">clone</span>()),

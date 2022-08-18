@@ -2300,6 +2300,20 @@
 <span id="2294">2294</span>
 <span id="2295">2295</span>
 <span id="2296">2296</span>
+<span id="2297">2297</span>
+<span id="2298">2298</span>
+<span id="2299">2299</span>
+<span id="2300">2300</span>
+<span id="2301">2301</span>
+<span id="2302">2302</span>
+<span id="2303">2303</span>
+<span id="2304">2304</span>
+<span id="2305">2305</span>
+<span id="2306">2306</span>
+<span id="2307">2307</span>
+<span id="2308">2308</span>
+<span id="2309">2309</span>
+<span id="2310">2310</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2017-2022 Parity Technologies (UK) Ltd.</span>
@@ -2330,8 +2344,6 @@
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>)]</span>
 <span class="kw">mod</span> <span class="ident">in_memory_backend</span>;
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod</span> <span class="ident">overlayed_changes</span>;
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>)]</span>
-<span class="kw">mod</span> <span class="ident">proving_backend</span>;
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>)]</span>
 <span class="kw">mod</span> <span class="ident">read_only</span>;
 <span class="kw">mod</span> <span class="ident">stats</span>;
@@ -2436,7 +2448,7 @@
 		<span class="ident">StorageTransactionCache</span>, <span class="ident">StorageValue</span>,
 	},
 	<span class="ident">stats</span>::{<span class="ident">StateMachineStats</span>, <span class="ident">UsageInfo</span>, <span class="ident">UsageUnit</span>},
-	<span class="ident">trie_backend::TrieBackend</span>,
+	<span class="ident">trie_backend</span>::{<span class="ident">TrieBackend</span>, <span class="ident">TrieBackendBuilder</span>},
 	<span class="ident">trie_backend_essence</span>::{<span class="ident">Storage</span>, <span class="ident">TrieBackendStorage</span>},
 };
 
@@ -2446,11 +2458,9 @@
 		<span class="ident">basic::BasicExternalities</span>,
 		<span class="ident">error</span>::{<span class="ident">Error</span>, <span class="ident">ExecutionError</span>},
 		<span class="ident">in_memory_backend</span>::{<span class="ident">new_in_mem</span>, <span class="ident">new_in_mem_hash_key</span>},
-		<span class="ident">proving_backend</span>::{
-			<span class="ident">create_proof_check_backend</span>, <span class="ident">ProofRecorder</span>, <span class="ident">ProvingBackend</span>, <span class="ident">ProvingBackendRecorder</span>,
-		},
 		<span class="ident">read_only</span>::{<span class="ident">InspectState</span>, <span class="ident">ReadOnlyExternalities</span>},
 		<span class="ident">testing::TestExternalities</span>,
+		<span class="ident">trie_backend::create_proof_check_backend</span>,
 	};
 	<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">sp_trie</span>::{
 		<span class="ident">trie_types</span>::{<span class="ident">TrieDBMutV0</span>, <span class="ident">TrieDBMutV1</span>},
@@ -2460,6 +2470,8 @@
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>)]</span>
 <span class="kw">mod</span> <span class="ident">execution</span> {
+	<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::backend::AsTrieBackend</span>;
+
 	<span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
 	<span class="kw">use</span> <span class="ident">codec</span>::{<span class="ident">Codec</span>, <span class="ident">Decode</span>, <span class="ident">Encode</span>};
 	<span class="kw">use</span> <span class="ident">hash_db::Hasher</span>;
@@ -2489,9 +2501,6 @@
 
 	<span class="doccomment">/// Trie backend with in-memory storage.</span>
 	<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">InMemoryBackend</span><span class="op">&lt;</span><span class="ident">H</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">TrieBackend</span><span class="op">&lt;</span><span class="ident">MemoryDB</span><span class="op">&lt;</span><span class="ident">H</span><span class="op">&gt;</span>, <span class="ident">H</span><span class="op">&gt;</span>;
-
-	<span class="doccomment">/// Proving Trie backend with in-memory storage.</span>
-	<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">InMemoryProvingBackend</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">H</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">ProvingBackend</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">MemoryDB</span><span class="op">&lt;</span><span class="ident">H</span><span class="op">&gt;</span>, <span class="ident">H</span><span class="op">&gt;</span>;
 
 	<span class="doccomment">/// Strategy for executing a call into the runtime.</span>
 	<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Copy</span>, <span class="ident">Clone</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>, <span class="ident">Debug</span>)]</span>
@@ -2864,15 +2873,13 @@
 		<span class="ident">runtime_code</span>: <span class="kw-2">&amp;</span><span class="ident">RuntimeCode</span>,
 	) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(<span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">StorageProof</span>), <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Error</span><span class="op">&gt;</span><span class="op">&gt;</span>
 	<span class="kw">where</span>
-		<span class="ident">B</span>: <span class="ident">Backend</span><span class="op">&lt;</span><span class="ident">H</span><span class="op">&gt;</span>,
+		<span class="ident">B</span>: <span class="ident">AsTrieBackend</span><span class="op">&lt;</span><span class="ident">H</span><span class="op">&gt;</span>,
 		<span class="ident">H</span>: <span class="ident">Hasher</span>,
 		<span class="ident">H::Out</span>: <span class="ident">Ord</span> <span class="op">+</span> <span class="lifetime">&#39;static</span> <span class="op">+</span> <span class="ident">codec::Codec</span>,
 		<span class="ident">Exec</span>: <span class="ident">CodeExecutor</span> <span class="op">+</span> <span class="ident">Clone</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
 		<span class="ident">Spawn</span>: <span class="ident">SpawnNamed</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
 	{
-		<span class="kw">let</span> <span class="ident">trie_backend</span> <span class="op">=</span> <span class="ident">backend</span>
-			.<span class="ident">as_trie_backend</span>()
-			.<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">Box::new</span>(<span class="ident">ExecutionError::UnableToGenerateProof</span>) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Error</span><span class="op">&gt;</span>)<span class="question-mark">?</span>;
+		<span class="kw">let</span> <span class="ident">trie_backend</span> <span class="op">=</span> <span class="ident">backend</span>.<span class="ident">as_trie_backend</span>();
 		<span class="ident">prove_execution_on_trie_backend</span>::<span class="op">&lt;</span><span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span><span class="op">&gt;</span>(
 			<span class="ident">trie_backend</span>,
 			<span class="ident">overlay</span>,
@@ -2909,23 +2916,31 @@
 		<span class="ident">Exec</span>: <span class="ident">CodeExecutor</span> <span class="op">+</span> <span class="lifetime">&#39;static</span> <span class="op">+</span> <span class="ident">Clone</span>,
 		<span class="ident">Spawn</span>: <span class="ident">SpawnNamed</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
 	{
-		<span class="kw">let</span> <span class="ident">proving_backend</span> <span class="op">=</span> <span class="ident">proving_backend::ProvingBackend::new</span>(<span class="ident">trie_backend</span>);
-		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">sm</span> <span class="op">=</span> <span class="ident">StateMachine</span>::<span class="op">&lt;</span><span class="kw">_</span>, <span class="ident">H</span>, <span class="ident">Exec</span><span class="op">&gt;</span><span class="ident">::new</span>(
-			<span class="kw-2">&amp;</span><span class="ident">proving_backend</span>,
-			<span class="ident">overlay</span>,
-			<span class="ident">exec</span>,
-			<span class="ident">method</span>,
-			<span class="ident">call_data</span>,
-			<span class="ident">Extensions::default</span>(),
-			<span class="ident">runtime_code</span>,
-			<span class="ident">spawn_handle</span>,
-		);
+		<span class="kw">let</span> <span class="ident">proving_backend</span> <span class="op">=</span>
+			<span class="ident">TrieBackendBuilder::wrap</span>(<span class="ident">trie_backend</span>).<span class="ident">with_recorder</span>(<span class="ident">Default::default</span>()).<span class="ident">build</span>();
 
-		<span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">sm</span>.<span class="ident">execute_using_consensus_failure_handler</span>::<span class="op">&lt;</span><span class="kw">_</span>, <span class="ident">NeverNativeValue</span>, <span class="kw">fn</span>() -&gt; <span class="kw">_</span><span class="op">&gt;</span>(
-			<span class="ident">always_wasm</span>(),
-			<span class="prelude-val">None</span>,
-		)<span class="question-mark">?</span>;
-		<span class="kw">let</span> <span class="ident">proof</span> <span class="op">=</span> <span class="ident">sm</span>.<span class="ident">backend</span>.<span class="ident">extract_proof</span>();
+		<span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> {
+			<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">sm</span> <span class="op">=</span> <span class="ident">StateMachine</span>::<span class="op">&lt;</span><span class="kw">_</span>, <span class="ident">H</span>, <span class="ident">Exec</span><span class="op">&gt;</span><span class="ident">::new</span>(
+				<span class="kw-2">&amp;</span><span class="ident">proving_backend</span>,
+				<span class="ident">overlay</span>,
+				<span class="ident">exec</span>,
+				<span class="ident">method</span>,
+				<span class="ident">call_data</span>,
+				<span class="ident">Extensions::default</span>(),
+				<span class="ident">runtime_code</span>,
+				<span class="ident">spawn_handle</span>,
+			);
+
+			<span class="ident">sm</span>.<span class="ident">execute_using_consensus_failure_handler</span>::<span class="op">&lt;</span><span class="kw">_</span>, <span class="ident">NeverNativeValue</span>, <span class="kw">fn</span>() -&gt; <span class="kw">_</span><span class="op">&gt;</span>(
+				<span class="ident">always_wasm</span>(),
+				<span class="prelude-val">None</span>,
+			)<span class="question-mark">?</span>
+		};
+
+		<span class="kw">let</span> <span class="ident">proof</span> <span class="op">=</span> <span class="ident">proving_backend</span>
+			.<span class="ident">extract_proof</span>()
+			.<span class="ident">expect</span>(<span class="string">&quot;A recorder was set and thus, a storage proof can be extracted; qed&quot;</span>);
+
 		<span class="prelude-val">Ok</span>((<span class="ident">result</span>.<span class="ident">into_encoded</span>(), <span class="ident">proof</span>))
 	}
 
@@ -2941,7 +2956,7 @@
 		<span class="ident">runtime_code</span>: <span class="kw-2">&amp;</span><span class="ident">RuntimeCode</span>,
 	) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Error</span><span class="op">&gt;</span><span class="op">&gt;</span>
 	<span class="kw">where</span>
-		<span class="ident">H</span>: <span class="ident">Hasher</span>,
+		<span class="ident">H</span>: <span class="ident">Hasher</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
 		<span class="ident">Exec</span>: <span class="ident">CodeExecutor</span> <span class="op">+</span> <span class="ident">Clone</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
 		<span class="ident">H::Out</span>: <span class="ident">Ord</span> <span class="op">+</span> <span class="lifetime">&#39;static</span> <span class="op">+</span> <span class="ident">codec::Codec</span>,
 		<span class="ident">Spawn</span>: <span class="ident">SpawnNamed</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
@@ -2995,15 +3010,13 @@
 	<span class="doccomment">/// Generate storage read proof.</span>
 	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">prove_read</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">H</span>, <span class="ident">I</span><span class="op">&gt;</span>(<span class="ident">backend</span>: <span class="ident">B</span>, <span class="ident">keys</span>: <span class="ident">I</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">StorageProof</span>, <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Error</span><span class="op">&gt;</span><span class="op">&gt;</span>
 	<span class="kw">where</span>
-		<span class="ident">B</span>: <span class="ident">Backend</span><span class="op">&lt;</span><span class="ident">H</span><span class="op">&gt;</span>,
+		<span class="ident">B</span>: <span class="ident">AsTrieBackend</span><span class="op">&lt;</span><span class="ident">H</span><span class="op">&gt;</span>,
 		<span class="ident">H</span>: <span class="ident">Hasher</span>,
 		<span class="ident">H::Out</span>: <span class="ident">Ord</span> <span class="op">+</span> <span class="ident">Codec</span>,
 		<span class="ident">I</span>: <span class="ident">IntoIterator</span>,
 		<span class="ident">I::Item</span>: <span class="ident">AsRef</span><span class="op">&lt;</span>[<span class="ident">u8</span>]<span class="op">&gt;</span>,
 	{
-		<span class="kw">let</span> <span class="ident">trie_backend</span> <span class="op">=</span> <span class="ident">backend</span>
-			.<span class="ident">as_trie_backend</span>()
-			.<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">Box::new</span>(<span class="ident">ExecutionError::UnableToGenerateProof</span>) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Error</span><span class="op">&gt;</span>)<span class="question-mark">?</span>;
+		<span class="kw">let</span> <span class="ident">trie_backend</span> <span class="op">=</span> <span class="ident">backend</span>.<span class="ident">as_trie_backend</span>();
 		<span class="ident">prove_read_on_trie_backend</span>(<span class="ident">trie_backend</span>, <span class="ident">keys</span>)
 	}
 
@@ -3131,13 +3144,11 @@
 		<span class="ident">start_at</span>: <span class="kw-2">&amp;</span>[<span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>],
 	) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(<span class="ident">StorageProof</span>, <span class="ident">u32</span>), <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Error</span><span class="op">&gt;</span><span class="op">&gt;</span>
 	<span class="kw">where</span>
-		<span class="ident">B</span>: <span class="ident">Backend</span><span class="op">&lt;</span><span class="ident">H</span><span class="op">&gt;</span>,
+		<span class="ident">B</span>: <span class="ident">AsTrieBackend</span><span class="op">&lt;</span><span class="ident">H</span><span class="op">&gt;</span>,
 		<span class="ident">H</span>: <span class="ident">Hasher</span>,
 		<span class="ident">H::Out</span>: <span class="ident">Ord</span> <span class="op">+</span> <span class="ident">Codec</span>,
 	{
-		<span class="kw">let</span> <span class="ident">trie_backend</span> <span class="op">=</span> <span class="ident">backend</span>
-			.<span class="ident">as_trie_backend</span>()
-			.<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">Box::new</span>(<span class="ident">ExecutionError::UnableToGenerateProof</span>) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Error</span><span class="op">&gt;</span>)<span class="question-mark">?</span>;
+		<span class="kw">let</span> <span class="ident">trie_backend</span> <span class="op">=</span> <span class="ident">backend</span>.<span class="ident">as_trie_backend</span>();
 		<span class="ident">prove_range_read_with_child_with_size_on_trie_backend</span>(<span class="ident">trie_backend</span>, <span class="ident">size_limit</span>, <span class="ident">start_at</span>)
 	}
 
@@ -3158,7 +3169,9 @@
 			<span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Box::new</span>(<span class="string">&quot;Invalid start of range.&quot;</span>))
 		}
 
-		<span class="kw">let</span> <span class="ident">proving_backend</span> <span class="op">=</span> <span class="ident">proving_backend::ProvingBackend</span>::<span class="op">&lt;</span><span class="ident">S</span>, <span class="ident">H</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="ident">trie_backend</span>);
+		<span class="kw">let</span> <span class="ident">recorder</span> <span class="op">=</span> <span class="ident">sp_trie::recorder::Recorder::default</span>();
+		<span class="kw">let</span> <span class="ident">proving_backend</span> <span class="op">=</span>
+			<span class="ident">TrieBackendBuilder::wrap</span>(<span class="ident">trie_backend</span>).<span class="ident">with_recorder</span>(<span class="ident">recorder</span>.<span class="ident">clone</span>()).<span class="ident">build</span>();
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">count</span> <span class="op">=</span> <span class="number">0</span>;
 
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">child_roots</span> <span class="op">=</span> <span class="ident">HashSet::new</span>();
@@ -3226,7 +3239,7 @@
 								<span class="comment">// do not add two child trie with same root</span>
 								<span class="bool-val">true</span>
 							}
-						} <span class="kw">else</span> <span class="kw">if</span> <span class="ident">proving_backend</span>.<span class="ident">estimate_encoded_size</span>() <span class="op">&lt;</span><span class="op">=</span> <span class="ident">size_limit</span> {
+						} <span class="kw">else</span> <span class="kw">if</span> <span class="ident">recorder</span>.<span class="ident">estimate_encoded_size</span>() <span class="op">&lt;</span><span class="op">=</span> <span class="ident">size_limit</span> {
 							<span class="ident">count</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
 							<span class="bool-val">true</span>
 						} <span class="kw">else</span> {
@@ -3250,7 +3263,11 @@
 				<span class="ident">start_at</span> <span class="op">=</span> <span class="prelude-val">None</span>;
 			}
 		}
-		<span class="prelude-val">Ok</span>((<span class="ident">proving_backend</span>.<span class="ident">extract_proof</span>(), <span class="ident">count</span>))
+
+		<span class="kw">let</span> <span class="ident">proof</span> <span class="op">=</span> <span class="ident">proving_backend</span>
+			.<span class="ident">extract_proof</span>()
+			.<span class="ident">expect</span>(<span class="string">&quot;A recorder was set and thus, a storage proof can be extracted; qed&quot;</span>);
+		<span class="prelude-val">Ok</span>((<span class="ident">proof</span>, <span class="ident">count</span>))
 	}
 
 	<span class="doccomment">/// Generate range storage read proof.</span>
@@ -3262,13 +3279,11 @@
 		<span class="ident">start_at</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>]<span class="op">&gt;</span>,
 	) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(<span class="ident">StorageProof</span>, <span class="ident">u32</span>), <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Error</span><span class="op">&gt;</span><span class="op">&gt;</span>
 	<span class="kw">where</span>
-		<span class="ident">B</span>: <span class="ident">Backend</span><span class="op">&lt;</span><span class="ident">H</span><span class="op">&gt;</span>,
+		<span class="ident">B</span>: <span class="ident">AsTrieBackend</span><span class="op">&lt;</span><span class="ident">H</span><span class="op">&gt;</span>,
 		<span class="ident">H</span>: <span class="ident">Hasher</span>,
 		<span class="ident">H::Out</span>: <span class="ident">Ord</span> <span class="op">+</span> <span class="ident">Codec</span>,
 	{
-		<span class="kw">let</span> <span class="ident">trie_backend</span> <span class="op">=</span> <span class="ident">backend</span>
-			.<span class="ident">as_trie_backend</span>()
-			.<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">Box::new</span>(<span class="ident">ExecutionError::UnableToGenerateProof</span>) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Error</span><span class="op">&gt;</span>)<span class="question-mark">?</span>;
+		<span class="kw">let</span> <span class="ident">trie_backend</span> <span class="op">=</span> <span class="ident">backend</span>.<span class="ident">as_trie_backend</span>();
 		<span class="ident">prove_range_read_with_size_on_trie_backend</span>(
 			<span class="ident">trie_backend</span>,
 			<span class="ident">child_info</span>,
@@ -3291,7 +3306,9 @@
 		<span class="ident">H</span>: <span class="ident">Hasher</span>,
 		<span class="ident">H::Out</span>: <span class="ident">Ord</span> <span class="op">+</span> <span class="ident">Codec</span>,
 	{
-		<span class="kw">let</span> <span class="ident">proving_backend</span> <span class="op">=</span> <span class="ident">proving_backend::ProvingBackend</span>::<span class="op">&lt;</span><span class="ident">S</span>, <span class="ident">H</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="ident">trie_backend</span>);
+		<span class="kw">let</span> <span class="ident">recorder</span> <span class="op">=</span> <span class="ident">sp_trie::recorder::Recorder::default</span>();
+		<span class="kw">let</span> <span class="ident">proving_backend</span> <span class="op">=</span>
+			<span class="ident">TrieBackendBuilder::wrap</span>(<span class="ident">trie_backend</span>).<span class="ident">with_recorder</span>(<span class="ident">recorder</span>.<span class="ident">clone</span>()).<span class="ident">build</span>();
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">count</span> <span class="op">=</span> <span class="number">0</span>;
 		<span class="ident">proving_backend</span>
 			.<span class="ident">apply_to_key_values_while</span>(
@@ -3299,7 +3316,7 @@
 				<span class="ident">prefix</span>,
 				<span class="ident">start_at</span>,
 				<span class="op">|</span><span class="ident">_key</span>, <span class="ident">_value</span><span class="op">|</span> {
-					<span class="kw">if</span> <span class="ident">count</span> <span class="op">==</span> <span class="number">0</span> <span class="op">|</span><span class="op">|</span> <span class="ident">proving_backend</span>.<span class="ident">estimate_encoded_size</span>() <span class="op">&lt;</span><span class="op">=</span> <span class="ident">size_limit</span> {
+					<span class="kw">if</span> <span class="ident">count</span> <span class="op">==</span> <span class="number">0</span> <span class="op">|</span><span class="op">|</span> <span class="ident">recorder</span>.<span class="ident">estimate_encoded_size</span>() <span class="op">&lt;</span><span class="op">=</span> <span class="ident">size_limit</span> {
 						<span class="ident">count</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
 						<span class="bool-val">true</span>
 					} <span class="kw">else</span> {
@@ -3309,7 +3326,11 @@
 				<span class="bool-val">false</span>,
 			)
 			.<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">Box::new</span>(<span class="ident">e</span>) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Error</span><span class="op">&gt;</span>)<span class="question-mark">?</span>;
-		<span class="prelude-val">Ok</span>((<span class="ident">proving_backend</span>.<span class="ident">extract_proof</span>(), <span class="ident">count</span>))
+
+		<span class="kw">let</span> <span class="ident">proof</span> <span class="op">=</span> <span class="ident">proving_backend</span>
+			.<span class="ident">extract_proof</span>()
+			.<span class="ident">expect</span>(<span class="string">&quot;A recorder was set and thus, a storage proof can be extracted; qed&quot;</span>);
+		<span class="prelude-val">Ok</span>((<span class="ident">proof</span>, <span class="ident">count</span>))
 	}
 
 	<span class="doccomment">/// Generate child storage read proof.</span>
@@ -3319,15 +3340,13 @@
 		<span class="ident">keys</span>: <span class="ident">I</span>,
 	) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">StorageProof</span>, <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Error</span><span class="op">&gt;</span><span class="op">&gt;</span>
 	<span class="kw">where</span>
-		<span class="ident">B</span>: <span class="ident">Backend</span><span class="op">&lt;</span><span class="ident">H</span><span class="op">&gt;</span>,
+		<span class="ident">B</span>: <span class="ident">AsTrieBackend</span><span class="op">&lt;</span><span class="ident">H</span><span class="op">&gt;</span>,
 		<span class="ident">H</span>: <span class="ident">Hasher</span>,
 		<span class="ident">H::Out</span>: <span class="ident">Ord</span> <span class="op">+</span> <span class="ident">Codec</span>,
 		<span class="ident">I</span>: <span class="ident">IntoIterator</span>,
 		<span class="ident">I::Item</span>: <span class="ident">AsRef</span><span class="op">&lt;</span>[<span class="ident">u8</span>]<span class="op">&gt;</span>,
 	{
-		<span class="kw">let</span> <span class="ident">trie_backend</span> <span class="op">=</span> <span class="ident">backend</span>
-			.<span class="ident">as_trie_backend</span>()
-			.<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">Box::new</span>(<span class="ident">ExecutionError::UnableToGenerateProof</span>) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Error</span><span class="op">&gt;</span>)<span class="question-mark">?</span>;
+		<span class="kw">let</span> <span class="ident">trie_backend</span> <span class="op">=</span> <span class="ident">backend</span>.<span class="ident">as_trie_backend</span>();
 		<span class="ident">prove_child_read_on_trie_backend</span>(<span class="ident">trie_backend</span>, <span class="ident">child_info</span>, <span class="ident">keys</span>)
 	}
 
@@ -3343,13 +3362,17 @@
 		<span class="ident">I</span>: <span class="ident">IntoIterator</span>,
 		<span class="ident">I::Item</span>: <span class="ident">AsRef</span><span class="op">&lt;</span>[<span class="ident">u8</span>]<span class="op">&gt;</span>,
 	{
-		<span class="kw">let</span> <span class="ident">proving_backend</span> <span class="op">=</span> <span class="ident">proving_backend::ProvingBackend</span>::<span class="op">&lt;</span><span class="kw">_</span>, <span class="ident">H</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="ident">trie_backend</span>);
+		<span class="kw">let</span> <span class="ident">proving_backend</span> <span class="op">=</span>
+			<span class="ident">TrieBackendBuilder::wrap</span>(<span class="ident">trie_backend</span>).<span class="ident">with_recorder</span>(<span class="ident">Default::default</span>()).<span class="ident">build</span>();
 		<span class="kw">for</span> <span class="ident">key</span> <span class="kw">in</span> <span class="ident">keys</span>.<span class="ident">into_iter</span>() {
 			<span class="ident">proving_backend</span>
 				.<span class="ident">storage</span>(<span class="ident">key</span>.<span class="ident">as_ref</span>())
 				.<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">Box::new</span>(<span class="ident">e</span>) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Error</span><span class="op">&gt;</span>)<span class="question-mark">?</span>;
 		}
-		<span class="prelude-val">Ok</span>(<span class="ident">proving_backend</span>.<span class="ident">extract_proof</span>())
+
+		<span class="prelude-val">Ok</span>(<span class="ident">proving_backend</span>
+			.<span class="ident">extract_proof</span>()
+			.<span class="ident">expect</span>(<span class="string">&quot;A recorder was set and thus, a storage proof can be extracted; qed&quot;</span>))
 	}
 
 	<span class="doccomment">/// Generate storage read proof on pre-created trie backend.</span>
@@ -3365,13 +3388,17 @@
 		<span class="ident">I</span>: <span class="ident">IntoIterator</span>,
 		<span class="ident">I::Item</span>: <span class="ident">AsRef</span><span class="op">&lt;</span>[<span class="ident">u8</span>]<span class="op">&gt;</span>,
 	{
-		<span class="kw">let</span> <span class="ident">proving_backend</span> <span class="op">=</span> <span class="ident">proving_backend::ProvingBackend</span>::<span class="op">&lt;</span><span class="kw">_</span>, <span class="ident">H</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="ident">trie_backend</span>);
+		<span class="kw">let</span> <span class="ident">proving_backend</span> <span class="op">=</span>
+			<span class="ident">TrieBackendBuilder::wrap</span>(<span class="ident">trie_backend</span>).<span class="ident">with_recorder</span>(<span class="ident">Default::default</span>()).<span class="ident">build</span>();
 		<span class="kw">for</span> <span class="ident">key</span> <span class="kw">in</span> <span class="ident">keys</span>.<span class="ident">into_iter</span>() {
 			<span class="ident">proving_backend</span>
 				.<span class="ident">child_storage</span>(<span class="ident">child_info</span>, <span class="ident">key</span>.<span class="ident">as_ref</span>())
 				.<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">Box::new</span>(<span class="ident">e</span>) <span class="kw">as</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Error</span><span class="op">&gt;</span>)<span class="question-mark">?</span>;
 		}
-		<span class="prelude-val">Ok</span>(<span class="ident">proving_backend</span>.<span class="ident">extract_proof</span>())
+
+		<span class="prelude-val">Ok</span>(<span class="ident">proving_backend</span>
+			.<span class="ident">extract_proof</span>()
+			.<span class="ident">expect</span>(<span class="string">&quot;A recorder was set and thus, a storage proof can be extracted; qed&quot;</span>))
 	}
 
 	<span class="doccomment">/// Check storage read proof, generated by `prove_read` call.</span>
@@ -3381,7 +3408,7 @@
 		<span class="ident">keys</span>: <span class="ident">I</span>,
 	) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>, <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Error</span><span class="op">&gt;</span><span class="op">&gt;</span>
 	<span class="kw">where</span>
-		<span class="ident">H</span>: <span class="ident">Hasher</span>,
+		<span class="ident">H</span>: <span class="ident">Hasher</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
 		<span class="ident">H::Out</span>: <span class="ident">Ord</span> <span class="op">+</span> <span class="ident">Codec</span>,
 		<span class="ident">I</span>: <span class="ident">IntoIterator</span>,
 		<span class="ident">I::Item</span>: <span class="ident">AsRef</span><span class="op">&lt;</span>[<span class="ident">u8</span>]<span class="op">&gt;</span>,
@@ -3406,7 +3433,7 @@
 		<span class="ident">start_at</span>: <span class="kw-2">&amp;</span>[<span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>],
 	) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(<span class="ident">KeyValueStates</span>, <span class="ident">usize</span>), <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Error</span><span class="op">&gt;</span><span class="op">&gt;</span>
 	<span class="kw">where</span>
-		<span class="ident">H</span>: <span class="ident">Hasher</span>,
+		<span class="ident">H</span>: <span class="ident">Hasher</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
 		<span class="ident">H::Out</span>: <span class="ident">Ord</span> <span class="op">+</span> <span class="ident">Codec</span>,
 	{
 		<span class="kw">let</span> <span class="ident">proving_backend</span> <span class="op">=</span> <span class="ident">create_proof_check_backend</span>::<span class="op">&lt;</span><span class="ident">H</span><span class="op">&gt;</span>(<span class="ident">root</span>, <span class="ident">proof</span>)<span class="question-mark">?</span>;
@@ -3423,7 +3450,7 @@
 		<span class="ident">start_at</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>]<span class="op">&gt;</span>,
 	) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(<span class="ident">Vec</span><span class="op">&lt;</span>(<span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>)<span class="op">&gt;</span>, <span class="ident">bool</span>), <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Error</span><span class="op">&gt;</span><span class="op">&gt;</span>
 	<span class="kw">where</span>
-		<span class="ident">H</span>: <span class="ident">Hasher</span>,
+		<span class="ident">H</span>: <span class="ident">Hasher</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
 		<span class="ident">H::Out</span>: <span class="ident">Ord</span> <span class="op">+</span> <span class="ident">Codec</span>,
 	{
 		<span class="kw">let</span> <span class="ident">proving_backend</span> <span class="op">=</span> <span class="ident">create_proof_check_backend</span>::<span class="op">&lt;</span><span class="ident">H</span><span class="op">&gt;</span>(<span class="ident">root</span>, <span class="ident">proof</span>)<span class="question-mark">?</span>;
@@ -3444,7 +3471,7 @@
 		<span class="ident">keys</span>: <span class="ident">I</span>,
 	) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>, <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Error</span><span class="op">&gt;</span><span class="op">&gt;</span>
 	<span class="kw">where</span>
-		<span class="ident">H</span>: <span class="ident">Hasher</span>,
+		<span class="ident">H</span>: <span class="ident">Hasher</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
 		<span class="ident">H::Out</span>: <span class="ident">Ord</span> <span class="op">+</span> <span class="ident">Codec</span>,
 		<span class="ident">I</span>: <span class="ident">IntoIterator</span>,
 		<span class="ident">I::Item</span>: <span class="ident">AsRef</span><span class="op">&lt;</span>[<span class="ident">u8</span>]<span class="op">&gt;</span>,
@@ -3648,7 +3675,7 @@
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="kw">mod</span> <span class="ident">tests</span> {
-	<span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">ext::Ext</span>, <span class="kw-2">*</span>};
+	<span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">backend::AsTrieBackend</span>, <span class="ident">ext::Ext</span>, <span class="kw-2">*</span>};
 	<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">execution::CallResult</span>, <span class="ident">in_memory_backend::new_in_mem_hash_key</span>};
 	<span class="kw">use</span> <span class="ident">assert_matches::assert_matches</span>;
 	<span class="kw">use</span> <span class="ident">codec</span>::{<span class="ident">Decode</span>, <span class="ident">Encode</span>};
@@ -3660,6 +3687,7 @@
 		<span class="ident">NativeOrEncoded</span>, <span class="ident">NeverNativeValue</span>,
 	};
 	<span class="kw">use</span> <span class="ident">sp_runtime::traits::BlakeTwo256</span>;
+	<span class="kw">use</span> <span class="ident">sp_trie::trie_types</span>::{<span class="ident">TrieDBMutBuilderV0</span>, <span class="ident">TrieDBMutBuilderV1</span>};
 	<span class="kw">use</span> <span class="ident">std</span>::{
 		<span class="ident">collections</span>::{<span class="ident">BTreeMap</span>, <span class="ident">HashMap</span>},
 		<span class="ident">panic::UnwindSafe</span>,
@@ -3721,7 +3749,7 @@
 		<span class="ident">execute_works_inner</span>(<span class="ident">StateVersion::V1</span>);
 	}
 	<span class="kw">fn</span> <span class="ident">execute_works_inner</span>(<span class="ident">state_version</span>: <span class="ident">StateVersion</span>) {
-		<span class="kw">let</span> <span class="ident">backend</span> <span class="op">=</span> <span class="ident">trie_backend::tests::test_trie</span>(<span class="ident">state_version</span>);
+		<span class="kw">let</span> <span class="ident">backend</span> <span class="op">=</span> <span class="ident">trie_backend::tests::test_trie</span>(<span class="ident">state_version</span>, <span class="prelude-val">None</span>, <span class="prelude-val">None</span>);
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">overlayed_changes</span> <span class="op">=</span> <span class="ident">Default::default</span>();
 		<span class="kw">let</span> <span class="ident">wasm_code</span> <span class="op">=</span> <span class="ident">RuntimeCode::empty</span>();
 
@@ -3749,7 +3777,7 @@
 		<span class="ident">execute_works_with_native_else_wasm_inner</span>(<span class="ident">StateVersion::V1</span>);
 	}
 	<span class="kw">fn</span> <span class="ident">execute_works_with_native_else_wasm_inner</span>(<span class="ident">state_version</span>: <span class="ident">StateVersion</span>) {
-		<span class="kw">let</span> <span class="ident">backend</span> <span class="op">=</span> <span class="ident">trie_backend::tests::test_trie</span>(<span class="ident">state_version</span>);
+		<span class="kw">let</span> <span class="ident">backend</span> <span class="op">=</span> <span class="ident">trie_backend::tests::test_trie</span>(<span class="ident">state_version</span>, <span class="prelude-val">None</span>, <span class="prelude-val">None</span>);
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">overlayed_changes</span> <span class="op">=</span> <span class="ident">Default::default</span>();
 		<span class="kw">let</span> <span class="ident">wasm_code</span> <span class="op">=</span> <span class="ident">RuntimeCode::empty</span>();
 
@@ -3778,7 +3806,7 @@
 	}
 	<span class="kw">fn</span> <span class="ident">dual_execution_strategy_detects_consensus_failure_inner</span>(<span class="ident">state_version</span>: <span class="ident">StateVersion</span>) {
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">consensus_failed</span> <span class="op">=</span> <span class="bool-val">false</span>;
-		<span class="kw">let</span> <span class="ident">backend</span> <span class="op">=</span> <span class="ident">trie_backend::tests::test_trie</span>(<span class="ident">state_version</span>);
+		<span class="kw">let</span> <span class="ident">backend</span> <span class="op">=</span> <span class="ident">trie_backend::tests::test_trie</span>(<span class="ident">state_version</span>, <span class="prelude-val">None</span>, <span class="prelude-val">None</span>);
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">overlayed_changes</span> <span class="op">=</span> <span class="ident">Default::default</span>();
 		<span class="kw">let</span> <span class="ident">wasm_code</span> <span class="op">=</span> <span class="ident">RuntimeCode::empty</span>();
 
@@ -3822,7 +3850,7 @@
 		};
 
 		<span class="comment">// fetch execution proof from &#39;remote&#39; full node</span>
-		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">remote_backend</span> <span class="op">=</span> <span class="ident">trie_backend::tests::test_trie</span>(<span class="ident">state_version</span>);
+		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">remote_backend</span> <span class="op">=</span> <span class="ident">trie_backend::tests::test_trie</span>(<span class="ident">state_version</span>, <span class="prelude-val">None</span>, <span class="prelude-val">None</span>);
 		<span class="kw">let</span> <span class="ident">remote_root</span> <span class="op">=</span> <span class="ident">remote_backend</span>.<span class="ident">storage_root</span>(<span class="ident">std::iter::empty</span>(), <span class="ident">state_version</span>).<span class="number">0</span>;
 		<span class="kw">let</span> (<span class="ident">remote_result</span>, <span class="ident">remote_proof</span>) <span class="op">=</span> <span class="ident">prove_execution</span>(
 			<span class="kw-2">&amp;mut</span> <span class="ident">remote_backend</span>,
@@ -3862,7 +3890,7 @@
 			<span class="string">b&quot;bbb&quot;</span>.<span class="ident">to_vec</span>() =&gt; <span class="string">b&quot;3&quot;</span>.<span class="ident">to_vec</span>()
 		];
 		<span class="kw">let</span> <span class="ident">state</span> <span class="op">=</span> <span class="ident">InMemoryBackend</span>::<span class="op">&lt;</span><span class="ident">BlakeTwo256</span><span class="op">&gt;</span><span class="ident">::from</span>((<span class="ident">initial</span>, <span class="ident">StateVersion::default</span>()));
-		<span class="kw">let</span> <span class="ident">backend</span> <span class="op">=</span> <span class="ident">state</span>.<span class="ident">as_trie_backend</span>().<span class="ident">unwrap</span>();
+		<span class="kw">let</span> <span class="ident">backend</span> <span class="op">=</span> <span class="ident">state</span>.<span class="ident">as_trie_backend</span>();
 
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">overlay</span> <span class="op">=</span> <span class="ident">OverlayedChanges::default</span>();
 		<span class="ident">overlay</span>.<span class="ident">set_storage</span>(<span class="string">b&quot;aba&quot;</span>.<span class="ident">to_vec</span>(), <span class="prelude-val">Some</span>(<span class="string">b&quot;1312&quot;</span>.<span class="ident">to_vec</span>()));
@@ -4018,7 +4046,7 @@
 		<span class="kw">let</span> <span class="ident">child_info</span> <span class="op">=</span> <span class="ident">ChildInfo::new_default</span>(<span class="string">b&quot;sub1&quot;</span>);
 		<span class="kw">let</span> <span class="ident">child_info</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">child_info</span>;
 		<span class="kw">let</span> <span class="ident">state</span> <span class="op">=</span> <span class="ident">new_in_mem_hash_key</span>::<span class="op">&lt;</span><span class="ident">BlakeTwo256</span><span class="op">&gt;</span>();
-		<span class="kw">let</span> <span class="ident">backend</span> <span class="op">=</span> <span class="ident">state</span>.<span class="ident">as_trie_backend</span>().<span class="ident">unwrap</span>();
+		<span class="kw">let</span> <span class="ident">backend</span> <span class="op">=</span> <span class="ident">state</span>.<span class="ident">as_trie_backend</span>();
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">overlay</span> <span class="op">=</span> <span class="ident">OverlayedChanges::default</span>();
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">cache</span> <span class="op">=</span> <span class="ident">StorageTransactionCache::default</span>();
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">ext</span> <span class="op">=</span> <span class="ident">Ext::new</span>(<span class="kw-2">&amp;mut</span> <span class="ident">overlay</span>, <span class="kw-2">&amp;mut</span> <span class="ident">cache</span>, <span class="ident">backend</span>, <span class="prelude-val">None</span>);
@@ -4034,7 +4062,7 @@
 		<span class="kw">let</span> <span class="ident">reference_data</span> <span class="op">=</span> <span class="macro">vec!</span>[<span class="string">b&quot;data1&quot;</span>.<span class="ident">to_vec</span>(), <span class="string">b&quot;2&quot;</span>.<span class="ident">to_vec</span>(), <span class="string">b&quot;D3&quot;</span>.<span class="ident">to_vec</span>(), <span class="string">b&quot;d4&quot;</span>.<span class="ident">to_vec</span>()];
 		<span class="kw">let</span> <span class="ident">key</span> <span class="op">=</span> <span class="string">b&quot;key&quot;</span>.<span class="ident">to_vec</span>();
 		<span class="kw">let</span> <span class="ident">state</span> <span class="op">=</span> <span class="ident">new_in_mem_hash_key</span>::<span class="op">&lt;</span><span class="ident">BlakeTwo256</span><span class="op">&gt;</span>();
-		<span class="kw">let</span> <span class="ident">backend</span> <span class="op">=</span> <span class="ident">state</span>.<span class="ident">as_trie_backend</span>().<span class="ident">unwrap</span>();
+		<span class="kw">let</span> <span class="ident">backend</span> <span class="op">=</span> <span class="ident">state</span>.<span class="ident">as_trie_backend</span>();
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">overlay</span> <span class="op">=</span> <span class="ident">OverlayedChanges::default</span>();
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">cache</span> <span class="op">=</span> <span class="ident">StorageTransactionCache::default</span>();
 		{
@@ -4071,7 +4099,7 @@
 		<span class="kw">let</span> <span class="ident">key</span> <span class="op">=</span> <span class="string">b&quot;events&quot;</span>.<span class="ident">to_vec</span>();
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">cache</span> <span class="op">=</span> <span class="ident">StorageTransactionCache::default</span>();
 		<span class="kw">let</span> <span class="ident">state</span> <span class="op">=</span> <span class="ident">new_in_mem_hash_key</span>::<span class="op">&lt;</span><span class="ident">BlakeTwo256</span><span class="op">&gt;</span>();
-		<span class="kw">let</span> <span class="ident">backend</span> <span class="op">=</span> <span class="ident">state</span>.<span class="ident">as_trie_backend</span>().<span class="ident">unwrap</span>();
+		<span class="kw">let</span> <span class="ident">backend</span> <span class="op">=</span> <span class="ident">state</span>.<span class="ident">as_trie_backend</span>();
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">overlay</span> <span class="op">=</span> <span class="ident">OverlayedChanges::default</span>();
 
 		<span class="comment">// For example, block initialization with event.</span>
@@ -4142,7 +4170,7 @@
 		<span class="kw">let</span> <span class="ident">child_info</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">child_info</span>;
 		<span class="kw">let</span> <span class="ident">missing_child_info</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">missing_child_info</span>;
 		<span class="comment">// fetch read proof from &#39;remote&#39; full node</span>
-		<span class="kw">let</span> <span class="ident">remote_backend</span> <span class="op">=</span> <span class="ident">trie_backend::tests::test_trie</span>(<span class="ident">state_version</span>);
+		<span class="kw">let</span> <span class="ident">remote_backend</span> <span class="op">=</span> <span class="ident">trie_backend::tests::test_trie</span>(<span class="ident">state_version</span>, <span class="prelude-val">None</span>, <span class="prelude-val">None</span>);
 		<span class="kw">let</span> <span class="ident">remote_root</span> <span class="op">=</span> <span class="ident">remote_backend</span>.<span class="ident">storage_root</span>(<span class="ident">std::iter::empty</span>(), <span class="ident">state_version</span>).<span class="number">0</span>;
 		<span class="kw">let</span> <span class="ident">remote_proof</span> <span class="op">=</span> <span class="ident">prove_read</span>(<span class="ident">remote_backend</span>, <span class="kw-2">&amp;</span>[<span class="string">b&quot;value2&quot;</span>]).<span class="ident">unwrap</span>();
 		<span class="kw">let</span> <span class="ident">remote_proof</span> <span class="op">=</span> <span class="ident">test_compact</span>(<span class="ident">remote_proof</span>, <span class="kw-2">&amp;</span><span class="ident">remote_root</span>);
@@ -4159,7 +4187,7 @@
 		);
 		<span class="macro">assert_eq!</span>(<span class="ident">local_result2</span>, <span class="bool-val">false</span>);
 		<span class="comment">// on child trie</span>
-		<span class="kw">let</span> <span class="ident">remote_backend</span> <span class="op">=</span> <span class="ident">trie_backend::tests::test_trie</span>(<span class="ident">state_version</span>);
+		<span class="kw">let</span> <span class="ident">remote_backend</span> <span class="op">=</span> <span class="ident">trie_backend::tests::test_trie</span>(<span class="ident">state_version</span>, <span class="prelude-val">None</span>, <span class="prelude-val">None</span>);
 		<span class="kw">let</span> <span class="ident">remote_root</span> <span class="op">=</span> <span class="ident">remote_backend</span>.<span class="ident">storage_root</span>(<span class="ident">std::iter::empty</span>(), <span class="ident">state_version</span>).<span class="number">0</span>;
 		<span class="kw">let</span> <span class="ident">remote_proof</span> <span class="op">=</span> <span class="ident">prove_child_read</span>(<span class="ident">remote_backend</span>, <span class="ident">child_info</span>, <span class="kw-2">&amp;</span>[<span class="string">b&quot;value3&quot;</span>]).<span class="ident">unwrap</span>();
 		<span class="kw">let</span> <span class="ident">remote_proof</span> <span class="op">=</span> <span class="ident">test_compact</span>(<span class="ident">remote_proof</span>, <span class="kw-2">&amp;</span><span class="ident">remote_root</span>);
@@ -4226,8 +4254,8 @@
 
 			<span class="kw">let</span> <span class="ident">trie</span>: <span class="ident">InMemoryBackend</span><span class="op">&lt;</span><span class="ident">BlakeTwo256</span><span class="op">&gt;</span> <span class="op">=</span>
 				(<span class="ident">storage</span>.<span class="ident">clone</span>(), <span class="ident">StateVersion::default</span>()).<span class="ident">into</span>();
-			<span class="kw">let</span> <span class="ident">trie_root</span> <span class="op">=</span> <span class="ident">trie</span>.<span class="ident">root</span>();
-			<span class="kw">let</span> <span class="ident">backend</span> <span class="op">=</span> <span class="ident"><span class="kw">crate</span>::ProvingBackend::new</span>(<span class="kw-2">&amp;</span><span class="ident">trie</span>);
+			<span class="kw">let</span> <span class="ident">trie_root</span> <span class="op">=</span> <span class="kw-2">*</span><span class="ident">trie</span>.<span class="ident">root</span>();
+			<span class="kw">let</span> <span class="ident">backend</span> <span class="op">=</span> <span class="ident">TrieBackendBuilder::wrap</span>(<span class="kw-2">&amp;</span><span class="ident">trie</span>).<span class="ident">with_recorder</span>(<span class="ident">Default::default</span>()).<span class="ident">build</span>();
 			<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">queries</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
 			<span class="kw">for</span> <span class="ident">c</span> <span class="kw">in</span> <span class="number">0</span>..(<span class="number">5</span> <span class="op">+</span> <span class="ident">nb_child_trie</span> <span class="op">/</span> <span class="number">2</span>) {
 				<span class="comment">// random existing query</span>
@@ -4272,10 +4300,10 @@
 				}
 			}
 
-			<span class="kw">let</span> <span class="ident">storage_proof</span> <span class="op">=</span> <span class="ident">backend</span>.<span class="ident">extract_proof</span>();
+			<span class="kw">let</span> <span class="ident">storage_proof</span> <span class="op">=</span> <span class="ident">backend</span>.<span class="ident">extract_proof</span>().<span class="ident">expect</span>(<span class="string">&quot;Failed to extract proof&quot;</span>);
 			<span class="kw">let</span> <span class="ident">remote_proof</span> <span class="op">=</span> <span class="ident">test_compact</span>(<span class="ident">storage_proof</span>, <span class="kw-2">&amp;</span><span class="ident">trie_root</span>);
 			<span class="kw">let</span> <span class="ident">proof_check</span> <span class="op">=</span>
-				<span class="ident">create_proof_check_backend</span>::<span class="op">&lt;</span><span class="ident">BlakeTwo256</span><span class="op">&gt;</span>(<span class="kw-2">*</span><span class="ident">trie_root</span>, <span class="ident">remote_proof</span>).<span class="ident">unwrap</span>();
+				<span class="ident">create_proof_check_backend</span>::<span class="op">&lt;</span><span class="ident">BlakeTwo256</span><span class="op">&gt;</span>(<span class="ident">trie_root</span>, <span class="ident">remote_proof</span>).<span class="ident">unwrap</span>();
 
 			<span class="kw">for</span> (<span class="ident">child_info</span>, <span class="ident">key</span>, <span class="ident">expected</span>) <span class="kw">in</span> <span class="ident">queries</span> {
 				<span class="macro">assert_eq!</span>(
@@ -4289,7 +4317,7 @@
 	<span class="attribute">#[<span class="ident">test</span>]</span>
 	<span class="kw">fn</span> <span class="ident">prove_read_with_size_limit_works</span>() {
 		<span class="kw">let</span> <span class="ident">state_version</span> <span class="op">=</span> <span class="ident">StateVersion::V0</span>;
-		<span class="kw">let</span> <span class="ident">remote_backend</span> <span class="op">=</span> <span class="ident">trie_backend::tests::test_trie</span>(<span class="ident">state_version</span>);
+		<span class="kw">let</span> <span class="ident">remote_backend</span> <span class="op">=</span> <span class="ident">trie_backend::tests::test_trie</span>(<span class="ident">state_version</span>, <span class="prelude-val">None</span>, <span class="prelude-val">None</span>);
 		<span class="kw">let</span> <span class="ident">remote_root</span> <span class="op">=</span> <span class="ident">remote_backend</span>.<span class="ident">storage_root</span>(<span class="ident">::std::iter::empty</span>(), <span class="ident">state_version</span>).<span class="number">0</span>;
 		<span class="kw">let</span> (<span class="ident">proof</span>, <span class="ident">count</span>) <span class="op">=</span>
 			<span class="ident">prove_range_read_with_size</span>(<span class="ident">remote_backend</span>, <span class="prelude-val">None</span>, <span class="prelude-val">None</span>, <span class="number">0</span>, <span class="prelude-val">None</span>).<span class="ident">unwrap</span>();
@@ -4297,7 +4325,7 @@
 		<span class="macro">assert_eq!</span>(<span class="ident">proof</span>.<span class="ident">into_memory_db</span>::<span class="op">&lt;</span><span class="ident">BlakeTwo256</span><span class="op">&gt;</span>().<span class="ident">drain</span>().<span class="ident">len</span>(), <span class="number">3</span>);
 		<span class="macro">assert_eq!</span>(<span class="ident">count</span>, <span class="number">1</span>);
 
-		<span class="kw">let</span> <span class="ident">remote_backend</span> <span class="op">=</span> <span class="ident">trie_backend::tests::test_trie</span>(<span class="ident">state_version</span>);
+		<span class="kw">let</span> <span class="ident">remote_backend</span> <span class="op">=</span> <span class="ident">trie_backend::tests::test_trie</span>(<span class="ident">state_version</span>, <span class="prelude-val">None</span>, <span class="prelude-val">None</span>);
 		<span class="kw">let</span> (<span class="ident">proof</span>, <span class="ident">count</span>) <span class="op">=</span>
 			<span class="ident">prove_range_read_with_size</span>(<span class="ident">remote_backend</span>, <span class="prelude-val">None</span>, <span class="prelude-val">None</span>, <span class="number">800</span>, <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>[])).<span class="ident">unwrap</span>();
 		<span class="macro">assert_eq!</span>(<span class="ident">proof</span>.<span class="ident">clone</span>().<span class="ident">into_memory_db</span>::<span class="op">&lt;</span><span class="ident">BlakeTwo256</span><span class="op">&gt;</span>().<span class="ident">drain</span>().<span class="ident">len</span>(), <span class="number">9</span>);
@@ -4320,7 +4348,7 @@
 		<span class="macro">assert_eq!</span>(<span class="ident">results</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u32</span>, <span class="number">101</span>);
 		<span class="macro">assert_eq!</span>(<span class="ident">completed</span>, <span class="bool-val">false</span>);
 
-		<span class="kw">let</span> <span class="ident">remote_backend</span> <span class="op">=</span> <span class="ident">trie_backend::tests::test_trie</span>(<span class="ident">state_version</span>);
+		<span class="kw">let</span> <span class="ident">remote_backend</span> <span class="op">=</span> <span class="ident">trie_backend::tests::test_trie</span>(<span class="ident">state_version</span>, <span class="prelude-val">None</span>, <span class="prelude-val">None</span>);
 		<span class="kw">let</span> (<span class="ident">proof</span>, <span class="ident">count</span>) <span class="op">=</span>
 			<span class="ident">prove_range_read_with_size</span>(<span class="ident">remote_backend</span>, <span class="prelude-val">None</span>, <span class="prelude-val">None</span>, <span class="number">50000</span>, <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>[])).<span class="ident">unwrap</span>();
 		<span class="macro">assert_eq!</span>(<span class="ident">proof</span>.<span class="ident">clone</span>().<span class="ident">into_memory_db</span>::<span class="op">&lt;</span><span class="ident">BlakeTwo256</span><span class="op">&gt;</span>().<span class="ident">drain</span>().<span class="ident">len</span>(), <span class="number">11</span>);
@@ -4337,7 +4365,7 @@
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">state_version</span> <span class="op">=</span> <span class="ident">StateVersion::V0</span>;
 		<span class="kw">let</span> (<span class="kw-2">mut</span> <span class="ident">mdb</span>, <span class="kw-2">mut</span> <span class="ident">root</span>) <span class="op">=</span> <span class="ident">trie_backend::tests::test_db</span>(<span class="ident">state_version</span>);
 		{
-			<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">trie</span> <span class="op">=</span> <span class="ident">TrieDBMutV0::from_existing</span>(<span class="kw-2">&amp;mut</span> <span class="ident">mdb</span>, <span class="kw-2">&amp;mut</span> <span class="ident">root</span>).<span class="ident">unwrap</span>();
+			<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">trie</span> <span class="op">=</span> <span class="ident">TrieDBMutBuilderV0::from_existing</span>(<span class="kw-2">&amp;mut</span> <span class="ident">mdb</span>, <span class="kw-2">&amp;mut</span> <span class="ident">root</span>).<span class="ident">build</span>();
 			<span class="ident">trie</span>.<span class="ident">insert</span>(<span class="string">b&quot;foo&quot;</span>, <span class="macro">vec!</span>[<span class="number">1u8</span>; <span class="number">1_000</span>].<span class="ident">as_slice</span>()) <span class="comment">// big inner hash</span>
 				.<span class="ident">expect</span>(<span class="string">&quot;insert failed&quot;</span>);
 			<span class="ident">trie</span>.<span class="ident">insert</span>(<span class="string">b&quot;foo2&quot;</span>, <span class="macro">vec!</span>[<span class="number">3u8</span>; <span class="number">16</span>].<span class="ident">as_slice</span>()) <span class="comment">// no inner hash</span>
@@ -4347,7 +4375,7 @@
 		}
 
 		<span class="kw">let</span> <span class="ident">check_proof</span> <span class="op">=</span> <span class="op">|</span><span class="ident">mdb</span>, <span class="ident">root</span>, <span class="ident">state_version</span><span class="op">|</span> -&gt; <span class="ident">StorageProof</span> {
-			<span class="kw">let</span> <span class="ident">remote_backend</span> <span class="op">=</span> <span class="ident">TrieBackend::new</span>(<span class="ident">mdb</span>, <span class="ident">root</span>);
+			<span class="kw">let</span> <span class="ident">remote_backend</span> <span class="op">=</span> <span class="ident">TrieBackendBuilder::new</span>(<span class="ident">mdb</span>, <span class="ident">root</span>).<span class="ident">build</span>();
 			<span class="kw">let</span> <span class="ident">remote_root</span> <span class="op">=</span> <span class="ident">remote_backend</span>.<span class="ident">storage_root</span>(<span class="ident">std::iter::empty</span>(), <span class="ident">state_version</span>).<span class="number">0</span>;
 			<span class="kw">let</span> <span class="ident">remote_proof</span> <span class="op">=</span> <span class="ident">prove_read</span>(<span class="ident">remote_backend</span>, <span class="kw-2">&amp;</span>[<span class="string">b&quot;foo222&quot;</span>]).<span class="ident">unwrap</span>();
 			<span class="comment">// check proof locally</span>
@@ -4371,7 +4399,7 @@
 		<span class="comment">// do switch</span>
 		<span class="ident">state_version</span> <span class="op">=</span> <span class="ident">StateVersion::V1</span>;
 		{
-			<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">trie</span> <span class="op">=</span> <span class="ident">TrieDBMutV1::from_existing</span>(<span class="kw-2">&amp;mut</span> <span class="ident">mdb</span>, <span class="kw-2">&amp;mut</span> <span class="ident">root</span>).<span class="ident">unwrap</span>();
+			<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">trie</span> <span class="op">=</span> <span class="ident">TrieDBMutBuilderV1::from_existing</span>(<span class="kw-2">&amp;mut</span> <span class="ident">mdb</span>, <span class="kw-2">&amp;mut</span> <span class="ident">root</span>).<span class="ident">build</span>();
 			<span class="ident">trie</span>.<span class="ident">insert</span>(<span class="string">b&quot;foo222&quot;</span>, <span class="macro">vec!</span>[<span class="number">5u8</span>; <span class="number">100</span>].<span class="ident">as_slice</span>()) <span class="comment">// inner hash</span>
 				.<span class="ident">expect</span>(<span class="string">&quot;insert failed&quot;</span>);
 			<span class="comment">// update with same value do change</span>
@@ -4390,10 +4418,10 @@
 	<span class="attribute">#[<span class="ident">test</span>]</span>
 	<span class="kw">fn</span> <span class="ident">prove_range_with_child_works</span>() {
 		<span class="kw">let</span> <span class="ident">state_version</span> <span class="op">=</span> <span class="ident">StateVersion::V0</span>;
-		<span class="kw">let</span> <span class="ident">remote_backend</span> <span class="op">=</span> <span class="ident">trie_backend::tests::test_trie</span>(<span class="ident">state_version</span>);
+		<span class="kw">let</span> <span class="ident">remote_backend</span> <span class="op">=</span> <span class="ident">trie_backend::tests::test_trie</span>(<span class="ident">state_version</span>, <span class="prelude-val">None</span>, <span class="prelude-val">None</span>);
 		<span class="kw">let</span> <span class="ident">remote_root</span> <span class="op">=</span> <span class="ident">remote_backend</span>.<span class="ident">storage_root</span>(<span class="ident">std::iter::empty</span>(), <span class="ident">state_version</span>).<span class="number">0</span>;
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">start_at</span> <span class="op">=</span> <span class="ident">smallvec::SmallVec</span>::<span class="op">&lt;</span>[<span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>; <span class="number">2</span>]<span class="op">&gt;</span><span class="ident">::new</span>();
-		<span class="kw">let</span> <span class="ident">trie_backend</span> <span class="op">=</span> <span class="ident">remote_backend</span>.<span class="ident">as_trie_backend</span>().<span class="ident">unwrap</span>();
+		<span class="kw">let</span> <span class="ident">trie_backend</span> <span class="op">=</span> <span class="ident">remote_backend</span>.<span class="ident">as_trie_backend</span>();
 		<span class="kw">let</span> <span class="ident">max_iter</span> <span class="op">=</span> <span class="number">1000</span>;
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">nb_loop</span> <span class="op">=</span> <span class="number">0</span>;
 		<span class="kw">loop</span> {
@@ -4440,7 +4468,7 @@
 		<span class="kw">let</span> <span class="ident">child_info2</span> <span class="op">=</span> <span class="ident">ChildInfo::new_default</span>(<span class="string">b&quot;sub2&quot;</span>);
 		<span class="comment">// this root will be include in proof</span>
 		<span class="kw">let</span> <span class="ident">child_info3</span> <span class="op">=</span> <span class="ident">ChildInfo::new_default</span>(<span class="string">b&quot;sub&quot;</span>);
-		<span class="kw">let</span> <span class="ident">remote_backend</span> <span class="op">=</span> <span class="ident">trie_backend::tests::test_trie</span>(<span class="ident">state_version</span>);
+		<span class="kw">let</span> <span class="ident">remote_backend</span> <span class="op">=</span> <span class="ident">trie_backend::tests::test_trie</span>(<span class="ident">state_version</span>, <span class="prelude-val">None</span>, <span class="prelude-val">None</span>);
 		<span class="kw">let</span> <span class="ident">long_vec</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> <span class="op">=</span> (<span class="number">0</span>..<span class="number">1024usize</span>).<span class="ident">map</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="number">8u8</span>).<span class="ident">collect</span>();
 		<span class="kw">let</span> (<span class="ident">remote_root</span>, <span class="ident">transaction</span>) <span class="op">=</span> <span class="ident">remote_backend</span>.<span class="ident">full_storage_root</span>(
 			<span class="ident">std::iter::empty</span>(),
@@ -4472,9 +4500,9 @@
 			.<span class="ident">into_iter</span>(),
 			<span class="ident">state_version</span>,
 		);
-		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">remote_storage</span> <span class="op">=</span> <span class="ident">remote_backend</span>.<span class="ident">into_storage</span>();
+		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">remote_storage</span> <span class="op">=</span> <span class="ident">remote_backend</span>.<span class="ident">backend_storage</span>().<span class="ident">clone</span>();
 		<span class="ident">remote_storage</span>.<span class="ident">consolidate</span>(<span class="ident">transaction</span>);
-		<span class="kw">let</span> <span class="ident">remote_backend</span> <span class="op">=</span> <span class="ident">TrieBackend::new</span>(<span class="ident">remote_storage</span>, <span class="ident">remote_root</span>);
+		<span class="kw">let</span> <span class="ident">remote_backend</span> <span class="op">=</span> <span class="ident">TrieBackendBuilder::new</span>(<span class="ident">remote_storage</span>, <span class="ident">remote_root</span>).<span class="ident">build</span>();
 		<span class="kw">let</span> <span class="ident">remote_proof</span> <span class="op">=</span> <span class="ident">prove_child_read</span>(<span class="ident">remote_backend</span>, <span class="kw-2">&amp;</span><span class="ident">child_info1</span>, <span class="kw-2">&amp;</span>[<span class="string">b&quot;key1&quot;</span>]).<span class="ident">unwrap</span>();
 		<span class="kw">let</span> <span class="ident">size</span> <span class="op">=</span> <span class="ident">remote_proof</span>.<span class="ident">encoded_size</span>();
 		<span class="kw">let</span> <span class="ident">remote_proof</span> <span class="op">=</span> <span class="ident">test_compact</span>(<span class="ident">remote_proof</span>, <span class="kw-2">&amp;</span><span class="ident">remote_root</span>);
@@ -4500,7 +4528,7 @@
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">overlay</span> <span class="op">=</span> <span class="ident">OverlayedChanges::default</span>();
 
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">transaction</span> <span class="op">=</span> {
-			<span class="kw">let</span> <span class="ident">backend</span> <span class="op">=</span> <span class="ident">test_trie</span>(<span class="ident">state_version</span>);
+			<span class="kw">let</span> <span class="ident">backend</span> <span class="op">=</span> <span class="ident">test_trie</span>(<span class="ident">state_version</span>, <span class="prelude-val">None</span>, <span class="prelude-val">None</span>);
 			<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">cache</span> <span class="op">=</span> <span class="ident">StorageTransactionCache::default</span>();
 			<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">ext</span> <span class="op">=</span> <span class="ident">Ext::new</span>(<span class="kw-2">&amp;mut</span> <span class="ident">overlay</span>, <span class="kw-2">&amp;mut</span> <span class="ident">cache</span>, <span class="kw-2">&amp;</span><span class="ident">backend</span>, <span class="prelude-val">None</span>);
 			<span class="ident">ext</span>.<span class="ident">set_child_storage</span>(<span class="kw-2">&amp;</span><span class="ident">child_info_1</span>, <span class="string">b&quot;abc&quot;</span>.<span class="ident">to_vec</span>(), <span class="string">b&quot;def&quot;</span>.<span class="ident">to_vec</span>());
@@ -4526,7 +4554,7 @@
 			<span class="string">b&quot;bbb&quot;</span>.<span class="ident">to_vec</span>() =&gt; <span class="string">b&quot;&quot;</span>.<span class="ident">to_vec</span>()
 		];
 		<span class="kw">let</span> <span class="ident">state</span> <span class="op">=</span> <span class="ident">InMemoryBackend</span>::<span class="op">&lt;</span><span class="ident">BlakeTwo256</span><span class="op">&gt;</span><span class="ident">::from</span>((<span class="ident">initial</span>, <span class="ident">StateVersion::default</span>()));
-		<span class="kw">let</span> <span class="ident">backend</span> <span class="op">=</span> <span class="ident">state</span>.<span class="ident">as_trie_backend</span>().<span class="ident">unwrap</span>();
+		<span class="kw">let</span> <span class="ident">backend</span> <span class="op">=</span> <span class="ident">state</span>.<span class="ident">as_trie_backend</span>();
 
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">overlay</span> <span class="op">=</span> <span class="ident">OverlayedChanges::default</span>();
 		<span class="ident">overlay</span>.<span class="ident">start_transaction</span>();
@@ -4557,7 +4585,7 @@
 			<span class="kw">struct</span> <span class="ident">DummyExt</span>(<span class="ident">u32</span>);
 		}
 
-		<span class="kw">let</span> <span class="ident">backend</span> <span class="op">=</span> <span class="ident">trie_backend::tests::test_trie</span>(<span class="ident">state_version</span>);
+		<span class="kw">let</span> <span class="ident">backend</span> <span class="op">=</span> <span class="ident">trie_backend::tests::test_trie</span>(<span class="ident">state_version</span>, <span class="prelude-val">None</span>, <span class="prelude-val">None</span>);
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">overlayed_changes</span> <span class="op">=</span> <span class="ident">Default::default</span>();
 		<span class="kw">let</span> <span class="ident">wasm_code</span> <span class="op">=</span> <span class="ident">RuntimeCode::empty</span>();
 

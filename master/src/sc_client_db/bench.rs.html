@@ -677,7 +677,6 @@
 <span id="671">671</span>
 <span id="672">672</span>
 <span id="673">673</span>
-<span id="674">674</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2020-2022 Parity Technologies (UK) Ltd.</span>
@@ -698,13 +697,7 @@
 
 <span class="doccomment">//! State backend that&#39;s useful for benchmarking</span>
 
-<span class="kw">use</span> <span class="ident">std</span>::{
-	<span class="ident">cell</span>::{<span class="ident">Cell</span>, <span class="ident">RefCell</span>},
-	<span class="ident">collections::HashMap</span>,
-	<span class="ident">sync::Arc</span>,
-};
-
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::storage_cache</span>::{<span class="ident">new_shared_cache</span>, <span class="ident">CachingState</span>, <span class="ident">SharedCache</span>};
+<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">DbState</span>, <span class="ident">DbStateBuilder</span>};
 <span class="kw">use</span> <span class="ident">hash_db</span>::{<span class="ident">Hasher</span>, <span class="ident">Prefix</span>};
 <span class="kw">use</span> <span class="ident">kvdb</span>::{<span class="ident">DBTransaction</span>, <span class="ident">KeyValueDB</span>};
 <span class="kw">use</span> <span class="ident">linked_hash_map::LinkedHashMap</span>;
@@ -717,40 +710,31 @@
 	<span class="ident">StateVersion</span>, <span class="ident">Storage</span>,
 };
 <span class="kw">use</span> <span class="ident">sp_state_machine</span>::{
-	<span class="ident">backend::Backend</span> <span class="kw">as</span> <span class="ident">StateBackend</span>, <span class="ident">ChildStorageCollection</span>, <span class="ident">DBValue</span>, <span class="ident">ProofRecorder</span>,
-	<span class="ident">StorageCollection</span>,
+	<span class="ident">backend::Backend</span> <span class="kw">as</span> <span class="ident">StateBackend</span>, <span class="ident">ChildStorageCollection</span>, <span class="ident">DBValue</span>, <span class="ident">StorageCollection</span>,
 };
-<span class="kw">use</span> <span class="ident">sp_trie</span>::{<span class="ident">prefixed_key</span>, <span class="ident">MemoryDB</span>};
+<span class="kw">use</span> <span class="ident">sp_trie</span>::{
+	<span class="ident">cache</span>::{<span class="ident">CacheSize</span>, <span class="ident">SharedTrieCache</span>},
+	<span class="ident">prefixed_key</span>, <span class="ident">MemoryDB</span>,
+};
+<span class="kw">use</span> <span class="ident">std</span>::{
+	<span class="ident">cell</span>::{<span class="ident">Cell</span>, <span class="ident">RefCell</span>},
+	<span class="ident">collections::HashMap</span>,
+	<span class="ident">sync::Arc</span>,
+};
 
-<span class="kw">type</span> <span class="ident">DbState</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span> <span class="op">=</span>
-	<span class="ident">sp_state_machine::TrieBackend</span><span class="op">&lt;</span><span class="ident">Arc</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">sp_state_machine::Storage</span><span class="op">&lt;</span><span class="ident">HashFor</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>, <span class="ident">HashFor</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span><span class="op">&gt;</span>;
-
-<span class="kw">type</span> <span class="ident">State</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">CachingState</span><span class="op">&lt;</span><span class="ident">DbState</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>, <span class="ident">B</span><span class="op">&gt;</span>;
+<span class="kw">type</span> <span class="ident">State</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">DbState</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>;
 
 <span class="kw">struct</span> <span class="ident">StorageDb</span><span class="op">&lt;</span><span class="ident">Block</span>: <span class="ident">BlockT</span><span class="op">&gt;</span> {
 	<span class="ident">db</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">KeyValueDB</span><span class="op">&gt;</span>,
-	<span class="ident">proof_recorder</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ProofRecorder</span><span class="op">&lt;</span><span class="ident">Block::Hash</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 	<span class="ident">_block</span>: <span class="ident">std::marker::PhantomData</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span>,
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">Block</span>: <span class="ident">BlockT</span><span class="op">&gt;</span> <span class="ident">sp_state_machine::Storage</span><span class="op">&lt;</span><span class="ident">HashFor</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">StorageDb</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span> {
 	<span class="kw">fn</span> <span class="ident">get</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">key</span>: <span class="kw-2">&amp;</span><span class="ident">Block::Hash</span>, <span class="ident">prefix</span>: <span class="ident">Prefix</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">DBValue</span><span class="op">&gt;</span>, <span class="ident">String</span><span class="op">&gt;</span> {
 		<span class="kw">let</span> <span class="ident">prefixed_key</span> <span class="op">=</span> <span class="ident">prefixed_key</span>::<span class="op">&lt;</span><span class="ident">HashFor</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">key</span>, <span class="ident">prefix</span>);
-		<span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">recorder</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">proof_recorder</span> {
-			<span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">v</span>) <span class="op">=</span> <span class="ident">recorder</span>.<span class="ident">get</span>(<span class="ident">key</span>) {
-				<span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">v</span>)
-			}
-			<span class="kw">let</span> <span class="ident">backend_value</span> <span class="op">=</span> <span class="self">self</span>
-				.<span class="ident">db</span>
-				.<span class="ident">get</span>(<span class="number">0</span>, <span class="kw-2">&amp;</span><span class="ident">prefixed_key</span>)
-				.<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="macro">format!</span>(<span class="string">&quot;Database backend error: {:?}&quot;</span>, <span class="ident">e</span>))<span class="question-mark">?</span>;
-			<span class="ident">recorder</span>.<span class="ident">record</span>(<span class="kw-2">*</span><span class="ident">key</span>, <span class="ident">backend_value</span>.<span class="ident">clone</span>());
-			<span class="prelude-val">Ok</span>(<span class="ident">backend_value</span>)
-		} <span class="kw">else</span> {
-			<span class="self">self</span>.<span class="ident">db</span>
-				.<span class="ident">get</span>(<span class="number">0</span>, <span class="kw-2">&amp;</span><span class="ident">prefixed_key</span>)
-				.<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="macro">format!</span>(<span class="string">&quot;Database backend error: {:?}&quot;</span>, <span class="ident">e</span>))
-		}
+		<span class="self">self</span>.<span class="ident">db</span>
+			.<span class="ident">get</span>(<span class="number">0</span>, <span class="kw-2">&amp;</span><span class="ident">prefixed_key</span>)
+			.<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="macro">format!</span>(<span class="string">&quot;Database backend error: {:?}&quot;</span>, <span class="ident">e</span>))
 	}
 }
 
@@ -762,7 +746,6 @@
 	<span class="ident">db</span>: <span class="ident">Cell</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Arc</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">KeyValueDB</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 	<span class="ident">genesis</span>: <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, (<span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">i32</span>)<span class="op">&gt;</span>,
 	<span class="ident">record</span>: <span class="ident">Cell</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>,
-	<span class="ident">shared_cache</span>: <span class="ident">SharedCache</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>, <span class="comment">// shared cache is always empty</span>
 	<span class="doccomment">/// Key tracker for keys in the main trie.</span>
 	<span class="doccomment">/// We track the total number of reads and writes to these keys,</span>
 	<span class="doccomment">/// not de-duplicated for repeats.</span>
@@ -773,9 +756,10 @@
 	<span class="doccomment">/// not de-duplicated for repeats.</span>
 	<span class="ident">child_key_tracker</span>: <span class="ident">RefCell</span><span class="op">&lt;</span><span class="ident">LinkedHashMap</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">LinkedHashMap</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">TrackedStorageKey</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 	<span class="ident">whitelist</span>: <span class="ident">RefCell</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">TrackedStorageKey</span><span class="op">&gt;</span><span class="op">&gt;</span>,
-	<span class="ident">proof_recorder</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ProofRecorder</span><span class="op">&lt;</span><span class="ident">B::Hash</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+	<span class="ident">proof_recorder</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">sp_trie::recorder::Recorder</span><span class="op">&lt;</span><span class="ident">HashFor</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 	<span class="ident">proof_recorder_root</span>: <span class="ident">Cell</span><span class="op">&lt;</span><span class="ident">B::Hash</span><span class="op">&gt;</span>,
 	<span class="ident">enable_tracking</span>: <span class="ident">bool</span>,
+	<span class="ident">shared_trie_cache</span>: <span class="ident">SharedTrieCache</span><span class="op">&lt;</span><span class="ident">HashFor</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">B</span>: <span class="ident">BlockT</span><span class="op">&gt;</span> <span class="ident">BenchmarkingState</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span> {
@@ -789,7 +773,7 @@
 		<span class="kw">let</span> <span class="ident">state_version</span> <span class="op">=</span> <span class="ident">sp_runtime::StateVersion::default</span>();
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">root</span> <span class="op">=</span> <span class="ident">B::Hash::default</span>();
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">mdb</span> <span class="op">=</span> <span class="ident">MemoryDB</span>::<span class="op">&lt;</span><span class="ident">HashFor</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::default</span>();
-		<span class="ident">sp_state_machine::TrieDBMutV1</span>::<span class="op">&lt;</span><span class="ident">HashFor</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="kw-2">&amp;mut</span> <span class="ident">mdb</span>, <span class="kw-2">&amp;mut</span> <span class="ident">root</span>);
+		<span class="ident">sp_trie::trie_types::TrieDBMutBuilderV1</span>::<span class="op">&lt;</span><span class="ident">HashFor</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="kw-2">&amp;mut</span> <span class="ident">mdb</span>, <span class="kw-2">&amp;mut</span> <span class="ident">root</span>).<span class="ident">build</span>();
 
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">state</span> <span class="op">=</span> <span class="ident">BenchmarkingState</span> {
 			<span class="ident">state</span>: <span class="ident">RefCell::new</span>(<span class="prelude-val">None</span>),
@@ -798,13 +782,14 @@
 			<span class="ident">genesis</span>: <span class="ident">Default::default</span>(),
 			<span class="ident">genesis_root</span>: <span class="ident">Default::default</span>(),
 			<span class="ident">record</span>: <span class="ident">Default::default</span>(),
-			<span class="ident">shared_cache</span>: <span class="ident">new_shared_cache</span>(<span class="number">0</span>, (<span class="number">1</span>, <span class="number">10</span>)),
 			<span class="ident">main_key_tracker</span>: <span class="ident">Default::default</span>(),
 			<span class="ident">child_key_tracker</span>: <span class="ident">Default::default</span>(),
 			<span class="ident">whitelist</span>: <span class="ident">Default::default</span>(),
 			<span class="ident">proof_recorder</span>: <span class="ident">record_proof</span>.<span class="ident">then</span>(<span class="ident">Default::default</span>),
 			<span class="ident">proof_recorder_root</span>: <span class="ident">Cell::new</span>(<span class="ident">root</span>),
 			<span class="ident">enable_tracking</span>,
+			<span class="comment">// Enable the cache, but do not sync anything to the shared state.</span>
+			<span class="ident">shared_trie_cache</span>: <span class="ident">SharedTrieCache::new</span>(<span class="ident">CacheSize::Maximum</span>(<span class="number">0</span>)),
 		};
 
 		<span class="ident">state</span>.<span class="ident">add_whitelist_to_tracker</span>();
@@ -840,16 +825,13 @@
 			<span class="ident">recorder</span>.<span class="ident">reset</span>();
 			<span class="self">self</span>.<span class="ident">proof_recorder_root</span>.<span class="ident">set</span>(<span class="self">self</span>.<span class="ident">root</span>.<span class="ident">get</span>());
 		}
-		<span class="kw">let</span> <span class="ident">storage_db</span> <span class="op">=</span> <span class="ident">Arc::new</span>(<span class="ident">StorageDb</span>::<span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span> {
-			<span class="ident">db</span>,
-			<span class="ident">proof_recorder</span>: <span class="self">self</span>.<span class="ident">proof_recorder</span>.<span class="ident">clone</span>(),
-			<span class="ident">_block</span>: <span class="ident">Default::default</span>(),
-		});
-		<span class="kw-2">*</span><span class="self">self</span>.<span class="ident">state</span>.<span class="ident">borrow_mut</span>() <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">State::new</span>(
-			<span class="ident">DbState</span>::<span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="ident">storage_db</span>, <span class="self">self</span>.<span class="ident">root</span>.<span class="ident">get</span>()),
-			<span class="self">self</span>.<span class="ident">shared_cache</span>.<span class="ident">clone</span>(),
-			<span class="prelude-val">None</span>,
-		));
+		<span class="kw">let</span> <span class="ident">storage_db</span> <span class="op">=</span> <span class="ident">Arc::new</span>(<span class="ident">StorageDb</span>::<span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span> { <span class="ident">db</span>, <span class="ident">_block</span>: <span class="ident">Default::default</span>() });
+		<span class="kw-2">*</span><span class="self">self</span>.<span class="ident">state</span>.<span class="ident">borrow_mut</span>() <span class="op">=</span> <span class="prelude-val">Some</span>(
+			<span class="ident">DbStateBuilder</span>::<span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="ident">storage_db</span>, <span class="self">self</span>.<span class="ident">root</span>.<span class="ident">get</span>())
+				.<span class="ident">with_optional_recorder</span>(<span class="self">self</span>.<span class="ident">proof_recorder</span>.<span class="ident">clone</span>())
+				.<span class="ident">with_cache</span>(<span class="self">self</span>.<span class="ident">shared_trie_cache</span>.<span class="ident">local_cache</span>())
+				.<span class="ident">build</span>(),
+		);
 		<span class="prelude-val">Ok</span>(())
 	}
 
@@ -1002,6 +984,19 @@
 			.<span class="ident">as_ref</span>()
 			.<span class="ident">ok_or_else</span>(<span class="ident">state_err</span>)<span class="question-mark">?</span>
 			.<span class="ident">child_storage</span>(<span class="ident">child_info</span>, <span class="ident">key</span>)
+	}
+
+	<span class="kw">fn</span> <span class="ident">child_storage_hash</span>(
+		<span class="kw-2">&amp;</span><span class="self">self</span>,
+		<span class="ident">child_info</span>: <span class="kw-2">&amp;</span><span class="ident">ChildInfo</span>,
+		<span class="ident">key</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>],
+	) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">B::Hash</span><span class="op">&gt;</span>, <span class="ident"><span class="self">Self</span>::Error</span><span class="op">&gt;</span> {
+		<span class="self">self</span>.<span class="ident">add_read_key</span>(<span class="prelude-val">Some</span>(<span class="ident">child_info</span>.<span class="ident">storage_key</span>()), <span class="ident">key</span>);
+		<span class="self">self</span>.<span class="ident">state</span>
+			.<span class="ident">borrow</span>()
+			.<span class="ident">as_ref</span>()
+			.<span class="ident">ok_or_else</span>(<span class="ident">state_err</span>)<span class="question-mark">?</span>
+			.<span class="ident">child_storage_hash</span>(<span class="ident">child_info</span>, <span class="ident">key</span>)
 	}
 
 	<span class="kw">fn</span> <span class="ident">exists_storage</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">key</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">bool</span>, <span class="ident"><span class="self">Self</span>::Error</span><span class="op">&gt;</span> {
@@ -1284,22 +1279,25 @@
 	<span class="kw">fn</span> <span class="ident">proof_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span> {
 		<span class="self">self</span>.<span class="ident">proof_recorder</span>.<span class="ident">as_ref</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">recorder</span><span class="op">|</span> {
 			<span class="kw">let</span> <span class="ident">proof_size</span> <span class="op">=</span> <span class="ident">recorder</span>.<span class="ident">estimate_encoded_size</span>() <span class="kw">as</span> <span class="ident">u32</span>;
+
 			<span class="kw">let</span> <span class="ident">proof</span> <span class="op">=</span> <span class="ident">recorder</span>.<span class="ident">to_storage_proof</span>();
+
 			<span class="kw">let</span> <span class="ident">proof_recorder_root</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">proof_recorder_root</span>.<span class="ident">get</span>();
 			<span class="kw">if</span> <span class="ident">proof_recorder_root</span> <span class="op">==</span> <span class="ident">Default::default</span>() <span class="op">|</span><span class="op">|</span> <span class="ident">proof_size</span> <span class="op">==</span> <span class="number">1</span> {
 				<span class="comment">// empty trie</span>
 				<span class="ident">proof_size</span>
-			} <span class="kw">else</span> <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">size</span>) <span class="op">=</span> <span class="ident">proof</span>.<span class="ident">encoded_compact_size</span>::<span class="op">&lt;</span><span class="ident">HashFor</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">proof_recorder_root</span>)
-			{
-				<span class="ident">size</span> <span class="kw">as</span> <span class="ident">u32</span>
 			} <span class="kw">else</span> {
-				<span class="macro">panic!</span>(
-					<span class="string">&quot;proof rec root {:?}, root {:?}, genesis {:?}, rec_len {:?}&quot;</span>,
-					<span class="self">self</span>.<span class="ident">proof_recorder_root</span>.<span class="ident">get</span>(),
-					<span class="self">self</span>.<span class="ident">root</span>.<span class="ident">get</span>(),
-					<span class="self">self</span>.<span class="ident">genesis_root</span>,
-					<span class="ident">proof_size</span>,
-				);
+				<span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">size</span>) <span class="op">=</span> <span class="ident">proof</span>.<span class="ident">encoded_compact_size</span>::<span class="op">&lt;</span><span class="ident">HashFor</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">proof_recorder_root</span>) {
+					<span class="ident">size</span> <span class="kw">as</span> <span class="ident">u32</span>
+				} <span class="kw">else</span> {
+					<span class="macro">panic!</span>(
+						<span class="string">&quot;proof rec root {:?}, root {:?}, genesis {:?}, rec_len {:?}&quot;</span>,
+						<span class="self">self</span>.<span class="ident">proof_recorder_root</span>.<span class="ident">get</span>(),
+						<span class="self">self</span>.<span class="ident">root</span>.<span class="ident">get</span>(),
+						<span class="self">self</span>.<span class="ident">genesis_root</span>,
+						<span class="ident">proof_size</span>,
+					);
+				}
 			}
 		})
 	}
