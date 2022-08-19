@@ -428,6 +428,8 @@
 <span id="422">422</span>
 <span id="423">423</span>
 <span id="424">424</span>
+<span id="425">425</span>
+<span id="426">426</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2020-2022 Parity Technologies (UK) Ltd.</span>
@@ -550,7 +552,8 @@
 		<span class="kw">let</span> <span class="ident">r</span> <span class="kw">in</span> <span class="number">1</span> .. <span class="ident">T::MaxRegistrars::get</span>() <span class="op">-</span> <span class="number">1</span> =&gt; <span class="ident">add_registrars</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">r</span>)<span class="question-mark">?</span>;
 		<span class="macro">ensure!</span>(<span class="ident">Registrars</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::get</span>().<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u32</span> <span class="op">==</span> <span class="ident">r</span>, <span class="string">&quot;Registrars not set up correctly.&quot;</span>);
 		<span class="kw">let</span> <span class="ident">origin</span> <span class="op">=</span> <span class="ident">T::RegistrarOrigin::successful_origin</span>();
-	}: <span class="kw">_</span><span class="op">&lt;</span><span class="ident">T::Origin</span><span class="op">&gt;</span>(<span class="ident">origin</span>, <span class="ident">account</span>(<span class="string">&quot;registrar&quot;</span>, <span class="ident">r</span> <span class="op">+</span> <span class="number">1</span>, <span class="ident">SEED</span>))
+		<span class="kw">let</span> <span class="ident">account</span> <span class="op">=</span> <span class="ident">T::Lookup::unlookup</span>(<span class="ident">account</span>(<span class="string">&quot;registrar&quot;</span>, <span class="ident">r</span> <span class="op">+</span> <span class="number">1</span>, <span class="ident">SEED</span>));
+	}: <span class="kw">_</span><span class="op">&lt;</span><span class="ident">T::Origin</span><span class="op">&gt;</span>(<span class="ident">origin</span>, <span class="ident">account</span>)
 	<span class="ident">verify</span> {
 		<span class="macro">ensure!</span>(<span class="ident">Registrars</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::get</span>().<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u32</span> <span class="op">==</span> <span class="ident">r</span> <span class="op">+</span> <span class="number">1</span>, <span class="string">&quot;Registrars not added.&quot;</span>);
 	}
@@ -717,7 +720,8 @@
 		<span class="ident">Identity</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::add_registrar</span>(<span class="ident">registrar_origin</span>, <span class="ident">caller_lookup</span>)<span class="question-mark">?</span>;
 		<span class="kw">let</span> <span class="ident">registrars</span> <span class="op">=</span> <span class="ident">Registrars</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::get</span>();
 		<span class="macro">ensure!</span>(<span class="ident">registrars</span>[<span class="ident">r</span> <span class="kw">as</span> <span class="ident">usize</span>].<span class="ident">as_ref</span>().<span class="ident">unwrap</span>().<span class="ident">account</span> <span class="op">==</span> <span class="ident">caller</span>, <span class="string">&quot;id not set.&quot;</span>);
-	}: <span class="kw">_</span>(<span class="ident">RawOrigin::Signed</span>(<span class="ident">caller</span>), <span class="ident">r</span>, <span class="ident">account</span>(<span class="string">&quot;new&quot;</span>, <span class="number">0</span>, <span class="ident">SEED</span>))
+		<span class="kw">let</span> <span class="ident">new_account</span> <span class="op">=</span> <span class="ident">T::Lookup::unlookup</span>(<span class="ident">account</span>(<span class="string">&quot;new&quot;</span>, <span class="number">0</span>, <span class="ident">SEED</span>));
+	}: <span class="kw">_</span>(<span class="ident">RawOrigin::Signed</span>(<span class="ident">caller</span>), <span class="ident">r</span>, <span class="ident">new_account</span>)
 	<span class="ident">verify</span> {
 		<span class="kw">let</span> <span class="ident">registrars</span> <span class="op">=</span> <span class="ident">Registrars</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::get</span>();
 		<span class="macro">ensure!</span>(<span class="ident">registrars</span>[<span class="ident">r</span> <span class="kw">as</span> <span class="ident">usize</span>].<span class="ident">as_ref</span>().<span class="ident">unwrap</span>().<span class="ident">account</span> <span class="op">==</span> <span class="ident">account</span>(<span class="string">&quot;new&quot;</span>, <span class="number">0</span>, <span class="ident">SEED</span>), <span class="string">&quot;id not changed.&quot;</span>);
