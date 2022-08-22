@@ -142,7 +142,7 @@
 	<span class="ident">ParsingMultiaddress</span>(<span class="attribute">#[<span class="ident">from</span>]</span> <span class="ident">libp2p::core::multiaddr::Error</span>),
 
 	<span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;Failed to parse a libp2p key.&quot;</span>)]</span>
-	<span class="ident">ParsingLibp2pIdentity</span>(<span class="attribute">#[<span class="ident">from</span>]</span> <span class="ident">sc_network::DecodingError</span>),
+	<span class="ident">ParsingLibp2pIdentity</span>(<span class="attribute">#[<span class="ident">from</span>]</span> <span class="ident">libp2p::identity::error::DecodingError</span>),
 
 	<span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;Failed to sign using a specific public key.&quot;</span>)]</span>
 	<span class="ident">MissingSignature</span>(<span class="ident">CryptoTypePublicPair</span>),

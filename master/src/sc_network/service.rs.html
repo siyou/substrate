@@ -2107,6 +2107,7 @@
 <span id="2101">2101</span>
 <span id="2102">2102</span>
 <span id="2103">2103</span>
+<span id="2104">2104</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2017-2022 Parity Technologies (UK) Ltd.</span>
@@ -2139,7 +2140,7 @@
 <span class="kw">use</span> <span class="kw">crate</span>::{
 	<span class="ident">behaviour</span>::{<span class="self">self</span>, <span class="ident">Behaviour</span>, <span class="ident">BehaviourOut</span>},
 	<span class="ident">bitswap::Bitswap</span>,
-	<span class="ident">config</span>::{<span class="ident">parse_str_addr</span>, <span class="ident">Params</span>, <span class="ident">TransportConfig</span>},
+	<span class="ident">config</span>::{<span class="ident">Params</span>, <span class="ident">TransportConfig</span>},
 	<span class="ident">discovery::DiscoveryConfig</span>,
 	<span class="ident">error::Error</span>,
 	<span class="ident">network_state</span>::{
@@ -2171,6 +2172,7 @@
 <span class="kw">use</span> <span class="ident">sc_client_api</span>::{<span class="ident">BlockBackend</span>, <span class="ident">ProofProvider</span>};
 <span class="kw">use</span> <span class="ident">sc_consensus</span>::{<span class="ident">BlockImportError</span>, <span class="ident">BlockImportStatus</span>, <span class="ident">ImportQueue</span>, <span class="ident">Link</span>};
 <span class="kw">use</span> <span class="ident">sc_network_common</span>::{
+	<span class="ident">config::parse_str_addr</span>,
 	<span class="ident">protocol::event</span>::{<span class="ident">DhtEvent</span>, <span class="ident">Event</span>},
 	<span class="ident">request_responses</span>::{<span class="ident">IfDisconnected</span>, <span class="ident">RequestFailure</span>},
 	<span class="ident">service</span>::{

@@ -1192,13 +1192,13 @@
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">sc_network::config::EmptyTransactionPool</span>;
 <span class="kw">use</span> <span class="ident">sc_network</span>::{
 	<span class="ident">config</span>::{
-		<span class="ident">MultiaddrWithPeerId</span>, <span class="ident">NetworkConfiguration</span>, <span class="ident">NonDefaultSetConfig</span>, <span class="ident">NonReservedPeerMode</span>, <span class="ident">Role</span>,
-		<span class="ident">SyncMode</span>, <span class="ident">TransportConfig</span>,
+		<span class="ident">NetworkConfiguration</span>, <span class="ident">NonDefaultSetConfig</span>, <span class="ident">NonReservedPeerMode</span>, <span class="ident">Role</span>, <span class="ident">SyncMode</span>,
+		<span class="ident">TransportConfig</span>,
 	},
 	<span class="ident">Multiaddr</span>, <span class="ident">NetworkService</span>, <span class="ident">NetworkWorker</span>,
 };
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">sc_network_common::config::ProtocolId</span>;
 <span class="kw">use</span> <span class="ident">sc_network_common</span>::{
+	<span class="ident">config</span>::{<span class="ident">MultiaddrWithPeerId</span>, <span class="ident">ProtocolId</span>},
 	<span class="ident">service</span>::{<span class="ident">NetworkBlock</span>, <span class="ident">NetworkStateInfo</span>, <span class="ident">NetworkSyncForkRequest</span>},
 	<span class="ident">sync::warp</span>::{<span class="ident">AuthorityList</span>, <span class="ident">EncodedProof</span>, <span class="ident">SetId</span>, <span class="ident">VerificationResult</span>, <span class="ident">WarpSyncProvider</span>},
 };
