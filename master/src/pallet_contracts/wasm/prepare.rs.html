@@ -1100,6 +1100,17 @@
 <span id="1094">1094</span>
 <span id="1095">1095</span>
 <span id="1096">1096</span>
+<span id="1097">1097</span>
+<span id="1098">1098</span>
+<span id="1099">1099</span>
+<span id="1100">1100</span>
+<span id="1101">1101</span>
+<span id="1102">1102</span>
+<span id="1103">1103</span>
+<span id="1104">1104</span>
+<span id="1105">1105</span>
+<span id="1106">1106</span>
+<span id="1107">1107</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2018-2022 Parity Technologies (UK) Ltd.</span>
@@ -1619,6 +1630,7 @@
 		<span class="ident">schedule::Limits</span>,
 		<span class="ident">tests</span>::{<span class="ident">Test</span>, <span class="ident">ALICE</span>},
 	};
+	<span class="kw">use</span> <span class="ident">pallet_contracts_proc_macro::define_env</span>;
 	<span class="kw">use</span> <span class="ident">std::fmt</span>;
 
 	<span class="kw">impl</span> <span class="ident">fmt::Debug</span> <span class="kw">for</span> <span class="ident">PrefabWasmModule</span><span class="op">&lt;</span><span class="ident">Test</span><span class="op">&gt;</span> {
@@ -1634,17 +1646,27 @@
 
 		<span class="comment">// Define test environment for tests. We need ImportSatisfyCheck</span>
 		<span class="comment">// implementation from it. So actual implementations doesn&#39;t matter.</span>
-		<span class="macro">define_env!</span>(<span class="ident">Test</span>, <span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>,
-			[<span class="ident">seal0</span>] <span class="ident">panic</span>(<span class="ident">_ctx</span>) =&gt; { <span class="macro">unreachable!</span>(); },
+		<span class="attribute">#[<span class="ident">define_env</span>]</span>
+		<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">test_env</span> {
+			<span class="kw">fn</span> <span class="ident">panic</span>(<span class="ident">_ctx</span>: <span class="ident"><span class="kw">crate</span>::wasm::Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">TrapReason</span><span class="op">&gt;</span> {
+				<span class="prelude-val">Ok</span>(())
+			}
 
 			<span class="comment">// gas is an implementation defined function and a contract can&#39;t import it.</span>
-			[<span class="ident">seal0</span>] <span class="ident">gas</span>(<span class="ident">_ctx</span>, <span class="ident">_amount</span>: <span class="ident">u32</span>) =&gt; { <span class="macro">unreachable!</span>(); },
+			<span class="kw">fn</span> <span class="ident">gas</span>(<span class="ident">_ctx</span>: <span class="ident"><span class="kw">crate</span>::wasm::Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>, <span class="ident">_amount</span>: <span class="ident">u32</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">TrapReason</span><span class="op">&gt;</span> {
+				<span class="prelude-val">Ok</span>(())
+			}
 
-			[<span class="ident">seal0</span>] <span class="ident">nop</span>(<span class="ident">_ctx</span>, <span class="ident">_unused</span>: <span class="ident">u64</span>) =&gt; { <span class="macro">unreachable!</span>(); },
+			<span class="kw">fn</span> <span class="ident">nop</span>(<span class="ident">_ctx</span>: <span class="ident"><span class="kw">crate</span>::wasm::Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>, <span class="ident">_unused</span>: <span class="ident">u64</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">TrapReason</span><span class="op">&gt;</span> {
+				<span class="prelude-val">Ok</span>(())
+			}
 
-			<span class="comment">// new version of nop with other data type for argument</span>
-			[<span class="ident">seal1</span>] <span class="ident">nop</span>(<span class="ident">_ctx</span>, <span class="ident">_unused</span>: <span class="ident">i32</span>) =&gt; { <span class="macro">unreachable!</span>(); },
-		);
+			<span class="comment">// new version of nop with other data type for argumebt</span>
+			<span class="attribute">#[<span class="ident">version</span>(<span class="number">1</span>)]</span>
+			<span class="kw">fn</span> <span class="ident">nop</span>(<span class="ident">_ctx</span>: <span class="ident"><span class="kw">crate</span>::wasm::Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>, <span class="ident">_unused</span>: <span class="ident">i32</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">TrapReason</span><span class="op">&gt;</span> {
+				<span class="prelude-val">Ok</span>(())
+			}
+		}
 	}
 
 	<span class="macro">macro_rules!</span> <span class="ident">prepare_test</span> {
@@ -1663,7 +1685,7 @@
 					},
 					.. <span class="ident">Default::default</span>()
 				};
-				<span class="kw">let</span> <span class="ident">r</span> <span class="op">=</span> <span class="ident">do_preparation</span>::<span class="op">&lt;</span><span class="ident">env::Test</span>, <span class="ident">Test</span><span class="op">&gt;</span>(<span class="ident">wasm</span>, <span class="kw-2">&amp;</span><span class="ident">schedule</span>, <span class="ident">ALICE</span>);
+				<span class="kw">let</span> <span class="ident">r</span> <span class="op">=</span> <span class="ident">do_preparation</span>::<span class="op">&lt;</span><span class="ident">env::Env</span>, <span class="ident">Test</span><span class="op">&gt;</span>(<span class="ident">wasm</span>, <span class="kw-2">&amp;</span><span class="ident">schedule</span>, <span class="ident">ALICE</span>);
 				<span class="macro">assert_matches::assert_matches!</span>(<span class="ident">r</span>.<span class="ident">map_err</span>(<span class="op">|</span>(<span class="kw">_</span>, <span class="ident">msg</span>)<span class="op">|</span> <span class="ident">msg</span>), $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">expected</span>)<span class="kw-2">*</span>);
 			}
 		};
