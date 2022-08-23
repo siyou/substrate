@@ -2097,17 +2097,6 @@
 <span id="2091">2091</span>
 <span id="2092">2092</span>
 <span id="2093">2093</span>
-<span id="2094">2094</span>
-<span id="2095">2095</span>
-<span id="2096">2096</span>
-<span id="2097">2097</span>
-<span id="2098">2098</span>
-<span id="2099">2099</span>
-<span id="2100">2100</span>
-<span id="2101">2101</span>
-<span id="2102">2102</span>
-<span id="2103">2103</span>
-<span id="2104">2104</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2017-2022 Parity Technologies (UK) Ltd.</span>
@@ -2270,18 +2259,7 @@
 			.<span class="ident">network_config</span>
 			.<span class="ident">boot_nodes</span>
 			.<span class="ident">into_iter</span>()
-			.<span class="ident">filter</span>(<span class="op">|</span><span class="ident">boot_node</span><span class="op">|</span> {
-				<span class="kw">if</span> <span class="ident">boot_node</span>.<span class="ident">peer_id</span> <span class="op">==</span> <span class="ident">local_peer_id</span> {
-					<span class="macro">warn!</span>(
-						<span class="ident">target</span>: <span class="string">&quot;sub-libp2p&quot;</span>,
-						<span class="string">&quot;Local peer ID used in bootnode, ignoring: {}&quot;</span>,
-						<span class="ident">boot_node</span>,
-					);
-					<span class="bool-val">false</span>
-				} <span class="kw">else</span> {
-					<span class="bool-val">true</span>
-				}
-			})
+			.<span class="ident">filter</span>(<span class="op">|</span><span class="ident">boot_node</span><span class="op">|</span> <span class="ident">boot_node</span>.<span class="ident">peer_id</span> <span class="op">!</span><span class="op">=</span> <span class="ident">local_peer_id</span>)
 			.<span class="ident">collect</span>();
 		<span class="ident">params</span>.<span class="ident">network_config</span>.<span class="ident">default_peers_set</span>.<span class="ident">reserved_nodes</span> <span class="op">=</span> <span class="ident">params</span>
 			.<span class="ident">network_config</span>
@@ -3935,7 +3913,7 @@
 								<span class="kw">if</span> <span class="kw">let</span> <span class="ident">ConnectedPoint::Dialer</span> { <span class="ident">address</span>, <span class="ident">role_override</span>: <span class="kw">_</span> } <span class="op">=</span>
 									<span class="ident">endpoint</span>
 								{
-									<span class="macro">error!</span>(
+									<span class="macro">warn!</span>(
 										<span class="string">&quot;💔 The bootnode you want to connect to at `{}` provided a different peer ID `{}` than the one you expect `{}`.&quot;</span>,
 										<span class="ident">address</span>,
 										<span class="ident">obtained</span>,
