@@ -1881,6 +1881,34 @@
 <span id="1875">1875</span>
 <span id="1876">1876</span>
 <span id="1877">1877</span>
+<span id="1878">1878</span>
+<span id="1879">1879</span>
+<span id="1880">1880</span>
+<span id="1881">1881</span>
+<span id="1882">1882</span>
+<span id="1883">1883</span>
+<span id="1884">1884</span>
+<span id="1885">1885</span>
+<span id="1886">1886</span>
+<span id="1887">1887</span>
+<span id="1888">1888</span>
+<span id="1889">1889</span>
+<span id="1890">1890</span>
+<span id="1891">1891</span>
+<span id="1892">1892</span>
+<span id="1893">1893</span>
+<span id="1894">1894</span>
+<span id="1895">1895</span>
+<span id="1896">1896</span>
+<span id="1897">1897</span>
+<span id="1898">1898</span>
+<span id="1899">1899</span>
+<span id="1900">1900</span>
+<span id="1901">1901</span>
+<span id="1902">1902</span>
+<span id="1903">1903</span>
+<span id="1904">1904</span>
+<span id="1905">1905</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2020-2022 Parity Technologies (UK) Ltd.</span>
@@ -3036,6 +3064,8 @@
 <span class="comment">// This creates a unit test for one benchmark of the main benchmark macro.</span>
 <span class="comment">// It runs the benchmark using the `high` and `low` value for each component</span>
 <span class="comment">// and ensure that everything completes successfully.</span>
+<span class="comment">// Instances each component with six values which can be controlled with the</span>
+<span class="comment">// env variable `VALUES_PER_COMPONENT`.</span>
 <span class="attribute">#[<span class="ident">macro_export</span>]</span>
 <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
 <span class="macro">macro_rules!</span> <span class="ident">impl_benchmark_test</span> {
@@ -3080,16 +3110,42 @@
 					<span class="kw">if</span> <span class="ident">components</span>.<span class="ident">is_empty</span>() {
 						<span class="ident">execute_benchmark</span>(<span class="ident">Default::default</span>())<span class="question-mark">?</span>;
 					} <span class="kw">else</span> {
-						<span class="kw">for</span> (<span class="ident">name</span>, <span class="ident">low</span>, <span class="ident">high</span>) <span class="kw">in</span> <span class="ident">components</span>.<span class="ident">iter</span>() {
-							<span class="comment">// Test only the low and high value, assuming values in the middle</span>
-							<span class="comment">// won&#39;t break</span>
-							<span class="kw">for</span> <span class="ident">component_value</span> <span class="kw">in</span> <span class="macro-nonterminal">$</span><span class="macro">crate::vec!</span>[<span class="macro-nonterminal">low</span>, <span class="ident">high</span>] {
+						<span class="kw">let</span> <span class="ident">num_values</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">ev</span>) <span class="op">=</span> <span class="ident">std::env::var</span>(<span class="string">&quot;VALUES_PER_COMPONENT&quot;</span>) {
+							<span class="ident">ev</span>.<span class="ident">parse</span>().<span class="ident">map_err</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> {
+								<span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::BenchmarkError::Stop</span>(
+									<span class="string">&quot;Could not parse env var `VALUES_PER_COMPONENT` as u32.&quot;</span>
+								)
+							})<span class="question-mark">?</span>
+						} <span class="kw">else</span> {
+							<span class="number">6</span>
+						};
+
+						<span class="kw">if</span> <span class="ident">num_values</span> <span class="op">&lt;</span> <span class="number">2</span> {
+							<span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="string">&quot;`VALUES_PER_COMPONENT` must be at least 2&quot;</span>.<span class="ident">into</span>());
+						}
+
+						<span class="kw">for</span> (<span class="ident">name</span>, <span class="ident">low</span>, <span class="ident">high</span>) <span class="kw">in</span> <span class="ident">components</span>.<span class="ident">clone</span>().<span class="ident">into_iter</span>() {
+							<span class="comment">// Test the lowest, highest (if its different from the lowest)</span>
+							<span class="comment">// and up to num_values-2 more equidistant values in between.</span>
+							<span class="comment">// For 0..10 and num_values=6 this would mean: [0, 2, 4, 6, 8, 10]</span>
+
+							<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">values</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro">crate::vec!</span>[<span class="macro-nonterminal">low</span>];
+							<span class="kw">let</span> <span class="ident">diff</span> <span class="op">=</span> (<span class="ident">high</span> <span class="op">-</span> <span class="ident">low</span>).<span class="ident">min</span>(<span class="ident">num_values</span> <span class="op">-</span> <span class="number">1</span>);
+							<span class="kw">let</span> <span class="ident">slope</span> <span class="op">=</span> (<span class="ident">high</span> <span class="op">-</span> <span class="ident">low</span>) <span class="kw">as</span> <span class="ident">f32</span> <span class="op">/</span> <span class="ident">diff</span> <span class="kw">as</span> <span class="ident">f32</span>;
+
+							<span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">1</span>..<span class="op">=</span><span class="ident">diff</span> {
+								<span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> ((<span class="ident">low</span> <span class="kw">as</span> <span class="ident">f32</span> <span class="op">+</span> <span class="ident">slope</span> <span class="op">*</span> <span class="ident">i</span> <span class="kw">as</span> <span class="ident">f32</span>) <span class="kw">as</span> <span class="ident">u32</span>)
+												.<span class="ident">clamp</span>(<span class="ident">low</span>, <span class="ident">high</span>);
+								<span class="ident">values</span>.<span class="ident">push</span>(<span class="ident">value</span>);
+							}
+
+							<span class="kw">for</span> <span class="ident">component_value</span> <span class="kw">in</span> <span class="ident">values</span> {
 								<span class="comment">// Select the max value for all the other components.</span>
 								<span class="kw">let</span> <span class="ident">c</span>: <span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::Vec</span><span class="op">&lt;</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">crate::BenchmarkParameter</span>, <span class="ident">u32</span>)<span class="op">&gt;</span> <span class="op">=</span> <span class="ident">components</span>
 									.<span class="ident">iter</span>()
 									.<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">n</span>, <span class="kw">_</span>, <span class="ident">h</span>)<span class="op">|</span>
-										<span class="kw">if</span> <span class="ident">n</span> <span class="op">==</span> <span class="ident">name</span> {
-											(<span class="kw-2">*</span><span class="ident">n</span>, <span class="kw-2">*</span><span class="ident">component_value</span>)
+										<span class="kw">if</span> <span class="kw-2">*</span><span class="ident">n</span> <span class="op">==</span> <span class="ident">name</span> {
+											(<span class="kw-2">*</span><span class="ident">n</span>, <span class="ident">component_value</span>)
 										} <span class="kw">else</span> {
 											(<span class="kw-2">*</span><span class="ident">n</span>, <span class="kw-2">*</span><span class="ident">h</span>)
 										}
