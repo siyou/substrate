@@ -391,6 +391,35 @@
 <span id="385">385</span>
 <span id="386">386</span>
 <span id="387">387</span>
+<span id="388">388</span>
+<span id="389">389</span>
+<span id="390">390</span>
+<span id="391">391</span>
+<span id="392">392</span>
+<span id="393">393</span>
+<span id="394">394</span>
+<span id="395">395</span>
+<span id="396">396</span>
+<span id="397">397</span>
+<span id="398">398</span>
+<span id="399">399</span>
+<span id="400">400</span>
+<span id="401">401</span>
+<span id="402">402</span>
+<span id="403">403</span>
+<span id="404">404</span>
+<span id="405">405</span>
+<span id="406">406</span>
+<span id="407">407</span>
+<span id="408">408</span>
+<span id="409">409</span>
+<span id="410">410</span>
+<span id="411">411</span>
+<span id="412">412</span>
+<span id="413">413</span>
+<span id="414">414</span>
+<span id="415">415</span>
+<span id="416">416</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2021-2022 Parity Technologies (UK) Ltd.</span>
@@ -411,6 +440,7 @@
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::construct_runtime</span>::{<span class="ident">Pallet</span>, <span class="ident">SYSTEM_PALLET_NAME</span>};
 <span class="kw">use</span> <span class="ident">proc_macro2::TokenStream</span>;
 <span class="kw">use</span> <span class="ident">quote::quote</span>;
+<span class="kw">use</span> <span class="ident">std::str::FromStr</span>;
 <span class="kw">use</span> <span class="ident">syn</span>::{<span class="ident">Generics</span>, <span class="ident">Ident</span>};
 
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">expand_outer_origin</span>(
@@ -696,19 +726,35 @@
 	<span class="kw">let</span> <span class="ident">part_is_generic</span> <span class="op">=</span> <span class="op">!</span><span class="ident">generics</span>.<span class="ident">params</span>.<span class="ident">is_empty</span>();
 	<span class="kw">let</span> <span class="ident">variant_name</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">pallet</span>.<span class="ident">name</span>;
 	<span class="kw">let</span> <span class="ident">path</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">pallet</span>.<span class="ident">path</span>;
+	<span class="kw">let</span> <span class="ident">attr</span> <span class="op">=</span> <span class="ident">pallet</span>.<span class="ident">cfg_pattern</span>.<span class="ident">iter</span>().<span class="ident">fold</span>(<span class="ident">TokenStream::new</span>(), <span class="op">|</span><span class="ident">acc</span>, <span class="ident">pattern</span><span class="op">|</span> {
+		<span class="kw">let</span> <span class="ident">attr</span> <span class="op">=</span> <span class="ident">TokenStream::from_str</span>(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;#[cfg({})]&quot;</span>, <span class="ident">pattern</span>.<span class="ident">original</span>()))
+			.<span class="ident">expect</span>(<span class="string">&quot;was successfully parsed before; qed&quot;</span>);
+		<span class="macro">quote!</span> {
+			#<span class="ident">acc</span>
+			#<span class="ident">attr</span>
+		}
+	});
 
 	<span class="kw">match</span> <span class="ident">instance</span> {
-		<span class="prelude-val">Some</span>(<span class="ident">inst</span>) <span class="kw">if</span> <span class="ident">part_is_generic</span> =&gt; {
-			<span class="macro">quote!</span>(<span class="attribute">#[<span class="ident">codec</span>(<span class="ident">index</span> <span class="op">=</span> #<span class="ident">index</span>)]</span> #<span class="ident">variant_name</span>(#<span class="ident">path::Origin</span><span class="op">&lt;</span>#<span class="ident">runtime</span>, #<span class="ident">path</span>::#<span class="ident">inst</span><span class="op">&gt;</span>),)
+		<span class="prelude-val">Some</span>(<span class="ident">inst</span>) <span class="kw">if</span> <span class="ident">part_is_generic</span> =&gt; <span class="macro">quote!</span> {
+			#<span class="ident">attr</span>
+			<span class="attribute">#[<span class="ident">codec</span>(<span class="ident">index</span> <span class="op">=</span> #<span class="ident">index</span>)]</span>
+			#<span class="ident">variant_name</span>(#<span class="ident">path::Origin</span><span class="op">&lt;</span>#<span class="ident">runtime</span>, #<span class="ident">path</span>::#<span class="ident">inst</span><span class="op">&gt;</span>),
 		},
-		<span class="prelude-val">Some</span>(<span class="ident">inst</span>) =&gt; {
-			<span class="macro">quote!</span>(<span class="attribute">#[<span class="ident">codec</span>(<span class="ident">index</span> <span class="op">=</span> #<span class="ident">index</span>)]</span> #<span class="ident">variant_name</span>(#<span class="ident">path::Origin</span><span class="op">&lt;</span>#<span class="ident">path</span>::#<span class="ident">inst</span><span class="op">&gt;</span>),)
+		<span class="prelude-val">Some</span>(<span class="ident">inst</span>) =&gt; <span class="macro">quote!</span> {
+			#<span class="ident">attr</span>
+			<span class="attribute">#[<span class="ident">codec</span>(<span class="ident">index</span> <span class="op">=</span> #<span class="ident">index</span>)]</span>
+			#<span class="ident">variant_name</span>(#<span class="ident">path::Origin</span><span class="op">&lt;</span>#<span class="ident">path</span>::#<span class="ident">inst</span><span class="op">&gt;</span>),
 		},
-		<span class="prelude-val">None</span> <span class="kw">if</span> <span class="ident">part_is_generic</span> =&gt; {
-			<span class="macro">quote!</span>(<span class="attribute">#[<span class="ident">codec</span>(<span class="ident">index</span> <span class="op">=</span> #<span class="ident">index</span>)]</span> #<span class="ident">variant_name</span>(#<span class="ident">path::Origin</span><span class="op">&lt;</span>#<span class="ident">runtime</span><span class="op">&gt;</span>),)
+		<span class="prelude-val">None</span> <span class="kw">if</span> <span class="ident">part_is_generic</span> =&gt; <span class="macro">quote!</span> {
+			#<span class="ident">attr</span>
+			<span class="attribute">#[<span class="ident">codec</span>(<span class="ident">index</span> <span class="op">=</span> #<span class="ident">index</span>)]</span>
+			#<span class="ident">variant_name</span>(#<span class="ident">path::Origin</span><span class="op">&lt;</span>#<span class="ident">runtime</span><span class="op">&gt;</span>),
 		},
-		<span class="prelude-val">None</span> =&gt; {
-			<span class="macro">quote!</span>(<span class="attribute">#[<span class="ident">codec</span>(<span class="ident">index</span> <span class="op">=</span> #<span class="ident">index</span>)]</span> #<span class="ident">variant_name</span>(#<span class="ident">path::Origin</span>),)
+		<span class="prelude-val">None</span> =&gt; <span class="macro">quote!</span> {
+			#<span class="ident">attr</span>
+			<span class="attribute">#[<span class="ident">codec</span>(<span class="ident">index</span> <span class="op">=</span> #<span class="ident">index</span>)]</span>
+			#<span class="ident">variant_name</span>(#<span class="ident">path::Origin</span>),
 		},
 	}
 }
@@ -732,14 +778,24 @@
 	};
 
 	<span class="kw">let</span> <span class="ident">doc_string</span> <span class="op">=</span> <span class="ident">get_intra_doc_string</span>(<span class="string">&quot; Convert to runtime origin using&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">path</span>.<span class="ident">module_name</span>());
+	<span class="kw">let</span> <span class="ident">attr</span> <span class="op">=</span> <span class="ident">pallet</span>.<span class="ident">cfg_pattern</span>.<span class="ident">iter</span>().<span class="ident">fold</span>(<span class="ident">TokenStream::new</span>(), <span class="op">|</span><span class="ident">acc</span>, <span class="ident">pattern</span><span class="op">|</span> {
+		<span class="kw">let</span> <span class="ident">attr</span> <span class="op">=</span> <span class="ident">TokenStream::from_str</span>(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;#[cfg({})]&quot;</span>, <span class="ident">pattern</span>.<span class="ident">original</span>()))
+			.<span class="ident">expect</span>(<span class="string">&quot;was successfully parsed before; qed&quot;</span>);
+		<span class="macro">quote!</span> {
+			#<span class="ident">acc</span>
+			#<span class="ident">attr</span>
+		}
+	});
 
 	<span class="macro">quote!</span> {
+		#<span class="ident">attr</span>
 		<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span>#<span class="ident">pallet_origin</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">OriginCaller</span> {
 			<span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">x</span>: #<span class="ident">pallet_origin</span>) -&gt; <span class="self">Self</span> {
 				<span class="ident">OriginCaller</span>::#<span class="ident">variant_name</span>(<span class="ident">x</span>)
 			}
 		}
 
+		#<span class="ident">attr</span>
 		<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span>#<span class="ident">pallet_origin</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Origin</span> {
 			<span class="attribute">#[<span class="ident">doc</span> <span class="op">=</span> #<span class="ident">doc_string</span>]</span>
 			<span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">x</span>: #<span class="ident">pallet_origin</span>) -&gt; <span class="self">Self</span> {
@@ -748,6 +804,7 @@
 			}
 		}
 
+		#<span class="ident">attr</span>
 		<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">Origin</span><span class="op">&gt;</span> <span class="kw">for</span> #<span class="ident">scrate::sp_std::result::Result</span><span class="op">&lt;</span>#<span class="ident">pallet_origin</span>, <span class="ident">Origin</span><span class="op">&gt;</span> {
 			<span class="doccomment">/// NOTE: converting to pallet origin loses the origin filter information.</span>
 			<span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">val</span>: <span class="ident">Origin</span>) -&gt; <span class="self">Self</span> {
@@ -759,6 +816,7 @@
 			}
 		}
 
+		#<span class="ident">attr</span>
 		<span class="kw">impl</span> <span class="ident">TryFrom</span><span class="op">&lt;</span><span class="ident">OriginCaller</span><span class="op">&gt;</span> <span class="kw">for</span> #<span class="ident">pallet_origin</span> {
 			<span class="kw">type</span> <span class="ident">Error</span> <span class="op">=</span> <span class="ident">OriginCaller</span>;
 			<span class="kw">fn</span> <span class="ident">try_from</span>(

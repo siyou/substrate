@@ -347,6 +347,24 @@ This can be useful for storage which can never go into PoV (Proof of Validity).<
 <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">type</span> <span class="ident">MyStorage</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">StorageValue</span><span class="op">&lt;</span><span class="ident">Value</span> <span class="op">=</span> <span class="ident">u32</span><span class="op">&gt;</span>;</code></pre></div>
 <p>All the <code>cfg</code> attributes are automatically copied to the items generated for the storage,
 i.e. the getter, storage prefix, and the metadata element etc.</p>
+<p>Any type placed as the <code>QueryKind</code> parameter must implement
+<a href="storage/types/trait.QueryKindTrait.html" title="frame_support::storage::types::QueryKindTrait"><code>frame_support::storage::types::QueryKindTrait</code></a>. There are 3 implementations of this
+trait by default:</p>
+<ol>
+<li><a href="storage/types/struct.OptionQuery.html" title="frame_support::storage::types::OptionQuery"><code>frame_support::storage::types::OptionQuery</code></a>, the default <code>QueryKind</code> used when this
+type parameter is omitted. Specifying this as the <code>QueryKind</code> would cause storage map
+APIs that return a <code>QueryKind</code> to instead return an <code>Option</code>, returning <code>Some</code> when a
+value does exist under a specified storage key, and <code>None</code> otherwise.</li>
+<li><a href="storage/types/struct.ValueQuery.html" title="frame_support::storage::types::ValueQuery"><code>frame_support::storage::types::ValueQuery</code></a> causes storage map APIs that return a
+<code>QueryKind</code> to instead return the value type. In cases where a value does not exist
+under a specified storage key, the <code>OnEmpty</code> type parameter on <code>QueryKindTrait</code> is used
+to return an appropriate value.</li>
+<li><a href="storage/types/struct.ResultQuery.html" title="frame_support::storage::types::ResultQuery"><code>frame_support::storage::types::ResultQuery</code></a> causes storage map APIs that return a
+<code>QueryKind</code> to instead return a <code>Result&lt;T, E&gt;</code>, with <code>T</code> being the value type and <code>E</code>
+being the pallet error type specified by the <code>#[pallet::error]</code> attribute. In cases
+where a value does not exist under a specified storage key, an <code>Err</code> with the specified
+pallet error variant is returned.</li>
+</ol>
 <p>NOTE: If the <code>QueryKind</code> generic parameter is still generic at this stage or is using some
 type alias then the generation of the getter might fail. In this case the getter can be
 implemented manually.</p>

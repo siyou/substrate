@@ -534,6 +534,11 @@
 <span id="528">528</span>
 <span id="529">529</span>
 <span id="530">530</span>
+<span id="531">531</span>
+<span id="532">532</span>
+<span id="533">533</span>
+<span id="534">534</span>
+<span id="535">535</span>
 </pre><pre class="rust"><code><span class="attribute">#![<span class="ident">cfg_attr</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>), <span class="ident">no_std</span>)]</span>
 
 <span class="comment">// Make the WASM binary available.</span>
@@ -590,287 +595,287 @@
 <span class="kw">static</span> <span class="kw-2">mut</span> <span class="ident">MUTABLE_STATIC_BSS</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">0</span>;
 
 <span class="macro">sp_core::wasm_export_functions!</span> {
-   <span class="kw">fn</span> <span class="ident">test_calling_missing_external</span>() {
-	   <span class="kw">unsafe</span> { <span class="ident">missing_external</span>() }
-   }
+	<span class="kw">fn</span> <span class="ident">test_calling_missing_external</span>() {
+		<span class="kw">unsafe</span> { <span class="ident">missing_external</span>() }
+	}
 
-   <span class="kw">fn</span> <span class="ident">test_calling_yet_another_missing_external</span>() {
-	   <span class="kw">unsafe</span> { <span class="ident">yet_another_missing_external</span>() }
-   }
+	<span class="kw">fn</span> <span class="ident">test_calling_yet_another_missing_external</span>() {
+		<span class="kw">unsafe</span> { <span class="ident">yet_another_missing_external</span>() }
+	}
 
-   <span class="kw">fn</span> <span class="ident">test_data_in</span>(<span class="ident">input</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>) -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> {
-	   <span class="ident">print</span>(<span class="string">&quot;set_storage&quot;</span>);
-	   <span class="ident">storage::set</span>(<span class="string">b&quot;input&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">input</span>);
+	<span class="kw">fn</span> <span class="ident">test_data_in</span>(<span class="ident">input</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>) -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> {
+		<span class="ident">print</span>(<span class="string">&quot;set_storage&quot;</span>);
+		<span class="ident">storage::set</span>(<span class="string">b&quot;input&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">input</span>);
 
-	   <span class="ident">print</span>(<span class="string">&quot;storage&quot;</span>);
-	   <span class="kw">let</span> <span class="ident">foo</span> <span class="op">=</span> <span class="ident">storage::get</span>(<span class="string">b&quot;foo&quot;</span>).<span class="ident">unwrap</span>();
+		<span class="ident">print</span>(<span class="string">&quot;storage&quot;</span>);
+		<span class="kw">let</span> <span class="ident">foo</span> <span class="op">=</span> <span class="ident">storage::get</span>(<span class="string">b&quot;foo&quot;</span>).<span class="ident">unwrap</span>();
 
-	   <span class="ident">print</span>(<span class="string">&quot;set_storage&quot;</span>);
-	   <span class="ident">storage::set</span>(<span class="string">b&quot;baz&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">foo</span>);
+		<span class="ident">print</span>(<span class="string">&quot;set_storage&quot;</span>);
+		<span class="ident">storage::set</span>(<span class="string">b&quot;baz&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">foo</span>);
 
-	   <span class="ident">print</span>(<span class="string">&quot;finished!&quot;</span>);
-	   <span class="string">b&quot;all ok!&quot;</span>.<span class="ident">to_vec</span>()
-   }
+		<span class="ident">print</span>(<span class="string">&quot;finished!&quot;</span>);
+		<span class="string">b&quot;all ok!&quot;</span>.<span class="ident">to_vec</span>()
+	}
 
-   <span class="kw">fn</span> <span class="ident">test_clear_prefix</span>(<span class="ident">input</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>) -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> {
-	   <span class="ident">storage::clear_prefix</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>, <span class="prelude-val">None</span>);
-	   <span class="string">b&quot;all ok!&quot;</span>.<span class="ident">to_vec</span>()
-   }
+	<span class="kw">fn</span> <span class="ident">test_clear_prefix</span>(<span class="ident">input</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>) -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> {
+		<span class="ident">storage::clear_prefix</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>, <span class="prelude-val">None</span>);
+		<span class="string">b&quot;all ok!&quot;</span>.<span class="ident">to_vec</span>()
+	}
 
-   <span class="kw">fn</span> <span class="ident">test_empty_return</span>() {}
+	<span class="kw">fn</span> <span class="ident">test_empty_return</span>() {}
 
-   <span class="kw">fn</span> <span class="ident">test_dirty_plenty_memory</span>(<span class="ident">heap_base</span>: <span class="ident">u32</span>, <span class="ident">heap_pages</span>: <span class="ident">u32</span>) {
-	   <span class="comment">// This piece of code will dirty multiple pages of memory. The number of pages is given by</span>
-	   <span class="comment">// the `heap_pages`. It&#39;s unit is a wasm page (64KiB). The first page to be cleared</span>
-	   <span class="comment">// is a wasm page that that follows the one that holds the `heap_base` address.</span>
-	   <span class="comment">//</span>
-	   <span class="comment">// This function dirties the **host** pages. I.e. we dirty 4KiB at a time and it will take</span>
-	   <span class="comment">// 16 writes to process a single wasm page.</span>
+	<span class="kw">fn</span> <span class="ident">test_dirty_plenty_memory</span>(<span class="ident">heap_base</span>: <span class="ident">u32</span>, <span class="ident">heap_pages</span>: <span class="ident">u32</span>) {
+		<span class="comment">// This piece of code will dirty multiple pages of memory. The number of pages is given by</span>
+		<span class="comment">// the `heap_pages`. It&#39;s unit is a wasm page (64KiB). The first page to be cleared</span>
+		<span class="comment">// is a wasm page that that follows the one that holds the `heap_base` address.</span>
+		<span class="comment">//</span>
+		<span class="comment">// This function dirties the **host** pages. I.e. we dirty 4KiB at a time and it will take</span>
+		<span class="comment">// 16 writes to process a single wasm page.</span>
 
-	   <span class="kw">let</span> <span class="ident">heap_ptr</span> <span class="op">=</span> <span class="ident">heap_base</span> <span class="kw">as</span> <span class="ident">usize</span>;
+		<span class="kw">let</span> <span class="ident">heap_ptr</span> <span class="op">=</span> <span class="ident">heap_base</span> <span class="kw">as</span> <span class="ident">usize</span>;
 
-	   <span class="comment">// Find the next wasm page boundary.</span>
-	   <span class="kw">let</span> <span class="ident">heap_ptr</span> <span class="op">=</span> <span class="ident">round_up_to</span>(<span class="ident">heap_ptr</span>, <span class="number">65536</span>);
+		<span class="comment">// Find the next wasm page boundary.</span>
+		<span class="kw">let</span> <span class="ident">heap_ptr</span> <span class="op">=</span> <span class="ident">round_up_to</span>(<span class="ident">heap_ptr</span>, <span class="number">65536</span>);
 
-	   <span class="comment">// Make it an actual pointer</span>
-	   <span class="kw">let</span> <span class="ident">heap_ptr</span> <span class="op">=</span> <span class="ident">heap_ptr</span> <span class="kw">as</span> <span class="kw-2">*mut</span> <span class="ident">u8</span>;
+		<span class="comment">// Make it an actual pointer</span>
+		<span class="kw">let</span> <span class="ident">heap_ptr</span> <span class="op">=</span> <span class="ident">heap_ptr</span> <span class="kw">as</span> <span class="kw-2">*mut</span> <span class="ident">u8</span>;
 
-	   <span class="comment">// Traverse the host pages and make each one dirty</span>
-	   <span class="kw">let</span> <span class="ident">host_pages</span> <span class="op">=</span> <span class="ident">heap_pages</span> <span class="kw">as</span> <span class="ident">usize</span> <span class="op">*</span> <span class="number">16</span>;
-	   <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">host_pages</span> {
-		   <span class="kw">unsafe</span> {
-			   <span class="comment">// technically this is an UB, but there is no way Rust can find this out.</span>
-			   <span class="ident">heap_ptr</span>.<span class="ident">add</span>(<span class="ident">i</span> <span class="op">*</span> <span class="number">4096</span>).<span class="ident">write</span>(<span class="number">0</span>);
-		   }
-	   }
+		<span class="comment">// Traverse the host pages and make each one dirty</span>
+		<span class="kw">let</span> <span class="ident">host_pages</span> <span class="op">=</span> <span class="ident">heap_pages</span> <span class="kw">as</span> <span class="ident">usize</span> <span class="op">*</span> <span class="number">16</span>;
+		<span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">host_pages</span> {
+			<span class="kw">unsafe</span> {
+				<span class="comment">// technically this is an UB, but there is no way Rust can find this out.</span>
+				<span class="ident">heap_ptr</span>.<span class="ident">add</span>(<span class="ident">i</span> <span class="op">*</span> <span class="number">4096</span>).<span class="ident">write</span>(<span class="number">0</span>);
+			}
+		}
 
-	   <span class="kw">fn</span> <span class="ident">round_up_to</span>(<span class="ident">n</span>: <span class="ident">usize</span>, <span class="ident">divisor</span>: <span class="ident">usize</span>) -&gt; <span class="ident">usize</span> {
-		   (<span class="ident">n</span> <span class="op">+</span> <span class="ident">divisor</span> <span class="op">-</span> <span class="number">1</span>) <span class="op">/</span> <span class="ident">divisor</span>
-	   }
-   }
+		<span class="kw">fn</span> <span class="ident">round_up_to</span>(<span class="ident">n</span>: <span class="ident">usize</span>, <span class="ident">divisor</span>: <span class="ident">usize</span>) -&gt; <span class="ident">usize</span> {
+			(<span class="ident">n</span> <span class="op">+</span> <span class="ident">divisor</span> <span class="op">-</span> <span class="number">1</span>) <span class="op">/</span> <span class="ident">divisor</span>
+		}
+	}
 
 	<span class="kw">fn</span> <span class="ident">test_allocate_vec</span>(<span class="ident">size</span>: <span class="ident">u32</span>) -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> {
 		<span class="ident">Vec::with_capacity</span>(<span class="ident">size</span> <span class="kw">as</span> <span class="ident">usize</span>)
 	}
 
-   <span class="kw">fn</span> <span class="ident">test_fp_f32add</span>(<span class="ident">a</span>: [<span class="ident">u8</span>; <span class="number">4</span>], <span class="ident">b</span>: [<span class="ident">u8</span>; <span class="number">4</span>]) -&gt; [<span class="ident">u8</span>; <span class="number">4</span>] {
-	   <span class="kw">let</span> <span class="ident">a</span> <span class="op">=</span> <span class="ident">f32::from_le_bytes</span>(<span class="ident">a</span>);
-	   <span class="kw">let</span> <span class="ident">b</span> <span class="op">=</span> <span class="ident">f32::from_le_bytes</span>(<span class="ident">b</span>);
-	   <span class="ident">f32::to_le_bytes</span>(<span class="ident">a</span> <span class="op">+</span> <span class="ident">b</span>)
-   }
+	<span class="kw">fn</span> <span class="ident">test_fp_f32add</span>(<span class="ident">a</span>: [<span class="ident">u8</span>; <span class="number">4</span>], <span class="ident">b</span>: [<span class="ident">u8</span>; <span class="number">4</span>]) -&gt; [<span class="ident">u8</span>; <span class="number">4</span>] {
+		<span class="kw">let</span> <span class="ident">a</span> <span class="op">=</span> <span class="ident">f32::from_le_bytes</span>(<span class="ident">a</span>);
+		<span class="kw">let</span> <span class="ident">b</span> <span class="op">=</span> <span class="ident">f32::from_le_bytes</span>(<span class="ident">b</span>);
+		<span class="ident">f32::to_le_bytes</span>(<span class="ident">a</span> <span class="op">+</span> <span class="ident">b</span>)
+	}
 
-   <span class="kw">fn</span> <span class="ident">test_panic</span>() { <span class="macro">panic!</span>(<span class="string">&quot;test panic&quot;</span>) }
+	<span class="kw">fn</span> <span class="ident">test_panic</span>() { <span class="macro">panic!</span>(<span class="string">&quot;test panic&quot;</span>) }
 
-   <span class="kw">fn</span> <span class="ident">test_conditional_panic</span>(<span class="ident">input</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>) -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> {
-	   <span class="kw">if</span> <span class="ident">input</span>.<span class="ident">len</span>() <span class="op">&gt;</span> <span class="number">0</span> {
-		   <span class="macro">panic!</span>(<span class="string">&quot;test panic&quot;</span>)
-	   }
+	<span class="kw">fn</span> <span class="ident">test_conditional_panic</span>(<span class="ident">input</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>) -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> {
+		<span class="kw">if</span> <span class="ident">input</span>.<span class="ident">len</span>() <span class="op">&gt;</span> <span class="number">0</span> {
+			<span class="macro">panic!</span>(<span class="string">&quot;test panic&quot;</span>)
+		}
 
-	   <span class="ident">input</span>
-   }
+		<span class="ident">input</span>
+	}
 
-   <span class="kw">fn</span> <span class="ident">test_blake2_256</span>(<span class="ident">input</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>) -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> {
-	   <span class="ident">blake2_256</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>).<span class="ident">to_vec</span>()
-   }
+	<span class="kw">fn</span> <span class="ident">test_blake2_256</span>(<span class="ident">input</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>) -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> {
+		<span class="ident">blake2_256</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>).<span class="ident">to_vec</span>()
+	}
 
-   <span class="kw">fn</span> <span class="ident">test_blake2_128</span>(<span class="ident">input</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>) -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> {
-	   <span class="ident">blake2_128</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>).<span class="ident">to_vec</span>()
-   }
+	<span class="kw">fn</span> <span class="ident">test_blake2_128</span>(<span class="ident">input</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>) -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> {
+		<span class="ident">blake2_128</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>).<span class="ident">to_vec</span>()
+	}
 
-   <span class="kw">fn</span> <span class="ident">test_sha2_256</span>(<span class="ident">input</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>) -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> {
-	   <span class="ident">sha2_256</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>).<span class="ident">to_vec</span>()
-   }
+	<span class="kw">fn</span> <span class="ident">test_sha2_256</span>(<span class="ident">input</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>) -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> {
+		<span class="ident">sha2_256</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>).<span class="ident">to_vec</span>()
+	}
 
-   <span class="kw">fn</span> <span class="ident">test_twox_256</span>(<span class="ident">input</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>) -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> {
-	   <span class="ident">twox_256</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>).<span class="ident">to_vec</span>()
-   }
+	<span class="kw">fn</span> <span class="ident">test_twox_256</span>(<span class="ident">input</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>) -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> {
+		<span class="ident">twox_256</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>).<span class="ident">to_vec</span>()
+	}
 
-   <span class="kw">fn</span> <span class="ident">test_twox_128</span>(<span class="ident">input</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>) -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> {
-	   <span class="ident">twox_128</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>).<span class="ident">to_vec</span>()
-   }
+	<span class="kw">fn</span> <span class="ident">test_twox_128</span>(<span class="ident">input</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>) -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> {
+		<span class="ident">twox_128</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>).<span class="ident">to_vec</span>()
+	}
 
-   <span class="kw">fn</span> <span class="ident">test_ed25519_verify</span>(<span class="ident">input</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>) -&gt; <span class="ident">bool</span> {
-	   <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">pubkey</span> <span class="op">=</span> [<span class="number">0</span>; <span class="number">32</span>];
-	   <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">sig</span> <span class="op">=</span> [<span class="number">0</span>; <span class="number">64</span>];
+	<span class="kw">fn</span> <span class="ident">test_ed25519_verify</span>(<span class="ident">input</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>) -&gt; <span class="ident">bool</span> {
+		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">pubkey</span> <span class="op">=</span> [<span class="number">0</span>; <span class="number">32</span>];
+		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">sig</span> <span class="op">=</span> [<span class="number">0</span>; <span class="number">64</span>];
 
-	   <span class="ident">pubkey</span>.<span class="ident">copy_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>[<span class="number">0</span>..<span class="number">32</span>]);
-	   <span class="ident">sig</span>.<span class="ident">copy_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>[<span class="number">32</span>..<span class="number">96</span>]);
+		<span class="ident">pubkey</span>.<span class="ident">copy_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>[<span class="number">0</span>..<span class="number">32</span>]);
+		<span class="ident">sig</span>.<span class="ident">copy_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>[<span class="number">32</span>..<span class="number">96</span>]);
 
-	   <span class="kw">let</span> <span class="ident">msg</span> <span class="op">=</span> <span class="string">b&quot;all ok!&quot;</span>;
-	   <span class="ident">ed25519_verify</span>(<span class="kw-2">&amp;</span><span class="ident">ed25519::Signature</span>(<span class="ident">sig</span>), <span class="kw-2">&amp;</span><span class="ident">msg</span>[..], <span class="kw-2">&amp;</span><span class="ident">ed25519::Public</span>(<span class="ident">pubkey</span>))
-   }
+		<span class="kw">let</span> <span class="ident">msg</span> <span class="op">=</span> <span class="string">b&quot;all ok!&quot;</span>;
+		<span class="ident">ed25519_verify</span>(<span class="kw-2">&amp;</span><span class="ident">ed25519::Signature</span>(<span class="ident">sig</span>), <span class="kw-2">&amp;</span><span class="ident">msg</span>[..], <span class="kw-2">&amp;</span><span class="ident">ed25519::Public</span>(<span class="ident">pubkey</span>))
+	}
 
-   <span class="kw">fn</span> <span class="ident">test_sr25519_verify</span>(<span class="ident">input</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>) -&gt; <span class="ident">bool</span> {
-	   <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">pubkey</span> <span class="op">=</span> [<span class="number">0</span>; <span class="number">32</span>];
-	   <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">sig</span> <span class="op">=</span> [<span class="number">0</span>; <span class="number">64</span>];
+	<span class="kw">fn</span> <span class="ident">test_sr25519_verify</span>(<span class="ident">input</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>) -&gt; <span class="ident">bool</span> {
+		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">pubkey</span> <span class="op">=</span> [<span class="number">0</span>; <span class="number">32</span>];
+		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">sig</span> <span class="op">=</span> [<span class="number">0</span>; <span class="number">64</span>];
 
-	   <span class="ident">pubkey</span>.<span class="ident">copy_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>[<span class="number">0</span>..<span class="number">32</span>]);
-	   <span class="ident">sig</span>.<span class="ident">copy_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>[<span class="number">32</span>..<span class="number">96</span>]);
+		<span class="ident">pubkey</span>.<span class="ident">copy_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>[<span class="number">0</span>..<span class="number">32</span>]);
+		<span class="ident">sig</span>.<span class="ident">copy_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>[<span class="number">32</span>..<span class="number">96</span>]);
 
-	   <span class="kw">let</span> <span class="ident">msg</span> <span class="op">=</span> <span class="string">b&quot;all ok!&quot;</span>;
-	   <span class="ident">sr25519_verify</span>(<span class="kw-2">&amp;</span><span class="ident">sr25519::Signature</span>(<span class="ident">sig</span>), <span class="kw-2">&amp;</span><span class="ident">msg</span>[..], <span class="kw-2">&amp;</span><span class="ident">sr25519::Public</span>(<span class="ident">pubkey</span>))
-   }
+		<span class="kw">let</span> <span class="ident">msg</span> <span class="op">=</span> <span class="string">b&quot;all ok!&quot;</span>;
+		<span class="ident">sr25519_verify</span>(<span class="kw-2">&amp;</span><span class="ident">sr25519::Signature</span>(<span class="ident">sig</span>), <span class="kw-2">&amp;</span><span class="ident">msg</span>[..], <span class="kw-2">&amp;</span><span class="ident">sr25519::Public</span>(<span class="ident">pubkey</span>))
+	}
 
-   <span class="kw">fn</span> <span class="ident">test_ordered_trie_root</span>() -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> {
-	   <span class="ident">BlakeTwo256::ordered_trie_root</span>(
-		   <span class="macro">vec!</span>[
-			   <span class="string">b&quot;zero&quot;</span>[..].<span class="ident">into</span>(),
-			   <span class="string">b&quot;one&quot;</span>[..].<span class="ident">into</span>(),
-			   <span class="string">b&quot;two&quot;</span>[..].<span class="ident">into</span>(),
-		   ],
-				<span class="ident">sp_core::storage::StateVersion::V1</span>,
-	   ).<span class="ident">as_ref</span>().<span class="ident">to_vec</span>()
-   }
+	<span class="kw">fn</span> <span class="ident">test_ordered_trie_root</span>() -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> {
+		<span class="ident">BlakeTwo256::ordered_trie_root</span>(
+			<span class="macro">vec!</span>[
+				<span class="string">b&quot;zero&quot;</span>[..].<span class="ident">into</span>(),
+				<span class="string">b&quot;one&quot;</span>[..].<span class="ident">into</span>(),
+				<span class="string">b&quot;two&quot;</span>[..].<span class="ident">into</span>(),
+			],
+			<span class="ident">sp_core::storage::StateVersion::V1</span>,
+		).<span class="ident">as_ref</span>().<span class="ident">to_vec</span>()
+	}
 
-   <span class="kw">fn</span> <span class="ident">test_offchain_index_set</span>() {
-	   <span class="ident">sp_io::offchain_index::set</span>(<span class="string">b&quot;k&quot;</span>, <span class="string">b&quot;v&quot;</span>);
-   }
+	<span class="kw">fn</span> <span class="ident">test_offchain_index_set</span>() {
+		<span class="ident">sp_io::offchain_index::set</span>(<span class="string">b&quot;k&quot;</span>, <span class="string">b&quot;v&quot;</span>);
+	}
 
-   <span class="kw">fn</span> <span class="ident">test_offchain_local_storage</span>() -&gt; <span class="ident">bool</span> {
-	   <span class="kw">let</span> <span class="ident">kind</span> <span class="op">=</span> <span class="ident">sp_core::offchain::StorageKind::PERSISTENT</span>;
-	   <span class="macro">assert_eq!</span>(<span class="ident">sp_io::offchain::local_storage_get</span>(<span class="ident">kind</span>, <span class="string">b&quot;test&quot;</span>), <span class="prelude-val">None</span>);
-	   <span class="ident">sp_io::offchain::local_storage_set</span>(<span class="ident">kind</span>, <span class="string">b&quot;test&quot;</span>, <span class="string">b&quot;asd&quot;</span>);
-	   <span class="macro">assert_eq!</span>(<span class="ident">sp_io::offchain::local_storage_get</span>(<span class="ident">kind</span>, <span class="string">b&quot;test&quot;</span>), <span class="prelude-val">Some</span>(<span class="string">b&quot;asd&quot;</span>.<span class="ident">to_vec</span>()));
+	<span class="kw">fn</span> <span class="ident">test_offchain_local_storage</span>() -&gt; <span class="ident">bool</span> {
+		<span class="kw">let</span> <span class="ident">kind</span> <span class="op">=</span> <span class="ident">sp_core::offchain::StorageKind::PERSISTENT</span>;
+		<span class="macro">assert_eq!</span>(<span class="ident">sp_io::offchain::local_storage_get</span>(<span class="ident">kind</span>, <span class="string">b&quot;test&quot;</span>), <span class="prelude-val">None</span>);
+		<span class="ident">sp_io::offchain::local_storage_set</span>(<span class="ident">kind</span>, <span class="string">b&quot;test&quot;</span>, <span class="string">b&quot;asd&quot;</span>);
+		<span class="macro">assert_eq!</span>(<span class="ident">sp_io::offchain::local_storage_get</span>(<span class="ident">kind</span>, <span class="string">b&quot;test&quot;</span>), <span class="prelude-val">Some</span>(<span class="string">b&quot;asd&quot;</span>.<span class="ident">to_vec</span>()));
 
-	   <span class="kw">let</span> <span class="ident">res</span> <span class="op">=</span> <span class="ident">sp_io::offchain::local_storage_compare_and_set</span>(
-		   <span class="ident">kind</span>,
-		   <span class="string">b&quot;test&quot;</span>,
-		   <span class="prelude-val">Some</span>(<span class="string">b&quot;asd&quot;</span>.<span class="ident">to_vec</span>()),
-		   <span class="string">b&quot;&quot;</span>,
-	   );
-	   <span class="macro">assert_eq!</span>(<span class="ident">sp_io::offchain::local_storage_get</span>(<span class="ident">kind</span>, <span class="string">b&quot;test&quot;</span>), <span class="prelude-val">Some</span>(<span class="string">b&quot;&quot;</span>.<span class="ident">to_vec</span>()));
-	   <span class="ident">res</span>
-   }
+		<span class="kw">let</span> <span class="ident">res</span> <span class="op">=</span> <span class="ident">sp_io::offchain::local_storage_compare_and_set</span>(
+			<span class="ident">kind</span>,
+			<span class="string">b&quot;test&quot;</span>,
+			<span class="prelude-val">Some</span>(<span class="string">b&quot;asd&quot;</span>.<span class="ident">to_vec</span>()),
+			<span class="string">b&quot;&quot;</span>,
+		);
+		<span class="macro">assert_eq!</span>(<span class="ident">sp_io::offchain::local_storage_get</span>(<span class="ident">kind</span>, <span class="string">b&quot;test&quot;</span>), <span class="prelude-val">Some</span>(<span class="string">b&quot;&quot;</span>.<span class="ident">to_vec</span>()));
+		<span class="ident">res</span>
+	}
 
-   <span class="kw">fn</span> <span class="ident">test_offchain_local_storage_with_none</span>() {
-	   <span class="kw">let</span> <span class="ident">kind</span> <span class="op">=</span> <span class="ident">sp_core::offchain::StorageKind::PERSISTENT</span>;
-	   <span class="macro">assert_eq!</span>(<span class="ident">sp_io::offchain::local_storage_get</span>(<span class="ident">kind</span>, <span class="string">b&quot;test&quot;</span>), <span class="prelude-val">None</span>);
+	<span class="kw">fn</span> <span class="ident">test_offchain_local_storage_with_none</span>() {
+		<span class="kw">let</span> <span class="ident">kind</span> <span class="op">=</span> <span class="ident">sp_core::offchain::StorageKind::PERSISTENT</span>;
+		<span class="macro">assert_eq!</span>(<span class="ident">sp_io::offchain::local_storage_get</span>(<span class="ident">kind</span>, <span class="string">b&quot;test&quot;</span>), <span class="prelude-val">None</span>);
 
-	   <span class="kw">let</span> <span class="ident">res</span> <span class="op">=</span> <span class="ident">sp_io::offchain::local_storage_compare_and_set</span>(<span class="ident">kind</span>, <span class="string">b&quot;test&quot;</span>, <span class="prelude-val">None</span>, <span class="string">b&quot;value&quot;</span>);
-	   <span class="macro">assert_eq!</span>(<span class="ident">res</span>, <span class="bool-val">true</span>);
-	   <span class="macro">assert_eq!</span>(<span class="ident">sp_io::offchain::local_storage_get</span>(<span class="ident">kind</span>, <span class="string">b&quot;test&quot;</span>), <span class="prelude-val">Some</span>(<span class="string">b&quot;value&quot;</span>.<span class="ident">to_vec</span>()));
-   }
+		<span class="kw">let</span> <span class="ident">res</span> <span class="op">=</span> <span class="ident">sp_io::offchain::local_storage_compare_and_set</span>(<span class="ident">kind</span>, <span class="string">b&quot;test&quot;</span>, <span class="prelude-val">None</span>, <span class="string">b&quot;value&quot;</span>);
+		<span class="macro">assert_eq!</span>(<span class="ident">res</span>, <span class="bool-val">true</span>);
+		<span class="macro">assert_eq!</span>(<span class="ident">sp_io::offchain::local_storage_get</span>(<span class="ident">kind</span>, <span class="string">b&quot;test&quot;</span>), <span class="prelude-val">Some</span>(<span class="string">b&quot;value&quot;</span>.<span class="ident">to_vec</span>()));
+	}
 
-   <span class="kw">fn</span> <span class="ident">test_offchain_http</span>() -&gt; <span class="ident">bool</span> {
-	   <span class="kw">use</span> <span class="ident">sp_core::offchain::HttpRequestStatus</span>;
-	   <span class="kw">let</span> <span class="ident">run</span> <span class="op">=</span> <span class="op">|</span><span class="op">|</span> -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-		   <span class="kw">let</span> <span class="ident">id</span> <span class="op">=</span> <span class="ident">sp_io::offchain::http_request_start</span>(
-			   <span class="string">&quot;POST&quot;</span>,
-			   <span class="string">&quot;http://localhost:12345&quot;</span>,
-			   <span class="kw-2">&amp;</span>[],
-		   ).<span class="ident">ok</span>()<span class="question-mark">?</span>;
-		   <span class="ident">sp_io::offchain::http_request_add_header</span>(<span class="ident">id</span>, <span class="string">&quot;X-Auth&quot;</span>, <span class="string">&quot;test&quot;</span>).<span class="ident">ok</span>()<span class="question-mark">?</span>;
-		   <span class="ident">sp_io::offchain::http_request_write_body</span>(<span class="ident">id</span>, <span class="kw-2">&amp;</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>], <span class="prelude-val">None</span>).<span class="ident">ok</span>()<span class="question-mark">?</span>;
-		   <span class="ident">sp_io::offchain::http_request_write_body</span>(<span class="ident">id</span>, <span class="kw-2">&amp;</span>[], <span class="prelude-val">None</span>).<span class="ident">ok</span>()<span class="question-mark">?</span>;
-		   <span class="kw">let</span> <span class="ident">status</span> <span class="op">=</span> <span class="ident">sp_io::offchain::http_response_wait</span>(<span class="kw-2">&amp;</span>[<span class="ident">id</span>], <span class="prelude-val">None</span>);
-		   <span class="macro">assert!</span>(<span class="ident">status</span> <span class="op">==</span> <span class="macro">vec!</span>[<span class="ident">HttpRequestStatus::Finished</span>(<span class="number">200</span>)], <span class="string">&quot;Expected Finished(200) status.&quot;</span>);
-		   <span class="kw">let</span> <span class="ident">headers</span> <span class="op">=</span> <span class="ident">sp_io::offchain::http_response_headers</span>(<span class="ident">id</span>);
-		   <span class="macro">assert_eq!</span>(<span class="ident">headers</span>, <span class="macro">vec!</span>[(<span class="string">b&quot;X-Auth&quot;</span>.<span class="ident">to_vec</span>(), <span class="string">b&quot;hello&quot;</span>.<span class="ident">to_vec</span>())]);
-		   <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buffer</span> <span class="op">=</span> <span class="macro">vec!</span>[<span class="number">0</span>; <span class="number">64</span>];
-		   <span class="kw">let</span> <span class="ident">read</span> <span class="op">=</span> <span class="ident">sp_io::offchain::http_response_read_body</span>(<span class="ident">id</span>, <span class="kw-2">&amp;mut</span> <span class="ident">buffer</span>, <span class="prelude-val">None</span>).<span class="ident">ok</span>()<span class="question-mark">?</span>;
-		   <span class="macro">assert_eq!</span>(<span class="ident">read</span>, <span class="number">3</span>);
-		   <span class="macro">assert_eq!</span>(<span class="kw-2">&amp;</span><span class="ident">buffer</span>[<span class="number">0</span>..<span class="ident">read</span> <span class="kw">as</span> <span class="ident">usize</span>], <span class="kw-2">&amp;</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]);
-		   <span class="kw">let</span> <span class="ident">read</span> <span class="op">=</span> <span class="ident">sp_io::offchain::http_response_read_body</span>(<span class="ident">id</span>, <span class="kw-2">&amp;mut</span> <span class="ident">buffer</span>, <span class="prelude-val">None</span>).<span class="ident">ok</span>()<span class="question-mark">?</span>;
-		   <span class="macro">assert_eq!</span>(<span class="ident">read</span>, <span class="number">0</span>);
+	<span class="kw">fn</span> <span class="ident">test_offchain_http</span>() -&gt; <span class="ident">bool</span> {
+		<span class="kw">use</span> <span class="ident">sp_core::offchain::HttpRequestStatus</span>;
+		<span class="kw">let</span> <span class="ident">run</span> <span class="op">=</span> <span class="op">|</span><span class="op">|</span> -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+			<span class="kw">let</span> <span class="ident">id</span> <span class="op">=</span> <span class="ident">sp_io::offchain::http_request_start</span>(
+				<span class="string">&quot;POST&quot;</span>,
+				<span class="string">&quot;http://localhost:12345&quot;</span>,
+				<span class="kw-2">&amp;</span>[],
+			).<span class="ident">ok</span>()<span class="question-mark">?</span>;
+			<span class="ident">sp_io::offchain::http_request_add_header</span>(<span class="ident">id</span>, <span class="string">&quot;X-Auth&quot;</span>, <span class="string">&quot;test&quot;</span>).<span class="ident">ok</span>()<span class="question-mark">?</span>;
+			<span class="ident">sp_io::offchain::http_request_write_body</span>(<span class="ident">id</span>, <span class="kw-2">&amp;</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>], <span class="prelude-val">None</span>).<span class="ident">ok</span>()<span class="question-mark">?</span>;
+			<span class="ident">sp_io::offchain::http_request_write_body</span>(<span class="ident">id</span>, <span class="kw-2">&amp;</span>[], <span class="prelude-val">None</span>).<span class="ident">ok</span>()<span class="question-mark">?</span>;
+			<span class="kw">let</span> <span class="ident">status</span> <span class="op">=</span> <span class="ident">sp_io::offchain::http_response_wait</span>(<span class="kw-2">&amp;</span>[<span class="ident">id</span>], <span class="prelude-val">None</span>);
+			<span class="macro">assert!</span>(<span class="ident">status</span> <span class="op">==</span> <span class="macro">vec!</span>[<span class="ident">HttpRequestStatus::Finished</span>(<span class="number">200</span>)], <span class="string">&quot;Expected Finished(200) status.&quot;</span>);
+			<span class="kw">let</span> <span class="ident">headers</span> <span class="op">=</span> <span class="ident">sp_io::offchain::http_response_headers</span>(<span class="ident">id</span>);
+			<span class="macro">assert_eq!</span>(<span class="ident">headers</span>, <span class="macro">vec!</span>[(<span class="string">b&quot;X-Auth&quot;</span>.<span class="ident">to_vec</span>(), <span class="string">b&quot;hello&quot;</span>.<span class="ident">to_vec</span>())]);
+			<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buffer</span> <span class="op">=</span> <span class="macro">vec!</span>[<span class="number">0</span>; <span class="number">64</span>];
+			<span class="kw">let</span> <span class="ident">read</span> <span class="op">=</span> <span class="ident">sp_io::offchain::http_response_read_body</span>(<span class="ident">id</span>, <span class="kw-2">&amp;mut</span> <span class="ident">buffer</span>, <span class="prelude-val">None</span>).<span class="ident">ok</span>()<span class="question-mark">?</span>;
+			<span class="macro">assert_eq!</span>(<span class="ident">read</span>, <span class="number">3</span>);
+			<span class="macro">assert_eq!</span>(<span class="kw-2">&amp;</span><span class="ident">buffer</span>[<span class="number">0</span>..<span class="ident">read</span> <span class="kw">as</span> <span class="ident">usize</span>], <span class="kw-2">&amp;</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]);
+			<span class="kw">let</span> <span class="ident">read</span> <span class="op">=</span> <span class="ident">sp_io::offchain::http_response_read_body</span>(<span class="ident">id</span>, <span class="kw-2">&amp;mut</span> <span class="ident">buffer</span>, <span class="prelude-val">None</span>).<span class="ident">ok</span>()<span class="question-mark">?</span>;
+			<span class="macro">assert_eq!</span>(<span class="ident">read</span>, <span class="number">0</span>);
 
-		   <span class="prelude-val">Some</span>(())
-	   };
+			<span class="prelude-val">Some</span>(())
+		};
 
-	   <span class="ident">run</span>().<span class="ident">is_some</span>()
-   }
+		<span class="ident">run</span>().<span class="ident">is_some</span>()
+	}
 
-   <span class="kw">fn</span> <span class="ident">test_enter_span</span>() -&gt; <span class="ident">u64</span> {
-	   <span class="ident">wasm_tracing::enter_span</span>(<span class="ident">Default::default</span>())
-   }
+	<span class="kw">fn</span> <span class="ident">test_enter_span</span>() -&gt; <span class="ident">u64</span> {
+		<span class="ident">wasm_tracing::enter_span</span>(<span class="ident">Default::default</span>())
+	}
 
-   <span class="kw">fn</span> <span class="ident">test_exit_span</span>(<span class="ident">span_id</span>: <span class="ident">u64</span>) {
-	   <span class="ident">wasm_tracing::exit</span>(<span class="ident">span_id</span>)
-   }
+	<span class="kw">fn</span> <span class="ident">test_exit_span</span>(<span class="ident">span_id</span>: <span class="ident">u64</span>) {
+		<span class="ident">wasm_tracing::exit</span>(<span class="ident">span_id</span>)
+	}
 
-   <span class="kw">fn</span> <span class="ident">test_nested_spans</span>() {
-	   <span class="ident">sp_io::init_tracing</span>();
-	   <span class="kw">let</span> <span class="ident">span_id</span> <span class="op">=</span> <span class="ident">wasm_tracing::enter_span</span>(<span class="ident">Default::default</span>());
-	   {
-		   <span class="ident">sp_io::init_tracing</span>();
-		   <span class="kw">let</span> <span class="ident">span_id</span> <span class="op">=</span> <span class="ident">wasm_tracing::enter_span</span>(<span class="ident">Default::default</span>());
-		   <span class="ident">wasm_tracing::exit</span>(<span class="ident">span_id</span>);
-	   }
-	   <span class="ident">wasm_tracing::exit</span>(<span class="ident">span_id</span>);
-   }
+	<span class="kw">fn</span> <span class="ident">test_nested_spans</span>() {
+		<span class="ident">sp_io::init_tracing</span>();
+		<span class="kw">let</span> <span class="ident">span_id</span> <span class="op">=</span> <span class="ident">wasm_tracing::enter_span</span>(<span class="ident">Default::default</span>());
+		{
+			<span class="ident">sp_io::init_tracing</span>();
+			<span class="kw">let</span> <span class="ident">span_id</span> <span class="op">=</span> <span class="ident">wasm_tracing::enter_span</span>(<span class="ident">Default::default</span>());
+			<span class="ident">wasm_tracing::exit</span>(<span class="ident">span_id</span>);
+		}
+		<span class="ident">wasm_tracing::exit</span>(<span class="ident">span_id</span>);
+	}
 
-   <span class="kw">fn</span> <span class="ident">returns_mutable_static</span>() -&gt; <span class="ident">u64</span> {
-	   <span class="kw">unsafe</span> {
-		   <span class="ident">MUTABLE_STATIC</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
-		   <span class="ident">MUTABLE_STATIC</span>
-	   }
-   }
+	<span class="kw">fn</span> <span class="ident">returns_mutable_static</span>() -&gt; <span class="ident">u64</span> {
+		<span class="kw">unsafe</span> {
+			<span class="ident">MUTABLE_STATIC</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
+			<span class="ident">MUTABLE_STATIC</span>
+		}
+	}
 
-   <span class="kw">fn</span> <span class="ident">returns_mutable_static_bss</span>() -&gt; <span class="ident">u64</span> {
-	   <span class="kw">unsafe</span> {
-		   <span class="ident">MUTABLE_STATIC_BSS</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
-		   <span class="ident">MUTABLE_STATIC_BSS</span>
-	   }
-   }
+	<span class="kw">fn</span> <span class="ident">returns_mutable_static_bss</span>() -&gt; <span class="ident">u64</span> {
+		<span class="kw">unsafe</span> {
+			<span class="ident">MUTABLE_STATIC_BSS</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
+			<span class="ident">MUTABLE_STATIC_BSS</span>
+		}
+	}
 
-   <span class="kw">fn</span> <span class="ident">allocates_huge_stack_array</span>(<span class="ident">trap</span>: <span class="ident">bool</span>) -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> {
-	   <span class="comment">// Allocate a stack frame that is approx. 75% of the stack (assuming it is 1MB).</span>
-	   <span class="comment">// This will just decrease (stacks in wasm32-u-u grow downwards) the stack</span>
-	   <span class="comment">// pointer. This won&#39;t trap on the current compilers.</span>
-	   <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">data</span> <span class="op">=</span> [<span class="number">0u8</span>; <span class="number">1024</span> <span class="op">*</span> <span class="number">768</span>];
+	<span class="kw">fn</span> <span class="ident">allocates_huge_stack_array</span>(<span class="ident">trap</span>: <span class="ident">bool</span>) -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> {
+		<span class="comment">// Allocate a stack frame that is approx. 75% of the stack (assuming it is 1MB).</span>
+		<span class="comment">// This will just decrease (stacks in wasm32-u-u grow downwards) the stack</span>
+		<span class="comment">// pointer. This won&#39;t trap on the current compilers.</span>
+		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">data</span> <span class="op">=</span> [<span class="number">0u8</span>; <span class="number">1024</span> <span class="op">*</span> <span class="number">768</span>];
 
-	   <span class="comment">// Then make sure we actually write something to it.</span>
-	   <span class="comment">//</span>
-	   <span class="comment">// If:</span>
-	   <span class="comment">// 1. the stack area is placed at the beginning of the linear memory space, and</span>
-	   <span class="comment">// 2. the stack pointer points to out-of-bounds area, and</span>
-	   <span class="comment">// 3. a write is performed around the current stack pointer.</span>
-	   <span class="comment">//</span>
-	   <span class="comment">// then a trap should happen.</span>
-	   <span class="comment">//</span>
-	   <span class="kw">for</span> (<span class="ident">i</span>, <span class="ident">v</span>) <span class="kw">in</span> <span class="ident">data</span>.<span class="ident">iter_mut</span>().<span class="ident">enumerate</span>() {
-		   <span class="kw-2">*</span><span class="ident">v</span> <span class="op">=</span> <span class="ident">i</span> <span class="kw">as</span> <span class="ident">u8</span>; <span class="comment">// deliberate truncation</span>
-	   }
+		<span class="comment">// Then make sure we actually write something to it.</span>
+		<span class="comment">//</span>
+		<span class="comment">// If:</span>
+		<span class="comment">// 1. the stack area is placed at the beginning of the linear memory space, and</span>
+		<span class="comment">// 2. the stack pointer points to out-of-bounds area, and</span>
+		<span class="comment">// 3. a write is performed around the current stack pointer.</span>
+		<span class="comment">//</span>
+		<span class="comment">// then a trap should happen.</span>
+		<span class="comment">//</span>
+		<span class="kw">for</span> (<span class="ident">i</span>, <span class="ident">v</span>) <span class="kw">in</span> <span class="ident">data</span>.<span class="ident">iter_mut</span>().<span class="ident">enumerate</span>() {
+			<span class="kw-2">*</span><span class="ident">v</span> <span class="op">=</span> <span class="ident">i</span> <span class="kw">as</span> <span class="ident">u8</span>; <span class="comment">// deliberate truncation</span>
+		}
 
-	   <span class="kw">if</span> <span class="ident">trap</span> {
-		   <span class="comment">// There is a small chance of this to be pulled up in theory. In practice</span>
-		   <span class="comment">// the probability of that is rather low.</span>
-		   <span class="macro">panic!</span>()
-	   }
+		<span class="kw">if</span> <span class="ident">trap</span> {
+			<span class="comment">// There is a small chance of this to be pulled up in theory. In practice</span>
+			<span class="comment">// the probability of that is rather low.</span>
+			<span class="macro">panic!</span>()
+		}
 
-	   <span class="ident">data</span>.<span class="ident">to_vec</span>()
-   }
+		<span class="ident">data</span>.<span class="ident">to_vec</span>()
+	}
 
-   <span class="comment">// Check that the heap at `heap_base + offset` don&#39;t contains the test message.</span>
-   <span class="comment">// After the check succeeds the test message is written into the heap.</span>
-   <span class="comment">//</span>
-   <span class="comment">// It is expected that the given pointer is not allocated.</span>
-   <span class="kw">fn</span> <span class="ident">check_and_set_in_heap</span>(<span class="ident">heap_base</span>: <span class="ident">u32</span>, <span class="ident">offset</span>: <span class="ident">u32</span>) {
-	   <span class="kw">let</span> <span class="ident">test_message</span> <span class="op">=</span> <span class="string">b&quot;Hello invalid heap memory&quot;</span>;
-	   <span class="kw">let</span> <span class="ident">ptr</span> <span class="op">=</span> (<span class="ident">heap_base</span> <span class="op">+</span> <span class="ident">offset</span>) <span class="kw">as</span> <span class="kw-2">*mut</span> <span class="ident">u8</span>;
+	<span class="comment">// Check that the heap at `heap_base + offset` don&#39;t contains the test message.</span>
+	<span class="comment">// After the check succeeds the test message is written into the heap.</span>
+	<span class="comment">//</span>
+	<span class="comment">// It is expected that the given pointer is not allocated.</span>
+	<span class="kw">fn</span> <span class="ident">check_and_set_in_heap</span>(<span class="ident">heap_base</span>: <span class="ident">u32</span>, <span class="ident">offset</span>: <span class="ident">u32</span>) {
+		<span class="kw">let</span> <span class="ident">test_message</span> <span class="op">=</span> <span class="string">b&quot;Hello invalid heap memory&quot;</span>;
+		<span class="kw">let</span> <span class="ident">ptr</span> <span class="op">=</span> (<span class="ident">heap_base</span> <span class="op">+</span> <span class="ident">offset</span>) <span class="kw">as</span> <span class="kw-2">*mut</span> <span class="ident">u8</span>;
 
-	   <span class="kw">let</span> <span class="ident">message_slice</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">sp_std::slice::from_raw_parts_mut</span>(<span class="ident">ptr</span>, <span class="ident">test_message</span>.<span class="ident">len</span>()) };
+		<span class="kw">let</span> <span class="ident">message_slice</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">sp_std::slice::from_raw_parts_mut</span>(<span class="ident">ptr</span>, <span class="ident">test_message</span>.<span class="ident">len</span>()) };
 
-	   <span class="macro">assert_ne!</span>(<span class="ident">test_message</span>, <span class="ident">message_slice</span>);
-	   <span class="ident">message_slice</span>.<span class="ident">copy_from_slice</span>(<span class="ident">test_message</span>);
-   }
+		<span class="macro">assert_ne!</span>(<span class="ident">test_message</span>, <span class="ident">message_slice</span>);
+		<span class="ident">message_slice</span>.<span class="ident">copy_from_slice</span>(<span class="ident">test_message</span>);
+	}
 
-   <span class="kw">fn</span> <span class="ident">test_spawn</span>() {
-	   <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="macro">vec!</span>[<span class="number">1u8</span>, <span class="number">2u8</span>];
-	   <span class="kw">let</span> <span class="ident">data_new</span> <span class="op">=</span> <span class="ident">sp_tasks::spawn</span>(<span class="ident">tasks::incrementer</span>, <span class="ident">data</span>).<span class="ident">join</span>();
+	<span class="kw">fn</span> <span class="ident">test_spawn</span>() {
+		<span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="macro">vec!</span>[<span class="number">1u8</span>, <span class="number">2u8</span>];
+		<span class="kw">let</span> <span class="ident">data_new</span> <span class="op">=</span> <span class="ident">sp_tasks::spawn</span>(<span class="ident">tasks::incrementer</span>, <span class="ident">data</span>).<span class="ident">join</span>();
 
-	   <span class="macro">assert_eq!</span>(<span class="ident">data_new</span>, <span class="macro">vec!</span>[<span class="number">2u8</span>, <span class="number">3u8</span>]);
-   }
+		<span class="macro">assert_eq!</span>(<span class="ident">data_new</span>, <span class="macro">vec!</span>[<span class="number">2u8</span>, <span class="number">3u8</span>]);
+	}
 
-   <span class="kw">fn</span> <span class="ident">test_nested_spawn</span>() {
-	   <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="macro">vec!</span>[<span class="number">7u8</span>, <span class="number">13u8</span>];
-	   <span class="kw">let</span> <span class="ident">data_new</span> <span class="op">=</span> <span class="ident">sp_tasks::spawn</span>(<span class="ident">tasks::parallel_incrementer</span>, <span class="ident">data</span>).<span class="ident">join</span>();
+	<span class="kw">fn</span> <span class="ident">test_nested_spawn</span>() {
+		<span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="macro">vec!</span>[<span class="number">7u8</span>, <span class="number">13u8</span>];
+		<span class="kw">let</span> <span class="ident">data_new</span> <span class="op">=</span> <span class="ident">sp_tasks::spawn</span>(<span class="ident">tasks::parallel_incrementer</span>, <span class="ident">data</span>).<span class="ident">join</span>();
 
-	   <span class="macro">assert_eq!</span>(<span class="ident">data_new</span>, <span class="macro">vec!</span>[<span class="number">10u8</span>, <span class="number">16u8</span>]);
-   }
+		<span class="macro">assert_eq!</span>(<span class="ident">data_new</span>, <span class="macro">vec!</span>[<span class="number">10u8</span>, <span class="number">16u8</span>]);
+	}
 
-   <span class="kw">fn</span> <span class="ident">test_panic_in_spawned</span>() {
-	   <span class="ident">sp_tasks::spawn</span>(<span class="ident">tasks::panicker</span>, <span class="macro">vec!</span>[]).<span class="ident">join</span>();
-   }
+	<span class="kw">fn</span> <span class="ident">test_panic_in_spawned</span>() {
+		<span class="ident">sp_tasks::spawn</span>(<span class="ident">tasks::panicker</span>, <span class="macro">vec!</span>[]).<span class="ident">join</span>();
+	}
 
 	<span class="kw">fn</span> <span class="ident">test_return_i8</span>() -&gt; <span class="ident">i8</span> {
 		<span class="op">-</span><span class="number">66</span>
@@ -886,6 +891,11 @@
 
 	<span class="kw">fn</span> <span class="ident">test_unreachable_intrinsic</span>() {
 		<span class="ident">core::arch::wasm32::unreachable</span>()
+	}
+
+	<span class="kw">fn</span> <span class="ident">test_return_value</span>() -&gt; <span class="ident">u64</span> {
+		<span class="comment">// Mainly a test that the macro is working when we have a return statement here.</span>
+		<span class="kw">return</span> <span class="number">1234</span>;
 	}
 }
 
