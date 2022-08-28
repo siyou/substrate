@@ -4037,7 +4037,7 @@
 
 	<span class="kw">impl</span> <span class="ident">pallet_nomination_pools_runtime_api::NominationPoolsApi</span><span class="op">&lt;</span><span class="ident">Block</span>, <span class="ident">AccountId</span>, <span class="ident">Balance</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Runtime</span> {
 		<span class="kw">fn</span> <span class="ident">pending_rewards</span>(<span class="ident">member_account</span>: <span class="ident">AccountId</span>) -&gt; <span class="ident">Balance</span> {
-			<span class="ident">NominationPools::pending_rewards</span>(<span class="ident">member_account</span>)
+			<span class="ident">NominationPools::pending_rewards</span>(<span class="ident">member_account</span>).<span class="ident">unwrap_or_default</span>()
 		}
 	}
 
