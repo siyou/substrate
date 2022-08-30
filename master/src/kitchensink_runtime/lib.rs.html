@@ -2193,6 +2193,18 @@
 <span id="2187">2187</span>
 <span id="2188">2188</span>
 <span id="2189">2189</span>
+<span id="2190">2190</span>
+<span id="2191">2191</span>
+<span id="2192">2192</span>
+<span id="2193">2193</span>
+<span id="2194">2194</span>
+<span id="2195">2195</span>
+<span id="2196">2196</span>
+<span id="2197">2197</span>
+<span id="2198">2198</span>
+<span id="2199">2199</span>
+<span id="2200">2200</span>
+<span id="2201">2201</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2018-2022 Parity Technologies (UK) Ltd.</span>
@@ -3713,8 +3725,10 @@
 	<span class="kw">type</span> <span class="ident">WeightInfo</span> <span class="op">=</span> ();
 }
 
+<span class="kw">const</span> <span class="ident">ALLIANCE_MOTION_DURATION_IN_BLOCKS</span>: <span class="ident">BlockNumber</span> <span class="op">=</span> <span class="number">5</span> <span class="op">*</span> <span class="ident">DAYS</span>;
+
 <span class="macro">parameter_types!</span> {
-	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">AllianceMotionDuration</span>: <span class="ident">BlockNumber</span> <span class="op">=</span> <span class="number">5</span> <span class="op">*</span> <span class="ident">DAYS</span>;
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">AllianceMotionDuration</span>: <span class="ident">BlockNumber</span> <span class="op">=</span> <span class="ident">ALLIANCE_MOTION_DURATION_IN_BLOCKS</span>;
 	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">AllianceMaxProposals</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">100</span>;
 	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">AllianceMaxMembers</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">100</span>;
 }
@@ -3736,6 +3750,7 @@
 	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">MaxFellows</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="ident">AllianceMaxMembers::get</span>() <span class="op">-</span> <span class="ident">MaxFounders::get</span>();
 	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">MaxAllies</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">100</span>;
 	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">AllyDeposit</span>: <span class="ident">Balance</span> <span class="op">=</span> <span class="number">10</span> <span class="op">*</span> <span class="ident">DOLLARS</span>;
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">RetirementPeriod</span>: <span class="ident">BlockNumber</span> <span class="op">=</span> <span class="ident">ALLIANCE_MOTION_DURATION_IN_BLOCKS</span> <span class="op">+</span> (<span class="number">1</span> <span class="op">*</span> <span class="ident">DAYS</span>);
 }
 
 <span class="kw">impl</span> <span class="ident">pallet_alliance::Config</span> <span class="kw">for</span> <span class="ident">Runtime</span> {
@@ -3772,6 +3787,7 @@
 	<span class="kw">type</span> <span class="ident">MaxMembersCount</span> <span class="op">=</span> <span class="ident">AllianceMaxMembers</span>;
 	<span class="kw">type</span> <span class="ident">AllyDeposit</span> <span class="op">=</span> <span class="ident">AllyDeposit</span>;
 	<span class="kw">type</span> <span class="ident">WeightInfo</span> <span class="op">=</span> <span class="ident">pallet_alliance::weights::SubstrateWeight</span><span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span>;
+	<span class="kw">type</span> <span class="ident">RetirementPeriod</span> <span class="op">=</span> <span class="ident">RetirementPeriod</span>;
 }
 
 <span class="macro">construct_runtime!</span>(
@@ -3877,8 +3893,15 @@
 	<span class="ident">frame_system::ChainContext</span><span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span>,
 	<span class="ident">Runtime</span>,
 	<span class="ident">AllPalletsWithSystem</span>,
-	<span class="ident">pallet_nomination_pools::migration::v2::MigrateToV2</span><span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span>,
+	<span class="ident">Migrations</span>,
 <span class="op">&gt;</span>;
+
+<span class="comment">// All migrations executed on runtime upgrade as a nested tuple of types implementing</span>
+<span class="comment">// `OnRuntimeUpgrade`.</span>
+<span class="kw">type</span> <span class="ident">Migrations</span> <span class="op">=</span> (
+	<span class="ident">pallet_nomination_pools::migration::v2::MigrateToV2</span><span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span>,
+	<span class="ident">pallet_alliance::migration::Migration</span><span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span>,
+);
 
 <span class="doccomment">/// MMR helper types.</span>
 <span class="kw">mod</span> <span class="ident">mmr</span> {
@@ -3898,6 +3921,7 @@
 <span class="kw">mod</span> <span class="ident">benches</span> {
 	<span class="macro">define_benchmarks!</span>(
 		[<span class="ident">frame_benchmarking</span>, <span class="ident">BaselineBench</span>::<span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span>]
+		[<span class="ident">pallet_alliance</span>, <span class="ident">Alliance</span>]
 		[<span class="ident">pallet_assets</span>, <span class="ident">Assets</span>]
 		[<span class="ident">pallet_babe</span>, <span class="ident">Babe</span>]
 		[<span class="ident">pallet_bags_list</span>, <span class="ident">BagsList</span>]

@@ -690,6 +690,12 @@
 <span id="684">684</span>
 <span id="685">685</span>
 <span id="686">686</span>
+<span id="687">687</span>
+<span id="688">688</span>
+<span id="689">689</span>
+<span id="690">690</span>
+<span id="691">691</span>
+<span id="692">692</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2022 Parity Technologies (UK) Ltd.</span>
@@ -1285,26 +1291,35 @@
 			.<span class="ident">map</span>(<span class="op">|</span><span class="ident">d</span><span class="op">|</span> <span class="ident">d</span>.<span class="number">0</span>)
 			.<span class="ident">all</span>(<span class="op">|</span><span class="ident">l</span><span class="op">|</span> <span class="ident">TEST_DATA</span>.<span class="ident">iter</span>().<span class="ident">any</span>(<span class="op">|</span><span class="ident">d</span><span class="op">|</span> <span class="ident">l</span>.<span class="ident">storage_key</span>().<span class="ident">unwrap</span>() <span class="op">==</span> <span class="ident">d</span>.<span class="number">0</span>)));
 
-		{
-			<span class="kw">let</span> <span class="ident">local_cache</span> <span class="op">=</span> <span class="ident">shared_cache</span>.<span class="ident">local_cache</span>();
+		<span class="comment">// Run this in a loop. The first time we check that with the filled value cache,</span>
+		<span class="comment">// the expected values are at the top of the LRU.</span>
+		<span class="comment">// The second run is using an empty value cache to ensure that we access the nodes.</span>
+		<span class="kw">for</span> <span class="kw">_</span> <span class="kw">in</span> <span class="number">0</span>..<span class="number">2</span> {
+			{
+				<span class="kw">let</span> <span class="ident">local_cache</span> <span class="op">=</span> <span class="ident">shared_cache</span>.<span class="ident">local_cache</span>();
 
-			<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">cache</span> <span class="op">=</span> <span class="ident">local_cache</span>.<span class="ident">as_trie_db_cache</span>(<span class="ident">root</span>);
-			<span class="kw">let</span> <span class="ident">trie</span> <span class="op">=</span> <span class="ident">TrieDBBuilder</span>::<span class="op">&lt;</span><span class="ident">Layout</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="kw-2">&amp;</span><span class="ident">db</span>, <span class="kw-2">&amp;</span><span class="ident">root</span>).<span class="ident">with_cache</span>(<span class="kw-2">&amp;mut</span> <span class="ident">cache</span>).<span class="ident">build</span>();
+				<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">cache</span> <span class="op">=</span> <span class="ident">local_cache</span>.<span class="ident">as_trie_db_cache</span>(<span class="ident">root</span>);
+				<span class="kw">let</span> <span class="ident">trie</span> <span class="op">=</span> <span class="ident">TrieDBBuilder</span>::<span class="op">&lt;</span><span class="ident">Layout</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="kw-2">&amp;</span><span class="ident">db</span>, <span class="kw-2">&amp;</span><span class="ident">root</span>).<span class="ident">with_cache</span>(<span class="kw-2">&amp;mut</span> <span class="ident">cache</span>).<span class="ident">build</span>();
 
-			<span class="kw">for</span> (<span class="ident">k</span>, <span class="kw">_</span>) <span class="kw">in</span> <span class="ident">TEST_DATA</span>.<span class="ident">iter</span>().<span class="ident">take</span>(<span class="number">2</span>) {
-				<span class="ident">trie</span>.<span class="ident">get</span>(<span class="ident">k</span>).<span class="ident">unwrap</span>().<span class="ident">unwrap</span>();
+				<span class="kw">for</span> (<span class="ident">k</span>, <span class="kw">_</span>) <span class="kw">in</span> <span class="ident">TEST_DATA</span>.<span class="ident">iter</span>().<span class="ident">take</span>(<span class="number">2</span>) {
+					<span class="ident">trie</span>.<span class="ident">get</span>(<span class="ident">k</span>).<span class="ident">unwrap</span>().<span class="ident">unwrap</span>();
+				}
 			}
-		}
 
-		<span class="comment">// Ensure that the accessed items are most recently used items of the shared value cache.</span>
-		<span class="macro">assert!</span>(<span class="ident">shared_cache</span>
-			.<span class="ident">read_lock_inner</span>()
-			.<span class="ident">value_cache</span>()
-			.<span class="ident">lru</span>
-			.<span class="ident">iter</span>()
-			.<span class="ident">take</span>(<span class="number">2</span>)
-			.<span class="ident">map</span>(<span class="op">|</span><span class="ident">d</span><span class="op">|</span> <span class="ident">d</span>.<span class="number">0</span>)
-			.<span class="ident">all</span>(<span class="op">|</span><span class="ident">l</span><span class="op">|</span> { <span class="ident">TEST_DATA</span>.<span class="ident">iter</span>().<span class="ident">take</span>(<span class="number">2</span>).<span class="ident">any</span>(<span class="op">|</span><span class="ident">d</span><span class="op">|</span> <span class="ident">l</span>.<span class="ident">storage_key</span>().<span class="ident">unwrap</span>() <span class="op">==</span> <span class="ident">d</span>.<span class="number">0</span>) }));
+			<span class="comment">// Ensure that the accessed items are most recently used items of the shared value</span>
+			<span class="comment">// cache.</span>
+			<span class="macro">assert!</span>(<span class="ident">shared_cache</span>
+				.<span class="ident">read_lock_inner</span>()
+				.<span class="ident">value_cache</span>()
+				.<span class="ident">lru</span>
+				.<span class="ident">iter</span>()
+				.<span class="ident">take</span>(<span class="number">2</span>)
+				.<span class="ident">map</span>(<span class="op">|</span><span class="ident">d</span><span class="op">|</span> <span class="ident">d</span>.<span class="number">0</span>)
+				.<span class="ident">all</span>(<span class="op">|</span><span class="ident">l</span><span class="op">|</span> { <span class="ident">TEST_DATA</span>.<span class="ident">iter</span>().<span class="ident">take</span>(<span class="number">2</span>).<span class="ident">any</span>(<span class="op">|</span><span class="ident">d</span><span class="op">|</span> <span class="ident">l</span>.<span class="ident">storage_key</span>().<span class="ident">unwrap</span>() <span class="op">==</span> <span class="ident">d</span>.<span class="number">0</span>) }));
+
+			<span class="comment">// Delete the value cache, so that we access the nodes.</span>
+			<span class="ident">shared_cache</span>.<span class="ident">reset_value_cache</span>();
+		}
 
 		<span class="kw">let</span> <span class="ident">most_recently_used_nodes</span> <span class="op">=</span> <span class="ident">shared_cache</span>
 			.<span class="ident">read_lock_inner</span>()
@@ -1313,9 +1328,6 @@
 			.<span class="ident">iter</span>()
 			.<span class="ident">map</span>(<span class="op">|</span><span class="ident">d</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">d</span>.<span class="number">0</span>)
 			.<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>();
-
-		<span class="comment">// Delete the value cache, so that we access the nodes.</span>
-		<span class="ident">shared_cache</span>.<span class="ident">reset_value_cache</span>();
 
 		{
 			<span class="kw">let</span> <span class="ident">local_cache</span> <span class="op">=</span> <span class="ident">shared_cache</span>.<span class="ident">local_cache</span>();

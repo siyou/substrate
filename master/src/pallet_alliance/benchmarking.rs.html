@@ -795,6 +795,27 @@
 <span id="789">789</span>
 <span id="790">790</span>
 <span id="791">791</span>
+<span id="792">792</span>
+<span id="793">793</span>
+<span id="794">794</span>
+<span id="795">795</span>
+<span id="796">796</span>
+<span id="797">797</span>
+<span id="798">798</span>
+<span id="799">799</span>
+<span id="800">800</span>
+<span id="801">801</span>
+<span id="802">802</span>
+<span id="803">803</span>
+<span id="804">804</span>
+<span id="805">805</span>
+<span id="806">806</span>
+<span id="807">807</span>
+<span id="808">808</span>
+<span id="809">809</span>
+<span id="810">810</span>
+<span id="811">811</span>
+<span id="812">812</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2022 Parity Technologies (UK) Ltd.</span>
@@ -1488,12 +1509,37 @@
 		<span class="ident">assert_last_event</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span>(<span class="ident">Event::AllyElevated</span> { <span class="ident">ally</span>: <span class="ident">ally1</span> }.<span class="ident">into</span>());
 	}
 
+	<span class="ident">give_retirement_notice</span> {
+		<span class="ident">set_members</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span>();
+		<span class="kw">let</span> <span class="ident">fellow2</span> <span class="op">=</span> <span class="ident">fellow</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span>(<span class="number">2</span>);
+
+		<span class="macro">assert!</span>(<span class="ident">Alliance</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::is_fellow</span>(<span class="kw-2">&amp;</span><span class="ident">fellow2</span>));
+	}: <span class="kw">_</span>(<span class="ident">SystemOrigin::Signed</span>(<span class="ident">fellow2</span>.<span class="ident">clone</span>()))
+	<span class="ident">verify</span> {
+		<span class="macro">assert!</span>(<span class="ident">Alliance</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::is_member_of</span>(<span class="kw-2">&amp;</span><span class="ident">fellow2</span>, <span class="ident">MemberRole::Retiring</span>));
+
+		<span class="macro">assert_eq!</span>(
+			<span class="ident">RetiringMembers</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::get</span>(<span class="kw-2">&amp;</span><span class="ident">fellow2</span>),
+			<span class="prelude-val">Some</span>(<span class="ident">System</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::block_number</span>() <span class="op">+</span> <span class="ident">T::RetirementPeriod::get</span>())
+		);
+		<span class="ident">assert_last_event</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span>(
+			<span class="ident">Event::MemberRetirementPeriodStarted</span> {<span class="ident">member</span>: <span class="ident">fellow2</span>}.<span class="ident">into</span>()
+		);
+	}
+
 	<span class="ident">retire</span> {
 		<span class="ident">set_members</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span>();
 
 		<span class="kw">let</span> <span class="ident">fellow2</span> <span class="op">=</span> <span class="ident">fellow</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span>(<span class="number">2</span>);
 		<span class="macro">assert!</span>(<span class="ident">Alliance</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::is_fellow</span>(<span class="kw-2">&amp;</span><span class="ident">fellow2</span>));
-		<span class="macro">assert!</span>(<span class="op">!</span><span class="ident">Alliance</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::is_up_for_kicking</span>(<span class="kw-2">&amp;</span><span class="ident">fellow2</span>));
+
+		<span class="macro">assert_eq!</span>(
+			<span class="ident">Alliance</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::give_retirement_notice</span>(
+				<span class="ident">SystemOrigin::Signed</span>(<span class="ident">fellow2</span>.<span class="ident">clone</span>()).<span class="ident">into</span>()
+			),
+			<span class="prelude-val">Ok</span>(())
+		);
+		<span class="ident">System</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::set_block_number</span>(<span class="ident">System</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::block_number</span>() <span class="op">+</span> <span class="ident">T::RetirementPeriod::get</span>());
 
 		<span class="macro">assert_eq!</span>(<span class="ident">DepositOf</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::get</span>(<span class="kw-2">&amp;</span><span class="ident">fellow2</span>), <span class="prelude-val">Some</span>(<span class="ident">T::AllyDeposit::get</span>()));
 	}: <span class="kw">_</span>(<span class="ident">SystemOrigin::Signed</span>(<span class="ident">fellow2</span>.<span class="ident">clone</span>()))
@@ -1510,11 +1556,7 @@
 		<span class="ident">set_members</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span>();
 
 		<span class="kw">let</span> <span class="ident">fellow2</span> <span class="op">=</span> <span class="ident">fellow</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span>(<span class="number">2</span>);
-		<span class="ident">UpForKicking</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::insert</span>(<span class="kw-2">&amp;</span><span class="ident">fellow2</span>, <span class="bool-val">true</span>);
-
 		<span class="macro">assert!</span>(<span class="ident">Alliance</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::is_member_of</span>(<span class="kw-2">&amp;</span><span class="ident">fellow2</span>, <span class="ident">MemberRole::Fellow</span>));
-		<span class="macro">assert!</span>(<span class="ident">Alliance</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::is_up_for_kicking</span>(<span class="kw-2">&amp;</span><span class="ident">fellow2</span>));
-
 		<span class="macro">assert_eq!</span>(<span class="ident">DepositOf</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::get</span>(<span class="kw-2">&amp;</span><span class="ident">fellow2</span>), <span class="prelude-val">Some</span>(<span class="ident">T::AllyDeposit::get</span>()));
 
 		<span class="kw">let</span> <span class="ident">fellow2_lookup</span> <span class="op">=</span> <span class="ident">T::Lookup::unlookup</span>(<span class="ident">fellow2</span>.<span class="ident">clone</span>());
