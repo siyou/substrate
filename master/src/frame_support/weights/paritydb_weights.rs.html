@@ -94,8 +94,8 @@
 		<span class="doccomment">/// ParityDB can be enabled with a feature flag, but is still experimental. These weights</span>
 		<span class="doccomment">/// are available for brave runtime engineers who may want to try this out as default.</span>
 		<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">ParityDbWeight</span>: <span class="ident">RuntimeDbWeight</span> <span class="op">=</span> <span class="ident">RuntimeDbWeight</span> {
-			<span class="ident">read</span>: <span class="number">8_000</span> <span class="op">*</span> <span class="ident">constants::WEIGHT_PER_NANOS</span>,
-			<span class="ident">write</span>: <span class="number">50_000</span> <span class="op">*</span> <span class="ident">constants::WEIGHT_PER_NANOS</span>,
+			<span class="ident">read</span>: <span class="number">8_000</span> <span class="op">*</span> <span class="ident">constants::WEIGHT_PER_NANOS</span>.<span class="ident">ref_time</span>(),
+			<span class="ident">write</span>: <span class="number">50_000</span> <span class="op">*</span> <span class="ident">constants::WEIGHT_PER_NANOS</span>.<span class="ident">ref_time</span>(),
 		};
 	}
 

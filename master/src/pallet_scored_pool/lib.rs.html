@@ -776,7 +776,7 @@
 				<span class="kw">let</span> <span class="ident">pool</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">Pool</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::get</span>();
 				<span class="op">&lt;</span><span class="ident">Pallet</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::refresh_members</span>(<span class="ident">pool</span>, <span class="ident">ChangeReceiver::MembershipChanged</span>);
 			}
-			<span class="number">0</span>
+			<span class="ident">Weight::zero</span>()
 		}
 	}
 

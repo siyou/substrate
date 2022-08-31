@@ -1103,7 +1103,7 @@
 		<span class="kw">let</span> <span class="ident">multiplier</span> <span class="op">=</span> <span class="self">self</span>.<span class="number">0</span>;
 		<span class="comment">// *target.0 is the amount passed into the extrinsic</span>
 		<span class="kw">let</span> <span class="ident">cents</span> <span class="op">=</span> <span class="kw-2">*</span><span class="ident">target</span>.<span class="number">0</span> <span class="op">/</span> <span class="op">&lt;</span><span class="ident">BalanceOf</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::from</span>(<span class="ident">MILLICENTS</span>);
-		(<span class="ident">cents</span> <span class="op">*</span> <span class="ident">multiplier</span>).<span class="ident">saturated_into</span>::<span class="op">&lt;</span><span class="ident">Weight</span><span class="op">&gt;</span>()
+		<span class="ident">Weight::from_ref_time</span>((<span class="ident">cents</span> <span class="op">*</span> <span class="ident">multiplier</span>).<span class="ident">saturated_into</span>::<span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>())
 	}
 }
 
@@ -1166,7 +1166,7 @@
 		<span class="kw">fn</span> <span class="ident">on_initialize</span>(<span class="ident">_n</span>: <span class="ident">T::BlockNumber</span>) -&gt; <span class="ident">Weight</span> {
 			<span class="comment">// Anything that needs to be done at the start of the block.</span>
 			<span class="comment">// We don&#39;t do anything here.</span>
-			<span class="number">0</span>
+			<span class="ident">Weight::zero</span>()
 		}
 
 		<span class="comment">// `on_finalize` is executed at the end of block after all extrinsic are dispatched.</span>

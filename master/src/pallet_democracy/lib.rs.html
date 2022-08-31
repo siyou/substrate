@@ -3721,7 +3721,7 @@
 	<span class="doccomment">/// # &lt;/weight&gt;</span>
 	<span class="kw">fn</span> <span class="ident">begin_block</span>(<span class="ident">now</span>: <span class="ident">T::BlockNumber</span>) -&gt; <span class="ident">Weight</span> {
 		<span class="kw">let</span> <span class="ident">max_block_weight</span> <span class="op">=</span> <span class="ident">T::BlockWeights::get</span>().<span class="ident">max_block</span>;
-		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">weight</span> <span class="op">=</span> <span class="number">0</span>;
+		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">weight</span> <span class="op">=</span> <span class="ident">Weight::new</span>();
 
 		<span class="kw">let</span> <span class="ident">next</span> <span class="op">=</span> <span class="ident"><span class="self">Self</span>::lowest_unbaked</span>();
 		<span class="kw">let</span> <span class="ident">last</span> <span class="op">=</span> <span class="ident"><span class="self">Self</span>::referendum_count</span>();

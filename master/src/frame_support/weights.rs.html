@@ -957,49 +957,6 @@
 <span id="951">951</span>
 <span id="952">952</span>
 <span id="953">953</span>
-<span id="954">954</span>
-<span id="955">955</span>
-<span id="956">956</span>
-<span id="957">957</span>
-<span id="958">958</span>
-<span id="959">959</span>
-<span id="960">960</span>
-<span id="961">961</span>
-<span id="962">962</span>
-<span id="963">963</span>
-<span id="964">964</span>
-<span id="965">965</span>
-<span id="966">966</span>
-<span id="967">967</span>
-<span id="968">968</span>
-<span id="969">969</span>
-<span id="970">970</span>
-<span id="971">971</span>
-<span id="972">972</span>
-<span id="973">973</span>
-<span id="974">974</span>
-<span id="975">975</span>
-<span id="976">976</span>
-<span id="977">977</span>
-<span id="978">978</span>
-<span id="979">979</span>
-<span id="980">980</span>
-<span id="981">981</span>
-<span id="982">982</span>
-<span id="983">983</span>
-<span id="984">984</span>
-<span id="985">985</span>
-<span id="986">986</span>
-<span id="987">987</span>
-<span id="988">988</span>
-<span id="989">989</span>
-<span id="990">990</span>
-<span id="991">991</span>
-<span id="992">992</span>
-<span id="993">993</span>
-<span id="994">994</span>
-<span id="995">995</span>
-<span id="996">996</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2019-2022 Parity Technologies (UK) Ltd.</span>
@@ -1125,6 +1082,7 @@
 <span class="kw">mod</span> <span class="ident">extrinsic_weights</span>;
 <span class="kw">mod</span> <span class="ident">paritydb_weights</span>;
 <span class="kw">mod</span> <span class="ident">rocksdb_weights</span>;
+<span class="kw">mod</span> <span class="ident">weight_v2</span>;
 
 <span class="kw">use</span> <span class="kw">crate</span>::{
 	<span class="ident">dispatch</span>::{<span class="ident">DispatchError</span>, <span class="ident">DispatchErrorWithPostInfo</span>, <span class="ident">DispatchResultWithPostInfo</span>},
@@ -1148,18 +1106,17 @@
 <span class="doccomment">/// Re-export priority as type</span>
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">sp_runtime::transaction_validity::TransactionPriority</span>;
 
-<span class="doccomment">/// Numeric range of a transaction weight.</span>
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">Weight</span> <span class="op">=</span> <span class="ident">u64</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">weight_v2</span>::<span class="kw-2">*</span>;
 
 <span class="doccomment">/// These constants are specific to FRAME, and the current implementation of its various components.</span>
 <span class="doccomment">/// For example: FRAME System, FRAME Executive, our FRAME support libraries, etc...</span>
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">constants</span> {
 	<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::Weight</span>;
 
-	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">WEIGHT_PER_SECOND</span>: <span class="ident">Weight</span> <span class="op">=</span> <span class="number">1_000_000_000_000</span>;
-	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">WEIGHT_PER_MILLIS</span>: <span class="ident">Weight</span> <span class="op">=</span> <span class="ident">WEIGHT_PER_SECOND</span> <span class="op">/</span> <span class="number">1000</span>; <span class="comment">// 1_000_000_000</span>
-	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">WEIGHT_PER_MICROS</span>: <span class="ident">Weight</span> <span class="op">=</span> <span class="ident">WEIGHT_PER_MILLIS</span> <span class="op">/</span> <span class="number">1000</span>; <span class="comment">// 1_000_000</span>
-	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">WEIGHT_PER_NANOS</span>: <span class="ident">Weight</span> <span class="op">=</span> <span class="ident">WEIGHT_PER_MICROS</span> <span class="op">/</span> <span class="number">1000</span>; <span class="comment">// 1_000</span>
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">WEIGHT_PER_SECOND</span>: <span class="ident">Weight</span> <span class="op">=</span> <span class="ident">Weight::from_ref_time</span>(<span class="number">1_000_000_000_000</span>);
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">WEIGHT_PER_MILLIS</span>: <span class="ident">Weight</span> <span class="op">=</span> <span class="ident">Weight::from_ref_time</span>(<span class="number">1_000_000_000</span>);
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">WEIGHT_PER_MICROS</span>: <span class="ident">Weight</span> <span class="op">=</span> <span class="ident">Weight::from_ref_time</span>(<span class="number">1_000_000</span>);
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">WEIGHT_PER_NANOS</span>: <span class="ident">Weight</span> <span class="op">=</span> <span class="ident">Weight::from_ref_time</span>(<span class="number">1_000</span>);
 
 	<span class="comment">// Expose the Block and Extrinsic base weights.</span>
 	<span class="kw">pub</span> <span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">block_weights::BlockExecutionWeight</span>, <span class="ident">extrinsic_weights::ExtrinsicBaseWeight</span>};
@@ -1203,6 +1160,12 @@
 <span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">Pays</span> {
 	<span class="kw">fn</span> <span class="ident">default</span>() -&gt; <span class="self">Self</span> {
 		<span class="ident"><span class="self">Self</span>::Yes</span>
+	}
+}
+
+<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">Pays</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">PostDispatchInfo</span> {
+	<span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">pays_fee</span>: <span class="ident">Pays</span>) -&gt; <span class="self">Self</span> {
+		<span class="self">Self</span> { <span class="ident">actual_weight</span>: <span class="prelude-val">None</span>, <span class="ident">pays_fee</span> }
 	}
 }
 
@@ -1361,25 +1324,6 @@
 	.<span class="ident">pays_fee</span>(<span class="ident">info</span>)
 }
 
-<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span>(<span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Weight</span><span class="op">&gt;</span>, <span class="ident">Pays</span>)<span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">PostDispatchInfo</span> {
-	<span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">post_weight_info</span>: (<span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Weight</span><span class="op">&gt;</span>, <span class="ident">Pays</span>)) -&gt; <span class="self">Self</span> {
-		<span class="kw">let</span> (<span class="ident">actual_weight</span>, <span class="ident">pays_fee</span>) <span class="op">=</span> <span class="ident">post_weight_info</span>;
-		<span class="self">Self</span> { <span class="ident">actual_weight</span>, <span class="ident">pays_fee</span> }
-	}
-}
-
-<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">Pays</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">PostDispatchInfo</span> {
-	<span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">pays_fee</span>: <span class="ident">Pays</span>) -&gt; <span class="self">Self</span> {
-		<span class="self">Self</span> { <span class="ident">actual_weight</span>: <span class="prelude-val">None</span>, <span class="ident">pays_fee</span> }
-	}
-}
-
-<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Weight</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">PostDispatchInfo</span> {
-	<span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">actual_weight</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Weight</span><span class="op">&gt;</span>) -&gt; <span class="self">Self</span> {
-		<span class="self">Self</span> { <span class="ident">actual_weight</span>, <span class="ident">pays_fee</span>: <span class="ident">Default::default</span>() }
-	}
-}
-
 <span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span>()<span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">PostDispatchInfo</span> {
 	<span class="kw">fn</span> <span class="ident">from</span>(<span class="kw">_</span>: ()) -&gt; <span class="self">Self</span> {
 		<span class="self">Self</span> { <span class="ident">actual_weight</span>: <span class="prelude-val">None</span>, <span class="ident">pays_fee</span>: <span class="ident">Default::default</span>() }
@@ -1409,7 +1353,7 @@
 	<span class="doccomment">/// # Example</span>
 	<span class="doccomment">///</span>
 	<span class="doccomment">/// ```ignore</span>
-	<span class="doccomment">/// let who = ensure_signed(origin).map_err(|e| e.with_weight(100))?;</span>
+	<span class="doccomment">/// let who = ensure_signed(origin).map_err(|e| e.with_weight(Weight::from_ref_time(100)))?;</span>
 	<span class="doccomment">/// ensure!(who == me, Error::&lt;T&gt;::NotMe.with_weight(200_000));</span>
 	<span class="doccomment">/// ```</span>
 	<span class="kw">fn</span> <span class="ident">with_weight</span>(<span class="self">self</span>, <span class="ident">actual_weight</span>: <span class="ident">Weight</span>) -&gt; <span class="ident">DispatchErrorWithPostInfo</span>;
@@ -1427,78 +1371,6 @@
 			},
 			<span class="ident">error</span>: <span class="self">self</span>.<span class="ident">into</span>(),
 		}
-	}
-}
-
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">WeighData</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Weight</span> {
-	<span class="kw">fn</span> <span class="ident">weigh_data</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: <span class="ident">T</span>) -&gt; <span class="ident">Weight</span> {
-		<span class="kw-2">*</span><span class="self">self</span>
-	}
-}
-
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">ClassifyDispatch</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Weight</span> {
-	<span class="kw">fn</span> <span class="ident">classify_dispatch</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: <span class="ident">T</span>) -&gt; <span class="ident">DispatchClass</span> {
-		<span class="ident">DispatchClass::Normal</span>
-	}
-}
-
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">PaysFee</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Weight</span> {
-	<span class="kw">fn</span> <span class="ident">pays_fee</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: <span class="ident">T</span>) -&gt; <span class="ident">Pays</span> {
-		<span class="ident">Pays::Yes</span>
-	}
-}
-
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">WeighData</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> (<span class="ident">Weight</span>, <span class="ident">DispatchClass</span>, <span class="ident">Pays</span>) {
-	<span class="kw">fn</span> <span class="ident">weigh_data</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: <span class="ident">T</span>) -&gt; <span class="ident">Weight</span> {
-		<span class="self">self</span>.<span class="number">0</span>
-	}
-}
-
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">ClassifyDispatch</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> (<span class="ident">Weight</span>, <span class="ident">DispatchClass</span>, <span class="ident">Pays</span>) {
-	<span class="kw">fn</span> <span class="ident">classify_dispatch</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: <span class="ident">T</span>) -&gt; <span class="ident">DispatchClass</span> {
-		<span class="self">self</span>.<span class="number">1</span>
-	}
-}
-
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">PaysFee</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> (<span class="ident">Weight</span>, <span class="ident">DispatchClass</span>, <span class="ident">Pays</span>) {
-	<span class="kw">fn</span> <span class="ident">pays_fee</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: <span class="ident">T</span>) -&gt; <span class="ident">Pays</span> {
-		<span class="self">self</span>.<span class="number">2</span>
-	}
-}
-
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">WeighData</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> (<span class="ident">Weight</span>, <span class="ident">DispatchClass</span>) {
-	<span class="kw">fn</span> <span class="ident">weigh_data</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: <span class="ident">T</span>) -&gt; <span class="ident">Weight</span> {
-		<span class="self">self</span>.<span class="number">0</span>
-	}
-}
-
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">ClassifyDispatch</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> (<span class="ident">Weight</span>, <span class="ident">DispatchClass</span>) {
-	<span class="kw">fn</span> <span class="ident">classify_dispatch</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: <span class="ident">T</span>) -&gt; <span class="ident">DispatchClass</span> {
-		<span class="self">self</span>.<span class="number">1</span>
-	}
-}
-
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">PaysFee</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> (<span class="ident">Weight</span>, <span class="ident">DispatchClass</span>) {
-	<span class="kw">fn</span> <span class="ident">pays_fee</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: <span class="ident">T</span>) -&gt; <span class="ident">Pays</span> {
-		<span class="ident">Pays::Yes</span>
-	}
-}
-
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">WeighData</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> (<span class="ident">Weight</span>, <span class="ident">Pays</span>) {
-	<span class="kw">fn</span> <span class="ident">weigh_data</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: <span class="ident">T</span>) -&gt; <span class="ident">Weight</span> {
-		<span class="self">self</span>.<span class="number">0</span>
-	}
-}
-
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">ClassifyDispatch</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> (<span class="ident">Weight</span>, <span class="ident">Pays</span>) {
-	<span class="kw">fn</span> <span class="ident">classify_dispatch</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: <span class="ident">T</span>) -&gt; <span class="ident">DispatchClass</span> {
-		<span class="ident">DispatchClass::Normal</span>
-	}
-}
-
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">PaysFee</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> (<span class="ident">Weight</span>, <span class="ident">Pays</span>) {
-	<span class="kw">fn</span> <span class="ident">pays_fee</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: <span class="ident">T</span>) -&gt; <span class="ident">Pays</span> {
-		<span class="self">self</span>.<span class="number">1</span>
 	}
 }
 
@@ -1529,30 +1401,37 @@
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">Call</span>: <span class="ident">Encode</span>, <span class="ident">Extra</span>: <span class="ident">Encode</span><span class="op">&gt;</span> <span class="ident">GetDispatchInfo</span> <span class="kw">for</span> <span class="ident">sp_runtime::testing::TestXt</span><span class="op">&lt;</span><span class="ident">Call</span>, <span class="ident">Extra</span><span class="op">&gt;</span> {
 	<span class="kw">fn</span> <span class="ident">get_dispatch_info</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">DispatchInfo</span> {
 		<span class="comment">// for testing: weight == size.</span>
-		<span class="ident">DispatchInfo</span> { <span class="ident">weight</span>: <span class="self">self</span>.<span class="ident">encode</span>().<span class="ident">len</span>() <span class="kw">as</span> <span class="kw">_</span>, <span class="ident">pays_fee</span>: <span class="ident">Pays::Yes</span>, ..<span class="ident">Default::default</span>() }
+		<span class="ident">DispatchInfo</span> {
+			<span class="ident">weight</span>: <span class="ident">Weight::from_ref_time</span>(<span class="self">self</span>.<span class="ident">encode</span>().<span class="ident">len</span>() <span class="kw">as</span> <span class="kw">_</span>),
+			<span class="ident">pays_fee</span>: <span class="ident">Pays::Yes</span>,
+			..<span class="ident">Default::default</span>()
+		}
 	}
 }
 
 <span class="doccomment">/// The weight of database operations that the runtime can invoke.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// NOTE: This is currently only measured in computational time, and will probably</span>
+<span class="doccomment">/// be updated all together once proof size is accounted for.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>, <span class="ident">Default</span>, <span class="ident">RuntimeDebug</span>, <span class="ident">Encode</span>, <span class="ident">Decode</span>, <span class="ident">TypeInfo</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">RuntimeDbWeight</span> {
-	<span class="kw">pub</span> <span class="ident">read</span>: <span class="ident">Weight</span>,
-	<span class="kw">pub</span> <span class="ident">write</span>: <span class="ident">Weight</span>,
+	<span class="kw">pub</span> <span class="ident">read</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">write</span>: <span class="ident">RefTimeWeight</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">RuntimeDbWeight</span> {
-	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">reads</span>(<span class="self">self</span>, <span class="ident">r</span>: <span class="ident">Weight</span>) -&gt; <span class="ident">Weight</span> {
-		<span class="self">self</span>.<span class="ident">read</span>.<span class="ident">saturating_mul</span>(<span class="ident">r</span>)
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">reads</span>(<span class="self">self</span>, <span class="ident">r</span>: <span class="ident">u64</span>) -&gt; <span class="ident">Weight</span> {
+		<span class="ident">Weight::from_ref_time</span>(<span class="self">self</span>.<span class="ident">read</span>.<span class="ident">saturating_mul</span>(<span class="ident">r</span>))
 	}
 
-	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">writes</span>(<span class="self">self</span>, <span class="ident">w</span>: <span class="ident">Weight</span>) -&gt; <span class="ident">Weight</span> {
-		<span class="self">self</span>.<span class="ident">write</span>.<span class="ident">saturating_mul</span>(<span class="ident">w</span>)
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">writes</span>(<span class="self">self</span>, <span class="ident">w</span>: <span class="ident">u64</span>) -&gt; <span class="ident">Weight</span> {
+		<span class="ident">Weight::from_ref_time</span>(<span class="self">self</span>.<span class="ident">write</span>.<span class="ident">saturating_mul</span>(<span class="ident">w</span>))
 	}
 
-	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">reads_writes</span>(<span class="self">self</span>, <span class="ident">r</span>: <span class="ident">Weight</span>, <span class="ident">w</span>: <span class="ident">Weight</span>) -&gt; <span class="ident">Weight</span> {
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">reads_writes</span>(<span class="self">self</span>, <span class="ident">r</span>: <span class="ident">u64</span>, <span class="ident">w</span>: <span class="ident">u64</span>) -&gt; <span class="ident">Weight</span> {
 		<span class="kw">let</span> <span class="ident">read_weight</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">read</span>.<span class="ident">saturating_mul</span>(<span class="ident">r</span>);
 		<span class="kw">let</span> <span class="ident">write_weight</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">write</span>.<span class="ident">saturating_mul</span>(<span class="ident">w</span>);
-		<span class="ident">read_weight</span>.<span class="ident">saturating_add</span>(<span class="ident">write_weight</span>)
+		<span class="ident">Weight::from_ref_time</span>(<span class="ident">read_weight</span>.<span class="ident">saturating_add</span>(<span class="ident">write_weight</span>))
 	}
 }
 
@@ -1620,7 +1499,8 @@
 		<span class="ident"><span class="self">Self</span>::polynomial</span>()
 			.<span class="ident">iter</span>()
 			.<span class="ident">fold</span>(<span class="ident"><span class="self">Self</span>::Balance::saturated_from</span>(<span class="number">0u32</span>), <span class="op">|</span><span class="kw-2">mut</span> <span class="ident">acc</span>, <span class="ident">args</span><span class="op">|</span> {
-				<span class="kw">let</span> <span class="ident">w</span> <span class="op">=</span> <span class="ident"><span class="self">Self</span>::Balance::saturated_from</span>(<span class="kw-2">*</span><span class="ident">weight</span>).<span class="ident">saturating_pow</span>(<span class="ident">args</span>.<span class="ident">degree</span>.<span class="ident">into</span>());
+				<span class="kw">let</span> <span class="ident">w</span> <span class="op">=</span> <span class="ident"><span class="self">Self</span>::Balance::saturated_from</span>(<span class="ident">weight</span>.<span class="ident">ref_time</span>())
+					.<span class="ident">saturating_pow</span>(<span class="ident">args</span>.<span class="ident">degree</span>.<span class="ident">into</span>());
 
 				<span class="comment">// The sum could get negative. Therefore we only sum with the accumulator.</span>
 				<span class="comment">// The Perbill Mul implementation is non overflowing.</span>
@@ -1650,7 +1530,7 @@
 	<span class="kw">type</span> <span class="ident">Balance</span> <span class="op">=</span> <span class="ident">T</span>;
 
 	<span class="kw">fn</span> <span class="ident">weight_to_fee</span>(<span class="ident">weight</span>: <span class="kw-2">&amp;</span><span class="ident">Weight</span>) -&gt; <span class="ident"><span class="self">Self</span>::Balance</span> {
-		<span class="ident"><span class="self">Self</span>::Balance::saturated_from</span>(<span class="kw-2">*</span><span class="ident">weight</span>)
+		<span class="ident"><span class="self">Self</span>::Balance::saturated_from</span>(<span class="ident">weight</span>.<span class="ident">ref_time</span>())
 	}
 }
 
@@ -1673,7 +1553,7 @@
 	<span class="kw">type</span> <span class="ident">Balance</span> <span class="op">=</span> <span class="ident">T</span>;
 
 	<span class="kw">fn</span> <span class="ident">weight_to_fee</span>(<span class="ident">weight</span>: <span class="kw-2">&amp;</span><span class="ident">Weight</span>) -&gt; <span class="ident"><span class="self">Self</span>::Balance</span> {
-		<span class="ident"><span class="self">Self</span>::Balance::saturated_from</span>(<span class="kw-2">*</span><span class="ident">weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">M::get</span>())
+		<span class="ident"><span class="self">Self</span>::Balance::saturated_from</span>(<span class="ident">weight</span>.<span class="ident">ref_time</span>()).<span class="ident">saturating_mul</span>(<span class="ident">M::get</span>())
 	}
 }
 
@@ -1729,7 +1609,7 @@
 <span class="kw">impl</span> <span class="ident">PerDispatchClass</span><span class="op">&lt;</span><span class="ident">Weight</span><span class="op">&gt;</span> {
 	<span class="doccomment">/// Returns the total weight consumed by all extrinsics in the block.</span>
 	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">total</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Weight</span> {
-		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">sum</span> <span class="op">=</span> <span class="number">0</span>;
+		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">sum</span> <span class="op">=</span> <span class="ident">Weight::new</span>();
 		<span class="kw">for</span> <span class="ident">class</span> <span class="kw">in</span> <span class="ident">DispatchClass::all</span>() {
 			<span class="ident">sum</span> <span class="op">=</span> <span class="ident">sum</span>.<span class="ident">saturating_add</span>(<span class="kw-2">*</span><span class="self">self</span>.<span class="ident">get</span>(<span class="kw-2">*</span><span class="ident">class</span>));
 		}
@@ -1746,7 +1626,7 @@
 	<span class="doccomment">/// occur.</span>
 	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">checked_add</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">weight</span>: <span class="ident">Weight</span>, <span class="ident">class</span>: <span class="ident">DispatchClass</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), ()<span class="op">&gt;</span> {
 		<span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">get_mut</span>(<span class="ident">class</span>);
-		<span class="kw-2">*</span><span class="ident">value</span> <span class="op">=</span> <span class="ident">value</span>.<span class="ident">checked_add</span>(<span class="ident">weight</span>).<span class="ident">ok_or</span>(())<span class="question-mark">?</span>;
+		<span class="kw-2">*</span><span class="ident">value</span> <span class="op">=</span> <span class="ident">value</span>.<span class="ident">checked_add</span>(<span class="kw-2">&amp;</span><span class="ident">weight</span>).<span class="ident">ok_or</span>(())<span class="question-mark">?</span>;
 		<span class="prelude-val">Ok</span>(())
 	}
 
@@ -1806,16 +1686,16 @@
 			<span class="kw">fn</span> <span class="ident">f03</span>(<span class="ident">_origin</span>) { <span class="macro">unimplemented!</span>(); }
 
 			<span class="comment">// weight = a x 10 + b</span>
-			<span class="attribute">#[<span class="ident">weight</span> <span class="op">=</span> ((<span class="ident">_a</span> <span class="op">*</span> <span class="number">10</span> <span class="op">+</span> <span class="ident">_eb</span> <span class="op">*</span> <span class="number">1</span>) <span class="kw">as</span> <span class="ident">Weight</span>, <span class="ident">DispatchClass::Normal</span>, <span class="ident">Pays::Yes</span>)]</span>
+			<span class="attribute">#[<span class="ident">weight</span> <span class="op">=</span> ((<span class="ident">_a</span> <span class="op">*</span> <span class="number">10</span> <span class="op">+</span> <span class="ident">_eb</span> <span class="op">*</span> <span class="number">1</span>) <span class="kw">as</span> <span class="ident">RefTimeWeight</span>, <span class="ident">DispatchClass::Normal</span>, <span class="ident">Pays::Yes</span>)]</span>
 			<span class="kw">fn</span> <span class="ident">f11</span>(<span class="ident">_origin</span>, <span class="ident">_a</span>: <span class="ident">u32</span>, <span class="ident">_eb</span>: <span class="ident">u32</span>) { <span class="macro">unimplemented!</span>(); }
 
 			<span class="attribute">#[<span class="ident">weight</span> <span class="op">=</span> (<span class="number">0</span>, <span class="ident">DispatchClass::Operational</span>, <span class="ident">Pays::Yes</span>)]</span>
 			<span class="kw">fn</span> <span class="ident">f12</span>(<span class="ident">_origin</span>, <span class="ident">_a</span>: <span class="ident">u32</span>, <span class="ident">_eb</span>: <span class="ident">u32</span>) { <span class="macro">unimplemented!</span>(); }
 
-			<span class="attribute">#[<span class="ident">weight</span> <span class="op">=</span> <span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">3</span>) <span class="op">+</span> <span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">2</span>) <span class="op">+</span> <span class="number">10_000</span>]</span>
+			<span class="attribute">#[<span class="ident">weight</span> <span class="op">=</span> <span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">3</span>) <span class="op">+</span> <span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">2</span>) <span class="op">+</span> <span class="ident">Weight::from_ref_time</span>(<span class="number">10_000</span>)]</span>
 			<span class="kw">fn</span> <span class="ident">f20</span>(<span class="ident">_origin</span>) { <span class="macro">unimplemented!</span>(); }
 
-			<span class="attribute">#[<span class="ident">weight</span> <span class="op">=</span> <span class="ident">T::DbWeight::get</span>().<span class="ident">reads_writes</span>(<span class="number">6</span>, <span class="number">5</span>) <span class="op">+</span> <span class="number">40_000</span>]</span>
+			<span class="attribute">#[<span class="ident">weight</span> <span class="op">=</span> <span class="ident">T::DbWeight::get</span>().<span class="ident">reads_writes</span>(<span class="number">6</span>, <span class="number">5</span>) <span class="op">+</span> <span class="ident">Weight::from_ref_time</span>(<span class="number">40_000</span>)]</span>
 			<span class="kw">fn</span> <span class="ident">f21</span>(<span class="ident">_origin</span>) { <span class="macro">unimplemented!</span>(); }
 
 		}
@@ -1825,80 +1705,98 @@
 	<span class="kw">fn</span> <span class="ident">weights_are_correct</span>() {
 		<span class="comment">// #[weight = 1000]</span>
 		<span class="kw">let</span> <span class="ident">info</span> <span class="op">=</span> <span class="ident">Call</span>::<span class="op">&lt;</span><span class="ident">TraitImpl</span><span class="op">&gt;</span><span class="ident">::f00</span> {}.<span class="ident">get_dispatch_info</span>();
-		<span class="macro">assert_eq!</span>(<span class="ident">info</span>.<span class="ident">weight</span>, <span class="number">1000</span>);
+		<span class="macro">assert_eq!</span>(<span class="ident">info</span>.<span class="ident">weight</span>, <span class="ident">Weight::from_ref_time</span>(<span class="number">1000</span>));
 		<span class="macro">assert_eq!</span>(<span class="ident">info</span>.<span class="ident">class</span>, <span class="ident">DispatchClass::Normal</span>);
 		<span class="macro">assert_eq!</span>(<span class="ident">info</span>.<span class="ident">pays_fee</span>, <span class="ident">Pays::Yes</span>);
 
 		<span class="comment">// #[weight = (1000, DispatchClass::Mandatory)]</span>
 		<span class="kw">let</span> <span class="ident">info</span> <span class="op">=</span> <span class="ident">Call</span>::<span class="op">&lt;</span><span class="ident">TraitImpl</span><span class="op">&gt;</span><span class="ident">::f01</span> {}.<span class="ident">get_dispatch_info</span>();
-		<span class="macro">assert_eq!</span>(<span class="ident">info</span>.<span class="ident">weight</span>, <span class="number">1000</span>);
+		<span class="macro">assert_eq!</span>(<span class="ident">info</span>.<span class="ident">weight</span>, <span class="ident">Weight::from_ref_time</span>(<span class="number">1000</span>));
 		<span class="macro">assert_eq!</span>(<span class="ident">info</span>.<span class="ident">class</span>, <span class="ident">DispatchClass::Mandatory</span>);
 		<span class="macro">assert_eq!</span>(<span class="ident">info</span>.<span class="ident">pays_fee</span>, <span class="ident">Pays::Yes</span>);
 
 		<span class="comment">// #[weight = (1000, Pays::No)]</span>
 		<span class="kw">let</span> <span class="ident">info</span> <span class="op">=</span> <span class="ident">Call</span>::<span class="op">&lt;</span><span class="ident">TraitImpl</span><span class="op">&gt;</span><span class="ident">::f02</span> {}.<span class="ident">get_dispatch_info</span>();
-		<span class="macro">assert_eq!</span>(<span class="ident">info</span>.<span class="ident">weight</span>, <span class="number">1000</span>);
+		<span class="macro">assert_eq!</span>(<span class="ident">info</span>.<span class="ident">weight</span>, <span class="ident">Weight::from_ref_time</span>(<span class="number">1000</span>));
 		<span class="macro">assert_eq!</span>(<span class="ident">info</span>.<span class="ident">class</span>, <span class="ident">DispatchClass::Normal</span>);
 		<span class="macro">assert_eq!</span>(<span class="ident">info</span>.<span class="ident">pays_fee</span>, <span class="ident">Pays::No</span>);
 
 		<span class="comment">// #[weight = (1000, DispatchClass::Operational, Pays::No)]</span>
 		<span class="kw">let</span> <span class="ident">info</span> <span class="op">=</span> <span class="ident">Call</span>::<span class="op">&lt;</span><span class="ident">TraitImpl</span><span class="op">&gt;</span><span class="ident">::f03</span> {}.<span class="ident">get_dispatch_info</span>();
-		<span class="macro">assert_eq!</span>(<span class="ident">info</span>.<span class="ident">weight</span>, <span class="number">1000</span>);
+		<span class="macro">assert_eq!</span>(<span class="ident">info</span>.<span class="ident">weight</span>, <span class="ident">Weight::from_ref_time</span>(<span class="number">1000</span>));
 		<span class="macro">assert_eq!</span>(<span class="ident">info</span>.<span class="ident">class</span>, <span class="ident">DispatchClass::Operational</span>);
 		<span class="macro">assert_eq!</span>(<span class="ident">info</span>.<span class="ident">pays_fee</span>, <span class="ident">Pays::No</span>);
 
 		<span class="comment">// #[weight = ((_a * 10 + _eb * 1) as Weight, DispatchClass::Normal, Pays::Yes)]</span>
 		<span class="kw">let</span> <span class="ident">info</span> <span class="op">=</span> <span class="ident">Call</span>::<span class="op">&lt;</span><span class="ident">TraitImpl</span><span class="op">&gt;</span><span class="ident">::f11</span> { <span class="ident">_a</span>: <span class="number">13</span>, <span class="ident">_eb</span>: <span class="number">20</span> }.<span class="ident">get_dispatch_info</span>();
-		<span class="macro">assert_eq!</span>(<span class="ident">info</span>.<span class="ident">weight</span>, <span class="number">150</span>); <span class="comment">// 13*10 + 20</span>
+		<span class="macro">assert_eq!</span>(<span class="ident">info</span>.<span class="ident">weight</span>, <span class="ident">Weight::from_ref_time</span>(<span class="number">150</span>)); <span class="comment">// 13*10 + 20</span>
 		<span class="macro">assert_eq!</span>(<span class="ident">info</span>.<span class="ident">class</span>, <span class="ident">DispatchClass::Normal</span>);
 		<span class="macro">assert_eq!</span>(<span class="ident">info</span>.<span class="ident">pays_fee</span>, <span class="ident">Pays::Yes</span>);
 
 		<span class="comment">// #[weight = (0, DispatchClass::Operational, Pays::Yes)]</span>
 		<span class="kw">let</span> <span class="ident">info</span> <span class="op">=</span> <span class="ident">Call</span>::<span class="op">&lt;</span><span class="ident">TraitImpl</span><span class="op">&gt;</span><span class="ident">::f12</span> { <span class="ident">_a</span>: <span class="number">10</span>, <span class="ident">_eb</span>: <span class="number">20</span> }.<span class="ident">get_dispatch_info</span>();
-		<span class="macro">assert_eq!</span>(<span class="ident">info</span>.<span class="ident">weight</span>, <span class="number">0</span>);
+		<span class="macro">assert_eq!</span>(<span class="ident">info</span>.<span class="ident">weight</span>, <span class="ident">Weight::from_ref_time</span>(<span class="number">0</span>));
 		<span class="macro">assert_eq!</span>(<span class="ident">info</span>.<span class="ident">class</span>, <span class="ident">DispatchClass::Operational</span>);
 		<span class="macro">assert_eq!</span>(<span class="ident">info</span>.<span class="ident">pays_fee</span>, <span class="ident">Pays::Yes</span>);
 
 		<span class="comment">// #[weight = T::DbWeight::get().reads(3) + T::DbWeight::get().writes(2) + 10_000]</span>
 		<span class="kw">let</span> <span class="ident">info</span> <span class="op">=</span> <span class="ident">Call</span>::<span class="op">&lt;</span><span class="ident">TraitImpl</span><span class="op">&gt;</span><span class="ident">::f20</span> {}.<span class="ident">get_dispatch_info</span>();
-		<span class="macro">assert_eq!</span>(<span class="ident">info</span>.<span class="ident">weight</span>, <span class="number">12300</span>); <span class="comment">// 100*3 + 1000*2 + 10_1000</span>
+		<span class="macro">assert_eq!</span>(<span class="ident">info</span>.<span class="ident">weight</span>, <span class="ident">Weight::from_ref_time</span>(<span class="number">12300</span>)); <span class="comment">// 100*3 + 1000*2 + 10_1000</span>
 		<span class="macro">assert_eq!</span>(<span class="ident">info</span>.<span class="ident">class</span>, <span class="ident">DispatchClass::Normal</span>);
 		<span class="macro">assert_eq!</span>(<span class="ident">info</span>.<span class="ident">pays_fee</span>, <span class="ident">Pays::Yes</span>);
 
 		<span class="comment">// #[weight = T::DbWeight::get().reads_writes(6, 5) + 40_000]</span>
 		<span class="kw">let</span> <span class="ident">info</span> <span class="op">=</span> <span class="ident">Call</span>::<span class="op">&lt;</span><span class="ident">TraitImpl</span><span class="op">&gt;</span><span class="ident">::f21</span> {}.<span class="ident">get_dispatch_info</span>();
-		<span class="macro">assert_eq!</span>(<span class="ident">info</span>.<span class="ident">weight</span>, <span class="number">45600</span>); <span class="comment">// 100*6 + 1000*5 + 40_1000</span>
+		<span class="macro">assert_eq!</span>(<span class="ident">info</span>.<span class="ident">weight</span>, <span class="ident">Weight::from_ref_time</span>(<span class="number">45600</span>)); <span class="comment">// 100*6 + 1000*5 + 40_1000</span>
 		<span class="macro">assert_eq!</span>(<span class="ident">info</span>.<span class="ident">class</span>, <span class="ident">DispatchClass::Normal</span>);
 		<span class="macro">assert_eq!</span>(<span class="ident">info</span>.<span class="ident">pays_fee</span>, <span class="ident">Pays::Yes</span>);
 	}
 
 	<span class="attribute">#[<span class="ident">test</span>]</span>
 	<span class="kw">fn</span> <span class="ident">extract_actual_weight_works</span>() {
-		<span class="kw">let</span> <span class="ident">pre</span> <span class="op">=</span> <span class="ident">DispatchInfo</span> { <span class="ident">weight</span>: <span class="number">1000</span>, ..<span class="ident">Default::default</span>() };
-		<span class="macro">assert_eq!</span>(<span class="ident">extract_actual_weight</span>(<span class="kw-2">&amp;</span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(<span class="number">7</span>).<span class="ident">into</span>()), <span class="kw-2">&amp;</span><span class="ident">pre</span>), <span class="number">7</span>);
-		<span class="macro">assert_eq!</span>(<span class="ident">extract_actual_weight</span>(<span class="kw-2">&amp;</span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(<span class="number">1000</span>).<span class="ident">into</span>()), <span class="kw-2">&amp;</span><span class="ident">pre</span>), <span class="number">1000</span>);
-		<span class="macro">assert_eq!</span>(<span class="ident">extract_actual_weight</span>(<span class="kw-2">&amp;</span><span class="prelude-val">Err</span>(<span class="ident">DispatchError::BadOrigin</span>.<span class="ident">with_weight</span>(<span class="number">9</span>)), <span class="kw-2">&amp;</span><span class="ident">pre</span>), <span class="number">9</span>);
+		<span class="kw">let</span> <span class="ident">pre</span> <span class="op">=</span> <span class="ident">DispatchInfo</span> { <span class="ident">weight</span>: <span class="ident">Weight::from_ref_time</span>(<span class="number">1000</span>), ..<span class="ident">Default::default</span>() };
+		<span class="macro">assert_eq!</span>(<span class="ident">extract_actual_weight</span>(<span class="kw-2">&amp;</span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(<span class="number">7</span>).<span class="ident">into</span>()), <span class="kw-2">&amp;</span><span class="ident">pre</span>), <span class="ident">Weight::from_ref_time</span>(<span class="number">7</span>));
+		<span class="macro">assert_eq!</span>(
+			<span class="ident">extract_actual_weight</span>(<span class="kw-2">&amp;</span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(<span class="number">1000</span>).<span class="ident">into</span>()), <span class="kw-2">&amp;</span><span class="ident">pre</span>),
+			<span class="ident">Weight::from_ref_time</span>(<span class="number">1000</span>)
+		);
+		<span class="macro">assert_eq!</span>(
+			<span class="ident">extract_actual_weight</span>(
+				<span class="kw-2">&amp;</span><span class="prelude-val">Err</span>(<span class="ident">DispatchError::BadOrigin</span>.<span class="ident">with_weight</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">9</span>))),
+				<span class="kw-2">&amp;</span><span class="ident">pre</span>
+			),
+			<span class="ident">Weight::from_ref_time</span>(<span class="number">9</span>)
+		);
 	}
 
 	<span class="attribute">#[<span class="ident">test</span>]</span>
 	<span class="kw">fn</span> <span class="ident">extract_actual_weight_caps_at_pre_weight</span>() {
-		<span class="kw">let</span> <span class="ident">pre</span> <span class="op">=</span> <span class="ident">DispatchInfo</span> { <span class="ident">weight</span>: <span class="number">1000</span>, ..<span class="ident">Default::default</span>() };
-		<span class="macro">assert_eq!</span>(<span class="ident">extract_actual_weight</span>(<span class="kw-2">&amp;</span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(<span class="number">1250</span>).<span class="ident">into</span>()), <span class="kw-2">&amp;</span><span class="ident">pre</span>), <span class="number">1000</span>);
+		<span class="kw">let</span> <span class="ident">pre</span> <span class="op">=</span> <span class="ident">DispatchInfo</span> { <span class="ident">weight</span>: <span class="ident">Weight::from_ref_time</span>(<span class="number">1000</span>), ..<span class="ident">Default::default</span>() };
 		<span class="macro">assert_eq!</span>(
-			<span class="ident">extract_actual_weight</span>(<span class="kw-2">&amp;</span><span class="prelude-val">Err</span>(<span class="ident">DispatchError::BadOrigin</span>.<span class="ident">with_weight</span>(<span class="number">1300</span>)), <span class="kw-2">&amp;</span><span class="ident">pre</span>),
-			<span class="number">1000</span>
+			<span class="ident">extract_actual_weight</span>(<span class="kw-2">&amp;</span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(<span class="number">1250</span>).<span class="ident">into</span>()), <span class="kw-2">&amp;</span><span class="ident">pre</span>),
+			<span class="ident">Weight::from_ref_time</span>(<span class="number">1000</span>)
+		);
+		<span class="macro">assert_eq!</span>(
+			<span class="ident">extract_actual_weight</span>(
+				<span class="kw-2">&amp;</span><span class="prelude-val">Err</span>(<span class="ident">DispatchError::BadOrigin</span>.<span class="ident">with_weight</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">1300</span>))),
+				<span class="kw-2">&amp;</span><span class="ident">pre</span>
+			),
+			<span class="ident">Weight::from_ref_time</span>(<span class="number">1000</span>),
 		);
 	}
 
 	<span class="attribute">#[<span class="ident">test</span>]</span>
 	<span class="kw">fn</span> <span class="ident">extract_actual_pays_fee_works</span>() {
-		<span class="kw">let</span> <span class="ident">pre</span> <span class="op">=</span> <span class="ident">DispatchInfo</span> { <span class="ident">weight</span>: <span class="number">1000</span>, ..<span class="ident">Default::default</span>() };
+		<span class="kw">let</span> <span class="ident">pre</span> <span class="op">=</span> <span class="ident">DispatchInfo</span> { <span class="ident">weight</span>: <span class="ident">Weight::from_ref_time</span>(<span class="number">1000</span>), ..<span class="ident">Default::default</span>() };
 		<span class="macro">assert_eq!</span>(<span class="ident">extract_actual_pays_fee</span>(<span class="kw-2">&amp;</span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(<span class="number">7</span>).<span class="ident">into</span>()), <span class="kw-2">&amp;</span><span class="ident">pre</span>), <span class="ident">Pays::Yes</span>);
 		<span class="macro">assert_eq!</span>(<span class="ident">extract_actual_pays_fee</span>(<span class="kw-2">&amp;</span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(<span class="number">1000</span>).<span class="ident">into</span>()), <span class="kw-2">&amp;</span><span class="ident">pre</span>), <span class="ident">Pays::Yes</span>);
 		<span class="macro">assert_eq!</span>(<span class="ident">extract_actual_pays_fee</span>(<span class="kw-2">&amp;</span><span class="prelude-val">Ok</span>((<span class="prelude-val">Some</span>(<span class="number">1000</span>), <span class="ident">Pays::Yes</span>).<span class="ident">into</span>()), <span class="kw-2">&amp;</span><span class="ident">pre</span>), <span class="ident">Pays::Yes</span>);
 		<span class="macro">assert_eq!</span>(<span class="ident">extract_actual_pays_fee</span>(<span class="kw-2">&amp;</span><span class="prelude-val">Ok</span>((<span class="prelude-val">Some</span>(<span class="number">1000</span>), <span class="ident">Pays::No</span>).<span class="ident">into</span>()), <span class="kw-2">&amp;</span><span class="ident">pre</span>), <span class="ident">Pays::No</span>);
 		<span class="macro">assert_eq!</span>(
-			<span class="ident">extract_actual_pays_fee</span>(<span class="kw-2">&amp;</span><span class="prelude-val">Err</span>(<span class="ident">DispatchError::BadOrigin</span>.<span class="ident">with_weight</span>(<span class="number">9</span>)), <span class="kw-2">&amp;</span><span class="ident">pre</span>),
+			<span class="ident">extract_actual_pays_fee</span>(
+				<span class="kw-2">&amp;</span><span class="prelude-val">Err</span>(<span class="ident">DispatchError::BadOrigin</span>.<span class="ident">with_weight</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">9</span>))),
+				<span class="kw-2">&amp;</span><span class="ident">pre</span>
+			),
 			<span class="ident">Pays::Yes</span>
 		);
 		<span class="macro">assert_eq!</span>(
@@ -1912,7 +1810,11 @@
 			<span class="ident">Pays::No</span>
 		);
 
-		<span class="kw">let</span> <span class="ident">pre</span> <span class="op">=</span> <span class="ident">DispatchInfo</span> { <span class="ident">weight</span>: <span class="number">1000</span>, <span class="ident">pays_fee</span>: <span class="ident">Pays::No</span>, ..<span class="ident">Default::default</span>() };
+		<span class="kw">let</span> <span class="ident">pre</span> <span class="op">=</span> <span class="ident">DispatchInfo</span> {
+			<span class="ident">weight</span>: <span class="ident">Weight::from_ref_time</span>(<span class="number">1000</span>),
+			<span class="ident">pays_fee</span>: <span class="ident">Pays::No</span>,
+			..<span class="ident">Default::default</span>()
+		};
 		<span class="macro">assert_eq!</span>(<span class="ident">extract_actual_pays_fee</span>(<span class="kw-2">&amp;</span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(<span class="number">7</span>).<span class="ident">into</span>()), <span class="kw-2">&amp;</span><span class="ident">pre</span>), <span class="ident">Pays::No</span>);
 		<span class="macro">assert_eq!</span>(<span class="ident">extract_actual_pays_fee</span>(<span class="kw-2">&amp;</span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(<span class="number">1000</span>).<span class="ident">into</span>()), <span class="kw-2">&amp;</span><span class="ident">pre</span>), <span class="ident">Pays::No</span>);
 		<span class="macro">assert_eq!</span>(<span class="ident">extract_actual_pays_fee</span>(<span class="kw-2">&amp;</span><span class="prelude-val">Ok</span>((<span class="prelude-val">Some</span>(<span class="number">1000</span>), <span class="ident">Pays::Yes</span>).<span class="ident">into</span>()), <span class="kw-2">&amp;</span><span class="ident">pre</span>), <span class="ident">Pays::No</span>);
@@ -1958,40 +1860,52 @@
 	<span class="attribute">#[<span class="ident">test</span>]</span>
 	<span class="kw">fn</span> <span class="ident">polynomial_works</span>() {
 		<span class="comment">// 100^3/2=500000 100^2*(2+1/3)=23333 700 -10000</span>
-		<span class="macro">assert_eq!</span>(<span class="ident">Poly::weight_to_fee</span>(<span class="kw-2">&amp;</span><span class="number">100</span>), <span class="number">514033</span>);
+		<span class="macro">assert_eq!</span>(<span class="ident">Poly::weight_to_fee</span>(<span class="kw-2">&amp;</span><span class="ident">Weight::from_ref_time</span>(<span class="number">100</span>)), <span class="number">514033</span>);
 		<span class="comment">// 10123^3/2=518677865433 10123^2*(2+1/3)=239108634 70861 -10000</span>
-		<span class="macro">assert_eq!</span>(<span class="ident">Poly::weight_to_fee</span>(<span class="kw-2">&amp;</span><span class="number">10_123</span>), <span class="number">518917034928</span>);
+		<span class="macro">assert_eq!</span>(<span class="ident">Poly::weight_to_fee</span>(<span class="kw-2">&amp;</span><span class="ident">Weight::from_ref_time</span>(<span class="number">10_123</span>)), <span class="number">518917034928</span>);
 	}
 
 	<span class="attribute">#[<span class="ident">test</span>]</span>
 	<span class="kw">fn</span> <span class="ident">polynomial_does_not_underflow</span>() {
-		<span class="macro">assert_eq!</span>(<span class="ident">Poly::weight_to_fee</span>(<span class="kw-2">&amp;</span><span class="number">0</span>), <span class="number">0</span>);
-		<span class="macro">assert_eq!</span>(<span class="ident">Poly::weight_to_fee</span>(<span class="kw-2">&amp;</span><span class="number">10</span>), <span class="number">0</span>);
+		<span class="macro">assert_eq!</span>(<span class="ident">Poly::weight_to_fee</span>(<span class="kw-2">&amp;</span><span class="ident">Weight::zero</span>()), <span class="number">0</span>);
+		<span class="macro">assert_eq!</span>(<span class="ident">Poly::weight_to_fee</span>(<span class="kw-2">&amp;</span><span class="ident">Weight::from_ref_time</span>(<span class="number">10</span>)), <span class="number">0</span>);
 	}
 
 	<span class="attribute">#[<span class="ident">test</span>]</span>
 	<span class="kw">fn</span> <span class="ident">polynomial_does_not_overflow</span>() {
-		<span class="macro">assert_eq!</span>(<span class="ident">Poly::weight_to_fee</span>(<span class="kw-2">&amp;</span><span class="ident">Weight::max_value</span>()), <span class="ident">Balance::max_value</span>() <span class="op">-</span> <span class="number">10_000</span>);
+		<span class="macro">assert_eq!</span>(<span class="ident">Poly::weight_to_fee</span>(<span class="kw-2">&amp;</span><span class="ident">Weight::MAX</span>), <span class="ident">Balance::max_value</span>() <span class="op">-</span> <span class="number">10_000</span>);
 	}
 
 	<span class="attribute">#[<span class="ident">test</span>]</span>
 	<span class="kw">fn</span> <span class="ident">identity_fee_works</span>() {
-		<span class="macro">assert_eq!</span>(<span class="ident">IdentityFee</span>::<span class="op">&lt;</span><span class="ident">Balance</span><span class="op">&gt;</span><span class="ident">::weight_to_fee</span>(<span class="kw-2">&amp;</span><span class="number">0</span>), <span class="number">0</span>);
-		<span class="macro">assert_eq!</span>(<span class="ident">IdentityFee</span>::<span class="op">&lt;</span><span class="ident">Balance</span><span class="op">&gt;</span><span class="ident">::weight_to_fee</span>(<span class="kw-2">&amp;</span><span class="number">50</span>), <span class="number">50</span>);
-		<span class="macro">assert_eq!</span>(
-			<span class="ident">IdentityFee</span>::<span class="op">&lt;</span><span class="ident">Balance</span><span class="op">&gt;</span><span class="ident">::weight_to_fee</span>(<span class="kw-2">&amp;</span><span class="ident">Weight::max_value</span>()),
-			<span class="ident">Balance::max_value</span>()
-		);
+		<span class="macro">assert_eq!</span>(<span class="ident">IdentityFee</span>::<span class="op">&lt;</span><span class="ident">Balance</span><span class="op">&gt;</span><span class="ident">::weight_to_fee</span>(<span class="kw-2">&amp;</span><span class="ident">Weight::zero</span>()), <span class="number">0</span>);
+		<span class="macro">assert_eq!</span>(<span class="ident">IdentityFee</span>::<span class="op">&lt;</span><span class="ident">Balance</span><span class="op">&gt;</span><span class="ident">::weight_to_fee</span>(<span class="kw-2">&amp;</span><span class="ident">Weight::from_ref_time</span>(<span class="number">50</span>)), <span class="number">50</span>);
+		<span class="macro">assert_eq!</span>(<span class="ident">IdentityFee</span>::<span class="op">&lt;</span><span class="ident">Balance</span><span class="op">&gt;</span><span class="ident">::weight_to_fee</span>(<span class="kw-2">&amp;</span><span class="ident">Weight::MAX</span>), <span class="ident">Balance::max_value</span>());
 	}
 
 	<span class="attribute">#[<span class="ident">test</span>]</span>
 	<span class="kw">fn</span> <span class="ident">constant_fee_works</span>() {
 		<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::traits::ConstU128</span>;
-		<span class="macro">assert_eq!</span>(<span class="ident">ConstantMultiplier</span>::<span class="op">&lt;</span><span class="ident">u128</span>, <span class="ident">ConstU128</span><span class="op">&lt;</span><span class="number">100u128</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::weight_to_fee</span>(<span class="kw-2">&amp;</span><span class="number">0</span>), <span class="number">0</span>);
-		<span class="macro">assert_eq!</span>(<span class="ident">ConstantMultiplier</span>::<span class="op">&lt;</span><span class="ident">u128</span>, <span class="ident">ConstU128</span><span class="op">&lt;</span><span class="number">10u128</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::weight_to_fee</span>(<span class="kw-2">&amp;</span><span class="number">50</span>), <span class="number">500</span>);
-		<span class="macro">assert_eq!</span>(<span class="ident">ConstantMultiplier</span>::<span class="op">&lt;</span><span class="ident">u128</span>, <span class="ident">ConstU128</span><span class="op">&lt;</span><span class="number">1024u128</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::weight_to_fee</span>(<span class="kw-2">&amp;</span><span class="number">16</span>), <span class="number">16384</span>);
 		<span class="macro">assert_eq!</span>(
-			<span class="ident">ConstantMultiplier</span>::<span class="op">&lt;</span><span class="ident">u128</span>, <span class="ident">ConstU128</span><span class="op">&lt;</span>{ <span class="ident">u128::MAX</span> }<span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::weight_to_fee</span>(<span class="kw-2">&amp;</span><span class="number">2</span>),
+			<span class="ident">ConstantMultiplier</span>::<span class="op">&lt;</span><span class="ident">u128</span>, <span class="ident">ConstU128</span><span class="op">&lt;</span><span class="number">100u128</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::weight_to_fee</span>(<span class="kw-2">&amp;</span><span class="ident">Weight::zero</span>()),
+			<span class="number">0</span>
+		);
+		<span class="macro">assert_eq!</span>(
+			<span class="ident">ConstantMultiplier</span>::<span class="op">&lt;</span><span class="ident">u128</span>, <span class="ident">ConstU128</span><span class="op">&lt;</span><span class="number">10u128</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::weight_to_fee</span>(<span class="kw-2">&amp;</span><span class="ident">Weight::from_ref_time</span>(
+				<span class="number">50</span>
+			)),
+			<span class="number">500</span>
+		);
+		<span class="macro">assert_eq!</span>(
+			<span class="ident">ConstantMultiplier</span>::<span class="op">&lt;</span><span class="ident">u128</span>, <span class="ident">ConstU128</span><span class="op">&lt;</span><span class="number">1024u128</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::weight_to_fee</span>(<span class="kw-2">&amp;</span><span class="ident">Weight::from_ref_time</span>(
+				<span class="number">16</span>
+			)),
+			<span class="number">16384</span>
+		);
+		<span class="macro">assert_eq!</span>(
+			<span class="ident">ConstantMultiplier</span>::<span class="op">&lt;</span><span class="ident">u128</span>, <span class="ident">ConstU128</span><span class="op">&lt;</span>{ <span class="ident">u128::MAX</span> }<span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::weight_to_fee</span>(
+				<span class="kw-2">&amp;</span><span class="ident">Weight::from_ref_time</span>(<span class="number">2</span>)
+			),
 			<span class="ident">u128::MAX</span>
 		);
 	}

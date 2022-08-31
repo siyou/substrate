@@ -501,7 +501,7 @@
 
 <span class="kw">impl</span> <span class="ident">BenchmarkResult</span> {
 	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_weight</span>(<span class="ident">w</span>: <span class="ident">Weight</span>) -&gt; <span class="self">Self</span> {
-		<span class="self">Self</span> { <span class="ident">extrinsic_time</span>: (<span class="ident">w</span> <span class="kw">as</span> <span class="ident">u128</span>) <span class="op">/</span> <span class="number">1_000</span>, ..<span class="ident">Default::default</span>() }
+		<span class="self">Self</span> { <span class="ident">extrinsic_time</span>: (<span class="ident">w</span>.<span class="ident">ref_time</span>() <span class="op">/</span> <span class="number">1_000</span>) <span class="kw">as</span> <span class="ident">u128</span>, ..<span class="ident">Default::default</span>() }
 	}
 }
 

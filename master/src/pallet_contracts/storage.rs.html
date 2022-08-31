@@ -318,6 +318,12 @@
 <span id="312">312</span>
 <span id="313">313</span>
 <span id="314">314</span>
+<span id="315">315</span>
+<span id="316">316</span>
+<span id="317">317</span>
+<span id="318">318</span>
+<span id="319">319</span>
+<span id="320">320</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2019-2022 Parity Technologies (UK) Ltd.</span>
@@ -348,7 +354,7 @@
 <span class="kw">use</span> <span class="ident">frame_support</span>::{
 	<span class="ident">dispatch</span>::{<span class="ident">DispatchError</span>, <span class="ident">DispatchResult</span>},
 	<span class="ident">storage::child</span>::{<span class="self">self</span>, <span class="ident">ChildInfo</span>},
-	<span class="ident">weights::Weight</span>,
+	<span class="ident">weights</span>::{<span class="ident">RefTimeWeight</span>, <span class="ident">Weight</span>},
 };
 <span class="kw">use</span> <span class="ident">scale_info::TypeInfo</span>;
 <span class="kw">use</span> <span class="ident">sp_core::crypto::UncheckedFrom</span>;
@@ -547,9 +553,11 @@
 		<span class="kw">let</span> <span class="ident">base_weight</span> <span class="op">=</span> <span class="ident">T::WeightInfo::on_process_deletion_queue_batch</span>();
 		<span class="kw">let</span> <span class="ident">weight_per_queue_item</span> <span class="op">=</span> <span class="ident">T::WeightInfo::on_initialize_per_queue_item</span>(<span class="number">1</span>) <span class="op">-</span>
 			<span class="ident">T::WeightInfo::on_initialize_per_queue_item</span>(<span class="number">0</span>);
-		<span class="kw">let</span> <span class="ident">weight_per_key</span> <span class="op">=</span> <span class="ident">T::WeightInfo::on_initialize_per_trie_key</span>(<span class="number">1</span>) <span class="op">-</span>
-			<span class="ident">T::WeightInfo::on_initialize_per_trie_key</span>(<span class="number">0</span>);
-		<span class="kw">let</span> <span class="ident">decoding_weight</span> <span class="op">=</span> <span class="ident">weight_per_queue_item</span>.<span class="ident">saturating_mul</span>(<span class="ident">queue_len</span> <span class="kw">as</span> <span class="ident">Weight</span>);
+		<span class="kw">let</span> <span class="ident">weight_per_key</span> <span class="op">=</span> (<span class="ident">T::WeightInfo::on_initialize_per_trie_key</span>(<span class="number">1</span>) <span class="op">-</span>
+			<span class="ident">T::WeightInfo::on_initialize_per_trie_key</span>(<span class="number">0</span>))
+		.<span class="ident">ref_time</span>();
+		<span class="kw">let</span> <span class="ident">decoding_weight</span> <span class="op">=</span>
+			<span class="ident">weight_per_queue_item</span>.<span class="ident">scalar_saturating_mul</span>(<span class="ident">queue_len</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>);
 
 		<span class="comment">// `weight_per_key` being zero makes no sense and would constitute a failure to</span>
 		<span class="comment">// benchmark properly. We opt for not removing any keys at all in this case.</span>
@@ -557,7 +565,8 @@
 			.<span class="ident">saturating_sub</span>(<span class="ident">base_weight</span>)
 			.<span class="ident">saturating_sub</span>(<span class="ident">decoding_weight</span>)
 			.<span class="ident">checked_div</span>(<span class="ident">weight_per_key</span>)
-			.<span class="ident">unwrap_or</span>(<span class="number">0</span>) <span class="kw">as</span> <span class="ident">u32</span>;
+			.<span class="ident">unwrap_or</span>(<span class="ident">Weight::zero</span>())
+			.<span class="ident">ref_time</span>() <span class="kw">as</span> <span class="ident">u32</span>;
 
 		(<span class="ident">weight_per_key</span>, <span class="ident">key_budget</span>)
 	}
@@ -568,7 +577,7 @@
 	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">process_deletion_queue_batch</span>(<span class="ident">weight_limit</span>: <span class="ident">Weight</span>) -&gt; <span class="ident">Weight</span> {
 		<span class="kw">let</span> <span class="ident">queue_len</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">DeletionQueue</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::decode_len</span>().<span class="ident">unwrap_or</span>(<span class="number">0</span>);
 		<span class="kw">if</span> <span class="ident">queue_len</span> <span class="op">==</span> <span class="number">0</span> {
-			<span class="kw">return</span> <span class="number">0</span>
+			<span class="kw">return</span> <span class="ident">Weight::zero</span>()
 		}
 
 		<span class="kw">let</span> (<span class="ident">weight_per_key</span>, <span class="kw-2">mut</span> <span class="ident">remaining_key_budget</span>) <span class="op">=</span>
@@ -602,7 +611,10 @@
 		}
 
 		<span class="op">&lt;</span><span class="ident">DeletionQueue</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::put</span>(<span class="ident">queue</span>);
-		<span class="ident">weight_limit</span>.<span class="ident">saturating_sub</span>(<span class="ident">weight_per_key</span>.<span class="ident">saturating_mul</span>(<span class="ident">remaining_key_budget</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+		<span class="kw">let</span> <span class="ident">ref_time_weight</span> <span class="op">=</span> <span class="ident">weight_limit</span>
+			.<span class="ident">ref_time</span>()
+			.<span class="ident">saturating_sub</span>(<span class="ident">weight_per_key</span>.<span class="ident">saturating_mul</span>(<span class="ident">remaining_key_budget</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>));
+		<span class="ident">Weight::from_ref_time</span>(<span class="ident">ref_time_weight</span>)
 	}
 
 	<span class="doccomment">/// Generates a unique trie id by returning  `hash(account_id ++ nonce)`.</span>

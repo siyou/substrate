@@ -2219,7 +2219,6 @@
 <span id="2213">2213</span>
 <span id="2214">2214</span>
 <span id="2215">2215</span>
-<span id="2216">2216</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2021-2022 Parity Technologies (UK) Ltd.</span>
@@ -2456,7 +2455,6 @@
 	<span class="ident">ElectionDataProvider</span>, <span class="ident">ElectionProvider</span>, <span class="ident">InstantElectionProvider</span>, <span class="ident">NposSolution</span>,
 };
 <span class="kw">use</span> <span class="ident">frame_support</span>::{
-	<span class="ident">dispatch::DispatchResultWithPostInfo</span>,
 	<span class="ident">ensure</span>,
 	<span class="ident">traits</span>::{<span class="ident">Currency</span>, <span class="ident">Get</span>, <span class="ident">OnUnbalanced</span>, <span class="ident">ReservableCurrency</span>},
 	<span class="ident">weights</span>::{<span class="ident">DispatchClass</span>, <span class="ident">Weight</span>},
@@ -3099,7 +3097,7 @@
 			<span class="ident">origin</span>: <span class="ident">OriginFor</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
 			<span class="ident">raw_solution</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">RawSolution</span><span class="op">&lt;</span><span class="ident">SolutionOf</span><span class="op">&lt;</span><span class="ident">T::MinerConfig</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 			<span class="ident">witness</span>: <span class="ident">SolutionOrSnapshotSize</span>,
-		) -&gt; <span class="ident">DispatchResultWithPostInfo</span> {
+		) -&gt; <span class="ident">DispatchResult</span> {
 			<span class="ident">ensure_none</span>(<span class="ident">origin</span>)<span class="question-mark">?</span>;
 			<span class="kw">let</span> <span class="ident">error_message</span> <span class="op">=</span> <span class="string">&quot;Invalid unsigned submission must produce invalid block and \
 				 deprive validator from their authoring reward.&quot;</span>;
@@ -3127,7 +3125,7 @@
 				<span class="ident">prev_ejected</span>: <span class="ident">ejected_a_solution</span>,
 			});
 
-			<span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>.<span class="ident">into</span>())
+			<span class="prelude-val">Ok</span>(())
 		}
 
 		<span class="doccomment">/// Set a new value for `MinimumUntrustedScore`.</span>
@@ -3214,7 +3212,7 @@
 			<span class="kw">let</span> <span class="ident">deposit</span> <span class="op">=</span> <span class="ident"><span class="self">Self</span>::deposit_for</span>(<span class="kw-2">&amp;</span><span class="ident">raw_solution</span>, <span class="ident">size</span>);
 			<span class="kw">let</span> <span class="ident">call_fee</span> <span class="op">=</span> {
 				<span class="kw">let</span> <span class="ident">call</span> <span class="op">=</span> <span class="ident">Call::submit</span> { <span class="ident">raw_solution</span>: <span class="ident">raw_solution</span>.<span class="ident">clone</span>() };
-				<span class="ident">T::EstimateCallFee::estimate_call_fee</span>(<span class="kw-2">&amp;</span><span class="ident">call</span>, <span class="prelude-val">None</span>.<span class="ident">into</span>())
+				<span class="ident">T::EstimateCallFee::estimate_call_fee</span>(<span class="kw-2">&amp;</span><span class="ident">call</span>, <span class="prelude-val">None</span>::<span class="op">&lt;</span><span class="ident">Weight</span><span class="op">&gt;</span>.<span class="ident">into</span>())
 			};
 
 			<span class="kw">let</span> <span class="ident">submission</span> <span class="op">=</span> <span class="ident">SignedSubmission</span> {

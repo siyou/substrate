@@ -3200,6 +3200,18 @@
 <span id="3194">3194</span>
 <span id="3195">3195</span>
 <span id="3196">3196</span>
+<span id="3197">3197</span>
+<span id="3198">3198</span>
+<span id="3199">3199</span>
+<span id="3200">3200</span>
+<span id="3201">3201</span>
+<span id="3202">3202</span>
+<span id="3203">3203</span>
+<span id="3204">3204</span>
+<span id="3205">3205</span>
+<span id="3206">3206</span>
+<span id="3207">3207</span>
+<span id="3208">3208</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2018-2022 Parity Technologies (UK) Ltd.</span>
@@ -3866,7 +3878,7 @@
 		<span class="ident">debug_message</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 	) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(<span class="self">Self</span>, <span class="ident">E</span>), <span class="ident">ExecError</span><span class="op">&gt;</span> {
 		<span class="kw">let</span> (<span class="ident">first_frame</span>, <span class="ident">executable</span>, <span class="ident">nonce</span>) <span class="op">=</span>
-			<span class="ident"><span class="self">Self</span>::new_frame</span>(<span class="ident">args</span>, <span class="ident">value</span>, <span class="ident">gas_meter</span>, <span class="ident">storage_meter</span>, <span class="number">0</span>, <span class="ident">schedule</span>)<span class="question-mark">?</span>;
+			<span class="ident"><span class="self">Self</span>::new_frame</span>(<span class="ident">args</span>, <span class="ident">value</span>, <span class="ident">gas_meter</span>, <span class="ident">storage_meter</span>, <span class="ident">Weight::zero</span>(), <span class="ident">schedule</span>)<span class="question-mark">?</span>;
 		<span class="kw">let</span> <span class="ident">stack</span> <span class="op">=</span> <span class="self">Self</span> {
 			<span class="ident">origin</span>,
 			<span class="ident">schedule</span>,
@@ -4291,7 +4303,7 @@
 				<span class="ident">delegated_call</span>: <span class="prelude-val">Some</span>(<span class="ident">DelegatedCall</span> { <span class="ident">executable</span>, <span class="ident">caller</span>: <span class="self">self</span>.<span class="ident">caller</span>().<span class="ident">clone</span>() }),
 			},
 			<span class="ident">value</span>,
-			<span class="number">0</span>,
+			<span class="ident">Weight::zero</span>(),
 		)<span class="question-mark">?</span>;
 		<span class="self">self</span>.<span class="ident">run</span>(<span class="ident">executable</span>, <span class="ident">input_data</span>)
 	}
@@ -5027,7 +5039,7 @@
 		<span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">Default::default</span>();
 		<span class="kw">let</span> <span class="ident">recurse_ch</span> <span class="op">=</span> <span class="ident">MockLoader::insert</span>(<span class="ident">Call</span>, <span class="op">|</span><span class="ident">ctx</span>, <span class="kw">_</span><span class="op">|</span> {
 			<span class="comment">// Try to call into yourself.</span>
-			<span class="kw">let</span> <span class="ident">r</span> <span class="op">=</span> <span class="ident">ctx</span>.<span class="ident">ext</span>.<span class="ident">call</span>(<span class="number">0</span>, <span class="ident">BOB</span>, <span class="number">0</span>, <span class="macro">vec!</span>[], <span class="bool-val">true</span>);
+			<span class="kw">let</span> <span class="ident">r</span> <span class="op">=</span> <span class="ident">ctx</span>.<span class="ident">ext</span>.<span class="ident">call</span>(<span class="ident">Weight::zero</span>(), <span class="ident">BOB</span>, <span class="number">0</span>, <span class="macro">vec!</span>[], <span class="bool-val">true</span>);
 
 			<span class="ident">REACHED_BOTTOM</span>.<span class="ident">with</span>(<span class="op">|</span><span class="ident">reached_bottom</span><span class="op">|</span> {
 				<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">reached_bottom</span> <span class="op">=</span> <span class="ident">reached_bottom</span>.<span class="ident">borrow_mut</span>();
@@ -5082,7 +5094,7 @@
 				.<span class="ident">with</span>(<span class="op">|</span><span class="ident">caller</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">caller</span>.<span class="ident">borrow_mut</span>() <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">ctx</span>.<span class="ident">ext</span>.<span class="ident">caller</span>().<span class="ident">clone</span>()));
 
 			<span class="comment">// Call into CHARLIE contract.</span>
-			<span class="macro">assert_matches!</span>(<span class="ident">ctx</span>.<span class="ident">ext</span>.<span class="ident">call</span>(<span class="number">0</span>, <span class="ident">CHARLIE</span>, <span class="number">0</span>, <span class="macro">vec!</span>[], <span class="bool-val">true</span>), <span class="prelude-val">Ok</span>(<span class="kw">_</span>));
+			<span class="macro">assert_matches!</span>(<span class="ident">ctx</span>.<span class="ident">ext</span>.<span class="ident">call</span>(<span class="ident">Weight::zero</span>(), <span class="ident">CHARLIE</span>, <span class="number">0</span>, <span class="macro">vec!</span>[], <span class="bool-val">true</span>), <span class="prelude-val">Ok</span>(<span class="kw">_</span>));
 			<span class="ident">exec_success</span>()
 		});
 		<span class="kw">let</span> <span class="ident">charlie_ch</span> <span class="op">=</span> <span class="ident">MockLoader::insert</span>(<span class="ident">Call</span>, <span class="op">|</span><span class="ident">ctx</span>, <span class="kw">_</span><span class="op">|</span> {
@@ -5213,7 +5225,7 @@
 			<span class="comment">// ALICE is the origin of the call stack</span>
 			<span class="macro">assert!</span>(<span class="ident">ctx</span>.<span class="ident">ext</span>.<span class="ident">caller_is_origin</span>());
 			<span class="comment">// BOB calls CHARLIE</span>
-			<span class="ident">ctx</span>.<span class="ident">ext</span>.<span class="ident">call</span>(<span class="number">0</span>, <span class="ident">CHARLIE</span>, <span class="number">0</span>, <span class="macro">vec!</span>[], <span class="bool-val">true</span>)
+			<span class="ident">ctx</span>.<span class="ident">ext</span>.<span class="ident">call</span>(<span class="ident">Weight::zero</span>(), <span class="ident">CHARLIE</span>, <span class="number">0</span>, <span class="macro">vec!</span>[], <span class="bool-val">true</span>)
 		});
 
 		<span class="ident">ExtBuilder::default</span>().<span class="ident">build</span>().<span class="ident">execute_with</span>(<span class="op">|</span><span class="op">|</span> {
@@ -5243,7 +5255,7 @@
 			<span class="macro">assert_eq!</span>(<span class="kw-2">*</span><span class="ident">ctx</span>.<span class="ident">ext</span>.<span class="ident">address</span>(), <span class="ident">BOB</span>);
 
 			<span class="comment">// Call into charlie contract.</span>
-			<span class="macro">assert_matches!</span>(<span class="ident">ctx</span>.<span class="ident">ext</span>.<span class="ident">call</span>(<span class="number">0</span>, <span class="ident">CHARLIE</span>, <span class="number">0</span>, <span class="macro">vec!</span>[], <span class="bool-val">true</span>), <span class="prelude-val">Ok</span>(<span class="kw">_</span>));
+			<span class="macro">assert_matches!</span>(<span class="ident">ctx</span>.<span class="ident">ext</span>.<span class="ident">call</span>(<span class="ident">Weight::zero</span>(), <span class="ident">CHARLIE</span>, <span class="number">0</span>, <span class="macro">vec!</span>[], <span class="bool-val">true</span>), <span class="prelude-val">Ok</span>(<span class="kw">_</span>));
 			<span class="ident">exec_success</span>()
 		});
 		<span class="kw">let</span> <span class="ident">charlie_ch</span> <span class="op">=</span> <span class="ident">MockLoader::insert</span>(<span class="ident">Call</span>, <span class="op">|</span><span class="ident">ctx</span>, <span class="kw">_</span><span class="op">|</span> {
@@ -5392,7 +5404,7 @@
 				<span class="kw">let</span> (<span class="ident">address</span>, <span class="ident">output</span>) <span class="op">=</span> <span class="ident">ctx</span>
 					.<span class="ident">ext</span>
 					.<span class="ident">instantiate</span>(
-						<span class="number">0</span>,
+						<span class="ident">Weight::zero</span>(),
 						<span class="ident">dummy_ch</span>,
 						<span class="op">&lt;</span><span class="ident">Test</span> <span class="kw">as</span> <span class="ident">Config</span><span class="op">&gt;</span><span class="ident">::Currency::minimum_balance</span>(),
 						<span class="macro">vec!</span>[],
@@ -5452,7 +5464,7 @@
 				<span class="comment">// Instantiate a contract and save it&#39;s address in `instantiated_contract_address`.</span>
 				<span class="macro">assert_matches!</span>(
 					<span class="ident">ctx</span>.<span class="ident">ext</span>.<span class="ident">instantiate</span>(
-						<span class="number">0</span>,
+						<span class="ident">Weight::zero</span>(),
 						<span class="ident">dummy_ch</span>,
 						<span class="op">&lt;</span><span class="ident">Test</span> <span class="kw">as</span> <span class="ident">Config</span><span class="op">&gt;</span><span class="ident">::Currency::minimum_balance</span>(),
 						<span class="macro">vec!</span>[],
@@ -5544,13 +5556,13 @@
 				<span class="kw">let</span> <span class="ident">info</span> <span class="op">=</span> <span class="ident">ctx</span>.<span class="ident">ext</span>.<span class="ident">contract_info</span>();
 				<span class="macro">assert_eq!</span>(<span class="ident">info</span>.<span class="ident">storage_deposit</span>, <span class="number">0</span>);
 				<span class="ident">info</span>.<span class="ident">storage_deposit</span> <span class="op">=</span> <span class="number">42</span>;
-				<span class="macro">assert_eq!</span>(<span class="ident">ctx</span>.<span class="ident">ext</span>.<span class="ident">call</span>(<span class="number">0</span>, <span class="ident">CHARLIE</span>, <span class="number">0</span>, <span class="macro">vec!</span>[], <span class="bool-val">true</span>), <span class="ident">exec_trapped</span>());
+				<span class="macro">assert_eq!</span>(<span class="ident">ctx</span>.<span class="ident">ext</span>.<span class="ident">call</span>(<span class="ident">Weight::zero</span>(), <span class="ident">CHARLIE</span>, <span class="number">0</span>, <span class="macro">vec!</span>[], <span class="bool-val">true</span>), <span class="ident">exec_trapped</span>());
 				<span class="macro">assert_eq!</span>(<span class="ident">ctx</span>.<span class="ident">ext</span>.<span class="ident">contract_info</span>().<span class="ident">storage_deposit</span>, <span class="number">42</span>);
 			}
 			<span class="ident">exec_success</span>()
 		});
 		<span class="kw">let</span> <span class="ident">code_charlie</span> <span class="op">=</span> <span class="ident">MockLoader::insert</span>(<span class="ident">Call</span>, <span class="op">|</span><span class="ident">ctx</span>, <span class="kw">_</span><span class="op">|</span> {
-			<span class="macro">assert!</span>(<span class="ident">ctx</span>.<span class="ident">ext</span>.<span class="ident">call</span>(<span class="number">0</span>, <span class="ident">BOB</span>, <span class="number">0</span>, <span class="macro">vec!</span>[<span class="number">99</span>], <span class="bool-val">true</span>).<span class="ident">is_ok</span>());
+			<span class="macro">assert!</span>(<span class="ident">ctx</span>.<span class="ident">ext</span>.<span class="ident">call</span>(<span class="ident">Weight::zero</span>(), <span class="ident">BOB</span>, <span class="number">0</span>, <span class="macro">vec!</span>[<span class="number">99</span>], <span class="bool-val">true</span>).<span class="ident">is_ok</span>());
 			<span class="ident">exec_trapped</span>()
 		});
 
@@ -5579,7 +5591,7 @@
 	<span class="kw">fn</span> <span class="ident">recursive_call_during_constructor_fails</span>() {
 		<span class="kw">let</span> <span class="ident">code</span> <span class="op">=</span> <span class="ident">MockLoader::insert</span>(<span class="ident">Constructor</span>, <span class="op">|</span><span class="ident">ctx</span>, <span class="kw">_</span><span class="op">|</span> {
 			<span class="macro">assert_matches!</span>(
-				<span class="ident">ctx</span>.<span class="ident">ext</span>.<span class="ident">call</span>(<span class="number">0</span>, <span class="ident">ctx</span>.<span class="ident">ext</span>.<span class="ident">address</span>().<span class="ident">clone</span>(), <span class="number">0</span>, <span class="macro">vec!</span>[], <span class="bool-val">true</span>),
+				<span class="ident">ctx</span>.<span class="ident">ext</span>.<span class="ident">call</span>(<span class="ident">Weight::zero</span>(), <span class="ident">ctx</span>.<span class="ident">ext</span>.<span class="ident">address</span>().<span class="ident">clone</span>(), <span class="number">0</span>, <span class="macro">vec!</span>[], <span class="bool-val">true</span>),
 				<span class="prelude-val">Err</span>(<span class="ident">ExecError</span>{<span class="ident">error</span>, ..}) <span class="kw">if</span> <span class="ident">error</span> <span class="op">==</span> <span class="op">&lt;</span><span class="ident">Error</span><span class="op">&lt;</span><span class="ident">Test</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::ContractNotFound</span>.<span class="ident">into</span>()
 			);
 			<span class="ident">exec_success</span>()
@@ -5681,7 +5693,7 @@
 		<span class="comment">// call the contract passed as input with disabled reentry</span>
 		<span class="kw">let</span> <span class="ident">code_bob</span> <span class="op">=</span> <span class="ident">MockLoader::insert</span>(<span class="ident">Call</span>, <span class="op">|</span><span class="ident">ctx</span>, <span class="kw">_</span><span class="op">|</span> {
 			<span class="kw">let</span> <span class="ident">dest</span> <span class="op">=</span> <span class="ident">Decode::decode</span>(<span class="kw-2">&amp;mut</span> <span class="ident">ctx</span>.<span class="ident">input_data</span>.<span class="ident">as_ref</span>()).<span class="ident">unwrap</span>();
-			<span class="ident">ctx</span>.<span class="ident">ext</span>.<span class="ident">call</span>(<span class="number">0</span>, <span class="ident">dest</span>, <span class="number">0</span>, <span class="macro">vec!</span>[], <span class="bool-val">false</span>)
+			<span class="ident">ctx</span>.<span class="ident">ext</span>.<span class="ident">call</span>(<span class="ident">Weight::zero</span>(), <span class="ident">dest</span>, <span class="number">0</span>, <span class="macro">vec!</span>[], <span class="bool-val">false</span>)
 		});
 
 		<span class="kw">let</span> <span class="ident">code_charlie</span> <span class="op">=</span> <span class="ident">MockLoader::insert</span>(<span class="ident">Call</span>, <span class="op">|</span><span class="kw">_</span>, <span class="kw">_</span><span class="op">|</span> <span class="ident">exec_success</span>());
@@ -5726,7 +5738,7 @@
 	<span class="kw">fn</span> <span class="ident">call_deny_reentry</span>() {
 		<span class="kw">let</span> <span class="ident">code_bob</span> <span class="op">=</span> <span class="ident">MockLoader::insert</span>(<span class="ident">Call</span>, <span class="op">|</span><span class="ident">ctx</span>, <span class="kw">_</span><span class="op">|</span> {
 			<span class="kw">if</span> <span class="ident">ctx</span>.<span class="ident">input_data</span>[<span class="number">0</span>] <span class="op">==</span> <span class="number">0</span> {
-				<span class="ident">ctx</span>.<span class="ident">ext</span>.<span class="ident">call</span>(<span class="number">0</span>, <span class="ident">CHARLIE</span>, <span class="number">0</span>, <span class="macro">vec!</span>[], <span class="bool-val">false</span>)
+				<span class="ident">ctx</span>.<span class="ident">ext</span>.<span class="ident">call</span>(<span class="ident">Weight::zero</span>(), <span class="ident">CHARLIE</span>, <span class="number">0</span>, <span class="macro">vec!</span>[], <span class="bool-val">false</span>)
 			} <span class="kw">else</span> {
 				<span class="ident">exec_success</span>()
 			}
@@ -5734,7 +5746,7 @@
 
 		<span class="comment">// call BOB with input set to &#39;1&#39;</span>
 		<span class="kw">let</span> <span class="ident">code_charlie</span> <span class="op">=</span>
-			<span class="ident">MockLoader::insert</span>(<span class="ident">Call</span>, <span class="op">|</span><span class="ident">ctx</span>, <span class="kw">_</span><span class="op">|</span> <span class="ident">ctx</span>.<span class="ident">ext</span>.<span class="ident">call</span>(<span class="number">0</span>, <span class="ident">BOB</span>, <span class="number">0</span>, <span class="macro">vec!</span>[<span class="number">1</span>], <span class="bool-val">true</span>));
+			<span class="ident">MockLoader::insert</span>(<span class="ident">Call</span>, <span class="op">|</span><span class="ident">ctx</span>, <span class="kw">_</span><span class="op">|</span> <span class="ident">ctx</span>.<span class="ident">ext</span>.<span class="ident">call</span>(<span class="ident">Weight::zero</span>(), <span class="ident">BOB</span>, <span class="number">0</span>, <span class="macro">vec!</span>[<span class="number">1</span>], <span class="bool-val">true</span>));
 
 		<span class="ident">ExtBuilder::default</span>().<span class="ident">build</span>().<span class="ident">execute_with</span>(<span class="op">|</span><span class="op">|</span> {
 			<span class="kw">let</span> <span class="ident">schedule</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">Test</span> <span class="kw">as</span> <span class="ident">Config</span><span class="op">&gt;</span><span class="ident">::Schedule::get</span>();
@@ -5897,18 +5909,30 @@
 		<span class="kw">let</span> <span class="ident">success_code</span> <span class="op">=</span> <span class="ident">MockLoader::insert</span>(<span class="ident">Constructor</span>, <span class="op">|</span><span class="kw">_</span>, <span class="kw">_</span><span class="op">|</span> <span class="ident">exec_success</span>());
 		<span class="kw">let</span> <span class="ident">succ_fail_code</span> <span class="op">=</span> <span class="ident">MockLoader::insert</span>(<span class="ident">Constructor</span>, <span class="kw">move</span> <span class="op">|</span><span class="ident">ctx</span>, <span class="kw">_</span><span class="op">|</span> {
 			<span class="ident">ctx</span>.<span class="ident">ext</span>
-				.<span class="ident">instantiate</span>(<span class="number">0</span>, <span class="ident">fail_code</span>, <span class="ident">ctx</span>.<span class="ident">ext</span>.<span class="ident">minimum_balance</span>() <span class="op">*</span> <span class="number">100</span>, <span class="macro">vec!</span>[], <span class="kw-2">&amp;</span>[])
+				.<span class="ident">instantiate</span>(
+					<span class="ident">Weight::zero</span>(),
+					<span class="ident">fail_code</span>,
+					<span class="ident">ctx</span>.<span class="ident">ext</span>.<span class="ident">minimum_balance</span>() <span class="op">*</span> <span class="number">100</span>,
+					<span class="macro">vec!</span>[],
+					<span class="kw-2">&amp;</span>[],
+				)
 				.<span class="ident">ok</span>();
 			<span class="ident">exec_success</span>()
 		});
 		<span class="kw">let</span> <span class="ident">succ_succ_code</span> <span class="op">=</span> <span class="ident">MockLoader::insert</span>(<span class="ident">Constructor</span>, <span class="kw">move</span> <span class="op">|</span><span class="ident">ctx</span>, <span class="kw">_</span><span class="op">|</span> {
 			<span class="kw">let</span> (<span class="ident">account_id</span>, <span class="kw">_</span>) <span class="op">=</span> <span class="ident">ctx</span>
 				.<span class="ident">ext</span>
-				.<span class="ident">instantiate</span>(<span class="number">0</span>, <span class="ident">success_code</span>, <span class="ident">ctx</span>.<span class="ident">ext</span>.<span class="ident">minimum_balance</span>() <span class="op">*</span> <span class="number">100</span>, <span class="macro">vec!</span>[], <span class="kw-2">&amp;</span>[])
+				.<span class="ident">instantiate</span>(
+					<span class="ident">Weight::zero</span>(),
+					<span class="ident">success_code</span>,
+					<span class="ident">ctx</span>.<span class="ident">ext</span>.<span class="ident">minimum_balance</span>() <span class="op">*</span> <span class="number">100</span>,
+					<span class="macro">vec!</span>[],
+					<span class="kw-2">&amp;</span>[],
+				)
 				.<span class="ident">unwrap</span>();
 
 			<span class="comment">// a plain call should not influence the account counter</span>
-			<span class="ident">ctx</span>.<span class="ident">ext</span>.<span class="ident">call</span>(<span class="number">0</span>, <span class="ident">account_id</span>, <span class="number">0</span>, <span class="macro">vec!</span>[], <span class="bool-val">false</span>).<span class="ident">unwrap</span>();
+			<span class="ident">ctx</span>.<span class="ident">ext</span>.<span class="ident">call</span>(<span class="ident">Weight::zero</span>(), <span class="ident">account_id</span>, <span class="number">0</span>, <span class="macro">vec!</span>[], <span class="bool-val">false</span>).<span class="ident">unwrap</span>();
 
 			<span class="ident">exec_success</span>()
 		});

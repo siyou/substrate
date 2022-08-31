@@ -1203,7 +1203,7 @@
 	<span class="ident">dispatch::Dispatchable</span>,
 	<span class="ident">ensure</span>,
 	<span class="ident">traits</span>::{<span class="ident">ConstU32</span>, <span class="ident">Contains</span>, <span class="ident">Currency</span>, <span class="ident">Get</span>, <span class="ident">Randomness</span>, <span class="ident">ReservableCurrency</span>, <span class="ident">Time</span>},
-	<span class="ident">weights</span>::{<span class="ident">DispatchClass</span>, <span class="ident">GetDispatchInfo</span>, <span class="ident">Pays</span>, <span class="ident">PostDispatchInfo</span>, <span class="ident">Weight</span>},
+	<span class="ident">weights</span>::{<span class="ident">DispatchClass</span>, <span class="ident">GetDispatchInfo</span>, <span class="ident">Pays</span>, <span class="ident">PostDispatchInfo</span>, <span class="ident">RefTimeWeight</span>, <span class="ident">Weight</span>},
 	<span class="ident">BoundedVec</span>,
 };
 <span class="kw">use</span> <span class="ident">frame_system</span>::{<span class="ident">limits::BlockWeights</span>, <span class="ident">Pallet</span> <span class="kw">as</span> <span class="ident">System</span>};
@@ -1307,7 +1307,7 @@
 			.<span class="ident">get</span>(<span class="ident">DispatchClass::Normal</span>)
 			.<span class="ident">max_total</span>
 			.<span class="ident">unwrap_or</span>(<span class="ident">block_weights</span>.<span class="ident">max_block</span>) <span class="op">/</span>
-			<span class="ident">Weight::from</span>(<span class="ident">P</span>)
+			<span class="ident">RefTimeWeight::from</span>(<span class="ident">P</span>)
 	}
 }
 
@@ -1966,8 +1966,8 @@
 		);
 		<span class="ident">ContractExecResult</span> {
 			<span class="ident">result</span>: <span class="ident">output</span>.<span class="ident">result</span>.<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">r</span><span class="op">|</span> <span class="ident">r</span>.<span class="ident">error</span>),
-			<span class="ident">gas_consumed</span>: <span class="ident">output</span>.<span class="ident">gas_meter</span>.<span class="ident">gas_consumed</span>(),
-			<span class="ident">gas_required</span>: <span class="ident">output</span>.<span class="ident">gas_meter</span>.<span class="ident">gas_required</span>(),
+			<span class="ident">gas_consumed</span>: <span class="ident">output</span>.<span class="ident">gas_meter</span>.<span class="ident">gas_consumed</span>().<span class="ident">ref_time</span>(),
+			<span class="ident">gas_required</span>: <span class="ident">output</span>.<span class="ident">gas_meter</span>.<span class="ident">gas_required</span>().<span class="ident">ref_time</span>(),
 			<span class="ident">storage_deposit</span>: <span class="ident">output</span>.<span class="ident">storage_deposit</span>,
 			<span class="ident">debug_message</span>: <span class="ident">debug_message</span>.<span class="ident">unwrap_or_default</span>(),
 		}
@@ -2011,8 +2011,8 @@
 				.<span class="ident">result</span>
 				.<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">account_id</span>, <span class="ident">result</span>)<span class="op">|</span> <span class="ident">InstantiateReturnValue</span> { <span class="ident">result</span>, <span class="ident">account_id</span> })
 				.<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">e</span>.<span class="ident">error</span>),
-			<span class="ident">gas_consumed</span>: <span class="ident">output</span>.<span class="ident">gas_meter</span>.<span class="ident">gas_consumed</span>(),
-			<span class="ident">gas_required</span>: <span class="ident">output</span>.<span class="ident">gas_meter</span>.<span class="ident">gas_required</span>(),
+			<span class="ident">gas_consumed</span>: <span class="ident">output</span>.<span class="ident">gas_meter</span>.<span class="ident">gas_consumed</span>().<span class="ident">ref_time</span>(),
+			<span class="ident">gas_required</span>: <span class="ident">output</span>.<span class="ident">gas_meter</span>.<span class="ident">gas_required</span>().<span class="ident">ref_time</span>(),
 			<span class="ident">storage_deposit</span>: <span class="ident">output</span>.<span class="ident">storage_deposit</span>,
 			<span class="ident">debug_message</span>: <span class="ident">debug_message</span>.<span class="ident">unwrap_or_default</span>(),
 		}

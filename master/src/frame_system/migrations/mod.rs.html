@@ -208,7 +208,7 @@
 	);
 	<span class="op">&lt;</span><span class="ident">UpgradedToU32RefCount</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::put</span>(<span class="bool-val">true</span>);
 	<span class="op">&lt;</span><span class="ident">UpgradedToTripleRefCount</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::put</span>(<span class="bool-val">true</span>);
-	<span class="ident">Weight::max_value</span>()
+	<span class="ident">Weight::MAX</span>
 }
 
 <span class="doccomment">/// Migrate from unique `u32` reference counting to triple `u32` reference counting.</span>
@@ -226,7 +226,7 @@
 		<span class="ident">translated</span>
 	);
 	<span class="op">&lt;</span><span class="ident">UpgradedToTripleRefCount</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::put</span>(<span class="bool-val">true</span>);
-	<span class="ident">Weight::max_value</span>()
+	<span class="ident">Weight::MAX</span>
 }
 
 <span class="doccomment">/// Migrate from dual `u32` reference counting to triple `u32` reference counting.</span>
@@ -244,7 +244,7 @@
 		<span class="ident">translated</span>
 	);
 	<span class="op">&lt;</span><span class="ident">UpgradedToTripleRefCount</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::put</span>(<span class="bool-val">true</span>);
-	<span class="ident">Weight::max_value</span>()
+	<span class="ident">Weight::MAX</span>
 }
 </code></pre></div>
 </section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="frame_system" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (7fe022f5a 2022-07-24)" ></div>

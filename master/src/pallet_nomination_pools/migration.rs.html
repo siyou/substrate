@@ -389,6 +389,7 @@
 <span id="383">383</span>
 <span id="384">384</span>
 <span id="385">385</span>
+<span id="386">386</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2022 Parity Technologies (UK) Ltd.</span>
@@ -711,6 +712,7 @@
 				<span class="ident">current</span>
 			);
 			<span class="ident">current</span>.<span class="ident">put</span>::<span class="op">&lt;</span><span class="ident">Pallet</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>();
+
 			<span class="ident">T::DbWeight::get</span>().<span class="ident">reads_writes</span>(<span class="ident">members_translated</span> <span class="op">+</span> <span class="number">1</span>, <span class="ident">reward_pools_translated</span> <span class="op">+</span> <span class="number">1</span>)
 		}
 	}

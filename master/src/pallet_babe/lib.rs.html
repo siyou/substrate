@@ -1355,7 +1355,7 @@
 		<span class="doccomment">/// Initialization</span>
 		<span class="kw">fn</span> <span class="ident">on_initialize</span>(<span class="ident">now</span>: <span class="ident">BlockNumberFor</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) -&gt; <span class="ident">Weight</span> {
 			<span class="ident"><span class="self">Self</span>::initialize</span>(<span class="ident">now</span>);
-			<span class="number">0</span>
+			<span class="ident">Weight::zero</span>()
 		}
 
 		<span class="doccomment">/// Block finalization</span>
@@ -2027,7 +2027,7 @@
 
 		<span class="ident">writes</span> <span class="op">+</span><span class="op">=</span> <span class="number">3</span>;
 
-		<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="ident">writes</span>) <span class="op">+</span> <span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="ident">reads</span>)
+		<span class="ident">T::DbWeight::get</span>().<span class="ident">reads_writes</span>(<span class="ident">reads</span>, <span class="ident">writes</span>)
 	}
 }
 </code></pre></div>

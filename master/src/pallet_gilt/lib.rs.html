@@ -1003,7 +1003,7 @@
 			<span class="kw">if</span> (<span class="ident">n</span> <span class="op">%</span> <span class="ident">T::IntakePeriod::get</span>()).<span class="ident">is_zero</span>() {
 				<span class="ident"><span class="self">Self</span>::pursue_target</span>(<span class="ident">T::MaxIntakeBids::get</span>())
 			} <span class="kw">else</span> {
-				<span class="number">0</span>
+				<span class="ident">Weight::zero</span>()
 			}
 		}
 	}

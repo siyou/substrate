@@ -2055,46 +2055,6 @@
 <span id="2049">2049</span>
 <span id="2050">2050</span>
 <span id="2051">2051</span>
-<span id="2052">2052</span>
-<span id="2053">2053</span>
-<span id="2054">2054</span>
-<span id="2055">2055</span>
-<span id="2056">2056</span>
-<span id="2057">2057</span>
-<span id="2058">2058</span>
-<span id="2059">2059</span>
-<span id="2060">2060</span>
-<span id="2061">2061</span>
-<span id="2062">2062</span>
-<span id="2063">2063</span>
-<span id="2064">2064</span>
-<span id="2065">2065</span>
-<span id="2066">2066</span>
-<span id="2067">2067</span>
-<span id="2068">2068</span>
-<span id="2069">2069</span>
-<span id="2070">2070</span>
-<span id="2071">2071</span>
-<span id="2072">2072</span>
-<span id="2073">2073</span>
-<span id="2074">2074</span>
-<span id="2075">2075</span>
-<span id="2076">2076</span>
-<span id="2077">2077</span>
-<span id="2078">2078</span>
-<span id="2079">2079</span>
-<span id="2080">2080</span>
-<span id="2081">2081</span>
-<span id="2082">2082</span>
-<span id="2083">2083</span>
-<span id="2084">2084</span>
-<span id="2085">2085</span>
-<span id="2086">2086</span>
-<span id="2087">2087</span>
-<span id="2088">2088</span>
-<span id="2089">2089</span>
-<span id="2090">2090</span>
-<span id="2091">2091</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2017-2022 Parity Technologies (UK) Ltd.</span>
@@ -2126,7 +2086,6 @@
 
 <span class="kw">use</span> <span class="kw">crate</span>::{
 	<span class="ident">behaviour</span>::{<span class="self">self</span>, <span class="ident">Behaviour</span>, <span class="ident">BehaviourOut</span>},
-	<span class="ident">bitswap::Bitswap</span>,
 	<span class="ident">config</span>::{<span class="ident">Params</span>, <span class="ident">TransportConfig</span>},
 	<span class="ident">discovery::DiscoveryConfig</span>,
 	<span class="ident">error::Error</span>,
@@ -2156,7 +2115,6 @@
 <span class="kw">use</span> <span class="ident">log</span>::{<span class="ident">debug</span>, <span class="ident">error</span>, <span class="ident">info</span>, <span class="ident">trace</span>, <span class="ident">warn</span>};
 <span class="kw">use</span> <span class="ident">metrics</span>::{<span class="ident">Histogram</span>, <span class="ident">HistogramVec</span>, <span class="ident">MetricSources</span>, <span class="ident">Metrics</span>};
 <span class="kw">use</span> <span class="ident">parking_lot::Mutex</span>;
-<span class="kw">use</span> <span class="ident">sc_client_api</span>::{<span class="ident">BlockBackend</span>, <span class="ident">ProofProvider</span>};
 <span class="kw">use</span> <span class="ident">sc_consensus</span>::{<span class="ident">BlockImportError</span>, <span class="ident">BlockImportStatus</span>, <span class="ident">ImportQueue</span>, <span class="ident">Link</span>};
 <span class="kw">use</span> <span class="ident">sc_network_common</span>::{
 	<span class="ident">config::MultiaddrWithPeerId</span>,
@@ -2172,7 +2130,7 @@
 };
 <span class="kw">use</span> <span class="ident">sc_peerset::PeersetHandle</span>;
 <span class="kw">use</span> <span class="ident">sc_utils::mpsc</span>::{<span class="ident">tracing_unbounded</span>, <span class="ident">TracingUnboundedReceiver</span>, <span class="ident">TracingUnboundedSender</span>};
-<span class="kw">use</span> <span class="ident">sp_blockchain</span>::{<span class="ident">HeaderBackend</span>, <span class="ident">HeaderMetadata</span>};
+<span class="kw">use</span> <span class="ident">sp_blockchain::HeaderBackend</span>;
 <span class="kw">use</span> <span class="ident">sp_runtime::traits</span>::{<span class="ident">Block</span> <span class="kw">as</span> <span class="ident">BlockT</span>, <span class="ident">NumberFor</span>};
 <span class="kw">use</span> <span class="ident">std</span>::{
 	<span class="ident">borrow::Cow</span>,
@@ -2234,13 +2192,7 @@
 <span class="kw">where</span>
 	<span class="ident">B</span>: <span class="ident">BlockT</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
 	<span class="ident">H</span>: <span class="ident">ExHashT</span>,
-	<span class="ident">Client</span>: <span class="ident">HeaderBackend</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>
-		<span class="op">+</span> <span class="ident">BlockBackend</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>
-		<span class="op">+</span> <span class="ident">HeaderMetadata</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">Error</span> <span class="op">=</span> <span class="ident">sp_blockchain::Error</span><span class="op">&gt;</span>
-		<span class="op">+</span> <span class="ident">ProofProvider</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>
-		<span class="op">+</span> <span class="ident">Send</span>
-		<span class="op">+</span> <span class="ident">Sync</span>
-		<span class="op">+</span> <span class="lifetime">&#39;static</span>,
+	<span class="ident">Client</span>: <span class="ident">sp_blockchain::HeaderBackend</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
 {
 	<span class="doccomment">/// Creates the network service.</span>
 	<span class="doccomment">///</span>
@@ -2317,7 +2269,7 @@
 			<span class="ident">params</span>.<span class="ident">protocol_id</span>.<span class="ident">clone</span>(),
 			<span class="ident">params</span>
 				.<span class="ident">chain</span>
-				.<span class="ident">block_hash</span>(<span class="number">0u32</span>.<span class="ident">into</span>())
+				.<span class="ident">hash</span>(<span class="number">0u32</span>.<span class="ident">into</span>())
 				.<span class="ident">ok</span>()
 				.<span class="ident">flatten</span>()
 				.<span class="ident">expect</span>(<span class="string">&quot;Genesis block exists; qed&quot;</span>),
@@ -2471,7 +2423,6 @@
 			};
 
 			<span class="kw">let</span> <span class="ident">behaviour</span> <span class="op">=</span> {
-				<span class="kw">let</span> <span class="ident">bitswap</span> <span class="op">=</span> <span class="ident">params</span>.<span class="ident">network_config</span>.<span class="ident">ipfs_server</span>.<span class="ident">then</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">Bitswap::new</span>(<span class="ident">params</span>.<span class="ident">chain</span>));
 				<span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">Behaviour::new</span>(
 					<span class="ident">protocol</span>,
 					<span class="ident">user_agent</span>,
@@ -2480,7 +2431,7 @@
 					<span class="ident">params</span>.<span class="ident">block_request_protocol_config</span>,
 					<span class="ident">params</span>.<span class="ident">state_request_protocol_config</span>,
 					<span class="ident">params</span>.<span class="ident">warp_sync_protocol_config</span>,
-					<span class="ident">bitswap</span>,
+					<span class="ident">params</span>.<span class="ident">bitswap</span>,
 					<span class="ident">params</span>.<span class="ident">light_client_request_protocol_config</span>,
 					<span class="ident">params</span>.<span class="ident">network_config</span>.<span class="ident">request_response_protocols</span>,
 					<span class="ident">peerset_handle</span>.<span class="ident">clone</span>(),
@@ -3394,13 +3345,7 @@
 <span class="kw">where</span>
 	<span class="ident">B</span>: <span class="ident">BlockT</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
 	<span class="ident">H</span>: <span class="ident">ExHashT</span>,
-	<span class="ident">Client</span>: <span class="ident">HeaderBackend</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>
-		<span class="op">+</span> <span class="ident">BlockBackend</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>
-		<span class="op">+</span> <span class="ident">HeaderMetadata</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">Error</span> <span class="op">=</span> <span class="ident">sp_blockchain::Error</span><span class="op">&gt;</span>
-		<span class="op">+</span> <span class="ident">ProofProvider</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>
-		<span class="op">+</span> <span class="ident">Send</span>
-		<span class="op">+</span> <span class="ident">Sync</span>
-		<span class="op">+</span> <span class="lifetime">&#39;static</span>,
+	<span class="ident">Client</span>: <span class="ident">HeaderBackend</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
 {
 	<span class="doccomment">/// Updated by the `NetworkWorker` and loaded by the `NetworkService`.</span>
 	<span class="ident">external_addresses</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">Mutex</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Multiaddr</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>,
@@ -3433,13 +3378,7 @@
 <span class="kw">where</span>
 	<span class="ident">B</span>: <span class="ident">BlockT</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
 	<span class="ident">H</span>: <span class="ident">ExHashT</span>,
-	<span class="ident">Client</span>: <span class="ident">HeaderBackend</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>
-		<span class="op">+</span> <span class="ident">BlockBackend</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>
-		<span class="op">+</span> <span class="ident">HeaderMetadata</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">Error</span> <span class="op">=</span> <span class="ident">sp_blockchain::Error</span><span class="op">&gt;</span>
-		<span class="op">+</span> <span class="ident">ProofProvider</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>
-		<span class="op">+</span> <span class="ident">Send</span>
-		<span class="op">+</span> <span class="ident">Sync</span>
-		<span class="op">+</span> <span class="lifetime">&#39;static</span>,
+	<span class="ident">Client</span>: <span class="ident">HeaderBackend</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
 {
 	<span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> ();
 
@@ -3472,7 +3411,6 @@
 				<span class="ident">Poll::Ready</span>(<span class="prelude-val">None</span>) =&gt; <span class="kw">return</span> <span class="ident">Poll::Ready</span>(()),
 				<span class="ident">Poll::Pending</span> =&gt; <span class="kw">break</span>,
 			};
-
 			<span class="kw">match</span> <span class="ident">msg</span> {
 				<span class="ident">ServiceToWorkerMsg::AnnounceBlock</span>(<span class="ident">hash</span>, <span class="ident">data</span>) =&gt; <span class="ident">this</span>
 					.<span class="ident">network_service</span>
@@ -4085,13 +4023,7 @@
 <span class="kw">where</span>
 	<span class="ident">B</span>: <span class="ident">BlockT</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
 	<span class="ident">H</span>: <span class="ident">ExHashT</span>,
-	<span class="ident">Client</span>: <span class="ident">HeaderBackend</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>
-		<span class="op">+</span> <span class="ident">BlockBackend</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>
-		<span class="op">+</span> <span class="ident">HeaderMetadata</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">Error</span> <span class="op">=</span> <span class="ident">sp_blockchain::Error</span><span class="op">&gt;</span>
-		<span class="op">+</span> <span class="ident">ProofProvider</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>
-		<span class="op">+</span> <span class="ident">Send</span>
-		<span class="op">+</span> <span class="ident">Sync</span>
-		<span class="op">+</span> <span class="lifetime">&#39;static</span>,
+	<span class="ident">Client</span>: <span class="ident">HeaderBackend</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
 {
 }
 
@@ -4099,13 +4031,7 @@
 <span class="kw">struct</span> <span class="ident">NetworkLink</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">B</span>, <span class="ident">Client</span><span class="op">&gt;</span>
 <span class="kw">where</span>
 	<span class="ident">B</span>: <span class="ident">BlockT</span>,
-	<span class="ident">Client</span>: <span class="ident">HeaderBackend</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>
-		<span class="op">+</span> <span class="ident">BlockBackend</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>
-		<span class="op">+</span> <span class="ident">HeaderMetadata</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">Error</span> <span class="op">=</span> <span class="ident">sp_blockchain::Error</span><span class="op">&gt;</span>
-		<span class="op">+</span> <span class="ident">ProofProvider</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>
-		<span class="op">+</span> <span class="ident">Send</span>
-		<span class="op">+</span> <span class="ident">Sync</span>
-		<span class="op">+</span> <span class="lifetime">&#39;static</span>,
+	<span class="ident">Client</span>: <span class="ident">HeaderBackend</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
 {
 	<span class="ident">protocol</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="ident">Swarm</span><span class="op">&lt;</span><span class="ident">Behaviour</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">Client</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 }
@@ -4113,13 +4039,7 @@
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">B</span>, <span class="ident">Client</span><span class="op">&gt;</span> <span class="ident">Link</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">NetworkLink</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">B</span>, <span class="ident">Client</span><span class="op">&gt;</span>
 <span class="kw">where</span>
 	<span class="ident">B</span>: <span class="ident">BlockT</span>,
-	<span class="ident">Client</span>: <span class="ident">HeaderBackend</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>
-		<span class="op">+</span> <span class="ident">BlockBackend</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>
-		<span class="op">+</span> <span class="ident">HeaderMetadata</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">Error</span> <span class="op">=</span> <span class="ident">sp_blockchain::Error</span><span class="op">&gt;</span>
-		<span class="op">+</span> <span class="ident">ProofProvider</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>
-		<span class="op">+</span> <span class="ident">Send</span>
-		<span class="op">+</span> <span class="ident">Sync</span>
-		<span class="op">+</span> <span class="lifetime">&#39;static</span>,
+	<span class="ident">Client</span>: <span class="ident">HeaderBackend</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
 {
 	<span class="kw">fn</span> <span class="ident">blocks_processed</span>(
 		<span class="kw-2">&amp;mut</span> <span class="self">self</span>,

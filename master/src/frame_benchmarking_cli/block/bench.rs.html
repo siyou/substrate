@@ -180,6 +180,7 @@
 <span id="174">174</span>
 <span id="175">175</span>
 <span id="176">176</span>
+<span id="177">177</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2022 Parity Technologies (UK) Ltd.</span>
@@ -324,7 +325,8 @@
 
 		<span class="kw">let</span> <span class="ident">weight</span> <span class="op">=</span> <span class="ident">ConsumedWeight::decode_all</span>(<span class="kw-2">&amp;mut</span> <span class="ident">raw_weight</span>)<span class="question-mark">?</span>;
 		<span class="comment">// Should be divisible, but still use floats in case we ever change that.</span>
-		<span class="prelude-val">Ok</span>((<span class="ident">weight</span>.<span class="ident">total</span>() <span class="kw">as</span> <span class="ident">f64</span> <span class="op">/</span> <span class="ident">WEIGHT_PER_NANOS</span> <span class="kw">as</span> <span class="ident">f64</span>).<span class="ident">floor</span>() <span class="kw">as</span> <span class="ident">NanoSeconds</span>)
+		<span class="prelude-val">Ok</span>((<span class="ident">weight</span>.<span class="ident">total</span>().<span class="ident">ref_time</span>() <span class="kw">as</span> <span class="ident">f64</span> <span class="op">/</span> <span class="ident">WEIGHT_PER_NANOS</span>.<span class="ident">ref_time</span>() <span class="kw">as</span> <span class="ident">f64</span>).<span class="ident">floor</span>()
+			<span class="kw">as</span> <span class="ident">NanoSeconds</span>)
 	}
 
 	<span class="doccomment">/// Prints the weight info of a block to the console.</span>

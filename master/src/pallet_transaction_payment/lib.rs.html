@@ -1689,6 +1689,45 @@
 <span id="1683">1683</span>
 <span id="1684">1684</span>
 <span id="1685">1685</span>
+<span id="1686">1686</span>
+<span id="1687">1687</span>
+<span id="1688">1688</span>
+<span id="1689">1689</span>
+<span id="1690">1690</span>
+<span id="1691">1691</span>
+<span id="1692">1692</span>
+<span id="1693">1693</span>
+<span id="1694">1694</span>
+<span id="1695">1695</span>
+<span id="1696">1696</span>
+<span id="1697">1697</span>
+<span id="1698">1698</span>
+<span id="1699">1699</span>
+<span id="1700">1700</span>
+<span id="1701">1701</span>
+<span id="1702">1702</span>
+<span id="1703">1703</span>
+<span id="1704">1704</span>
+<span id="1705">1705</span>
+<span id="1706">1706</span>
+<span id="1707">1707</span>
+<span id="1708">1708</span>
+<span id="1709">1709</span>
+<span id="1710">1710</span>
+<span id="1711">1711</span>
+<span id="1712">1712</span>
+<span id="1713">1713</span>
+<span id="1714">1714</span>
+<span id="1715">1715</span>
+<span id="1716">1716</span>
+<span id="1717">1717</span>
+<span id="1718">1718</span>
+<span id="1719">1719</span>
+<span id="1720">1720</span>
+<span id="1721">1721</span>
+<span id="1722">1722</span>
+<span id="1723">1723</span>
+<span id="1724">1724</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2019-2022 Parity Technologies (UK) Ltd.</span>
@@ -1757,7 +1796,8 @@
 	<span class="ident">dispatch::DispatchResult</span>,
 	<span class="ident">traits</span>::{<span class="ident">EstimateCallFee</span>, <span class="ident">Get</span>},
 	<span class="ident">weights</span>::{
-		<span class="ident">DispatchClass</span>, <span class="ident">DispatchInfo</span>, <span class="ident">GetDispatchInfo</span>, <span class="ident">Pays</span>, <span class="ident">PostDispatchInfo</span>, <span class="ident">Weight</span>, <span class="ident">WeightToFee</span>,
+		<span class="ident">DispatchClass</span>, <span class="ident">DispatchInfo</span>, <span class="ident">GetDispatchInfo</span>, <span class="ident">Pays</span>, <span class="ident">PostDispatchInfo</span>, <span class="ident">RefTimeWeight</span>,
+		<span class="ident">Weight</span>, <span class="ident">WeightToFee</span>,
 	},
 };
 
@@ -1880,7 +1920,11 @@
 			<span class="ident">weights</span>.<span class="ident">get</span>(<span class="ident">DispatchClass::Normal</span>).<span class="ident">max_total</span>.<span class="ident">unwrap_or</span>(<span class="ident">weights</span>.<span class="ident">max_block</span>);
 		<span class="kw">let</span> <span class="ident">current_block_weight</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">frame_system::Pallet</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::block_weight</span>();
 		<span class="kw">let</span> <span class="ident">normal_block_weight</span> <span class="op">=</span>
-			<span class="kw-2">*</span><span class="ident">current_block_weight</span>.<span class="ident">get</span>(<span class="ident">DispatchClass::Normal</span>).<span class="ident">min</span>(<span class="kw-2">&amp;</span><span class="ident">normal_max_weight</span>);
+			<span class="ident">current_block_weight</span>.<span class="ident">get</span>(<span class="ident">DispatchClass::Normal</span>).<span class="ident">min</span>(<span class="ident">normal_max_weight</span>);
+
+		<span class="comment">// TODO: Handle all weight dimensions</span>
+		<span class="kw">let</span> <span class="ident">normal_max_weight</span> <span class="op">=</span> <span class="ident">normal_max_weight</span>.<span class="ident">ref_time</span>();
+		<span class="kw">let</span> <span class="ident">normal_block_weight</span> <span class="op">=</span> <span class="ident">normal_block_weight</span>.<span class="ident">ref_time</span>();
 
 		<span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="ident">S::get</span>();
 		<span class="kw">let</span> <span class="ident">v</span> <span class="op">=</span> <span class="ident">V::get</span>();
@@ -2038,7 +2082,7 @@
 			<span class="macro">assert!</span>(
 				<span class="op">&lt;</span><span class="ident">Multiplier</span> <span class="kw">as</span> <span class="ident">sp_runtime::traits::Bounded</span><span class="op">&gt;</span><span class="ident">::max_value</span>() <span class="op">&gt;</span><span class="op">=</span>
 					<span class="ident">Multiplier::checked_from_integer</span>::<span class="op">&lt;</span><span class="ident">u128</span><span class="op">&gt;</span>(
-						<span class="ident">T::BlockWeights::get</span>().<span class="ident">max_block</span>.<span class="ident">try_into</span>().<span class="ident">unwrap</span>()
+						<span class="ident">T::BlockWeights::get</span>().<span class="ident">max_block</span>.<span class="ident">ref_time</span>().<span class="ident">try_into</span>().<span class="ident">unwrap</span>()
 					)
 					.<span class="ident">unwrap</span>(),
 			);
@@ -2050,7 +2094,7 @@
 				);
 			<span class="comment">// add 1 percent;</span>
 			<span class="kw">let</span> <span class="ident">addition</span> <span class="op">=</span> <span class="ident">target</span> <span class="op">/</span> <span class="number">100</span>;
-			<span class="kw">if</span> <span class="ident">addition</span> <span class="op">==</span> <span class="number">0</span> {
+			<span class="kw">if</span> <span class="ident">addition</span> <span class="op">==</span> <span class="ident">Weight::zero</span>() {
 				<span class="comment">// this is most likely because in a test setup we set everything to ().</span>
 				<span class="kw">return</span>
 			}
@@ -2245,7 +2289,7 @@
 	}
 
 	<span class="kw">fn</span> <span class="ident">length_to_fee</span>(<span class="ident">length</span>: <span class="ident">u32</span>) -&gt; <span class="ident">BalanceOf</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-		<span class="ident">T::LengthToFee::weight_to_fee</span>(<span class="kw-2">&amp;</span>(<span class="ident">length</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+		<span class="ident">T::LengthToFee::weight_to_fee</span>(<span class="kw-2">&amp;</span><span class="ident">Weight::from_ref_time</span>(<span class="ident">length</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 
 	<span class="kw">fn</span> <span class="ident">weight_to_fee</span>(<span class="ident">weight</span>: <span class="ident">Weight</span>) -&gt; <span class="ident">BalanceOf</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
@@ -2346,7 +2390,11 @@
 		<span class="kw">let</span> <span class="ident">max_block_weight</span> <span class="op">=</span> <span class="ident">T::BlockWeights::get</span>().<span class="ident">max_block</span>;
 		<span class="kw">let</span> <span class="ident">max_block_length</span> <span class="op">=</span> <span class="kw-2">*</span><span class="ident">T::BlockLength::get</span>().<span class="ident">max</span>.<span class="ident">get</span>(<span class="ident">info</span>.<span class="ident">class</span>) <span class="kw">as</span> <span class="ident">u64</span>;
 
-		<span class="kw">let</span> <span class="ident">bounded_weight</span> <span class="op">=</span> <span class="ident">info</span>.<span class="ident">weight</span>.<span class="ident">max</span>(<span class="number">1</span>).<span class="ident">min</span>(<span class="ident">max_block_weight</span>);
+		<span class="comment">// TODO: Take into account all dimensions of weight</span>
+		<span class="kw">let</span> <span class="ident">max_block_weight</span> <span class="op">=</span> <span class="ident">max_block_weight</span>.<span class="ident">ref_time</span>();
+		<span class="kw">let</span> <span class="ident">info_weight</span> <span class="op">=</span> <span class="ident">info</span>.<span class="ident">weight</span>.<span class="ident">ref_time</span>();
+
+		<span class="kw">let</span> <span class="ident">bounded_weight</span> <span class="op">=</span> <span class="ident">info_weight</span>.<span class="ident">max</span>(<span class="number">1</span>).<span class="ident">min</span>(<span class="ident">max_block_weight</span>);
 		<span class="kw">let</span> <span class="ident">bounded_length</span> <span class="op">=</span> (<span class="ident">len</span> <span class="kw">as</span> <span class="ident">u64</span>).<span class="ident">max</span>(<span class="number">1</span>).<span class="ident">min</span>(<span class="ident">max_block_length</span>);
 
 		<span class="kw">let</span> <span class="ident">max_tx_per_block_weight</span> <span class="op">=</span> <span class="ident">max_block_weight</span> <span class="op">/</span> <span class="ident">bounded_weight</span>;
@@ -2527,19 +2575,19 @@
 		<span class="kw-2">&amp;</span><span class="ident">Call::Balances</span>(<span class="ident">BalancesCall::transfer</span> { <span class="ident">dest</span>: <span class="number">2</span>, <span class="ident">value</span>: <span class="number">69</span> });
 
 	<span class="macro">thread_local!</span> {
-		<span class="kw">static</span> <span class="ident">EXTRINSIC_BASE_WEIGHT</span>: <span class="ident">RefCell</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">RefCell::new</span>(<span class="number">0</span>);
+		<span class="kw">static</span> <span class="ident">EXTRINSIC_BASE_WEIGHT</span>: <span class="ident">RefCell</span><span class="op">&lt;</span><span class="ident">Weight</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">RefCell::new</span>(<span class="ident">Weight::new</span>());
 	}
 
 	<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">BlockWeights</span>;
 	<span class="kw">impl</span> <span class="ident">Get</span><span class="op">&lt;</span><span class="ident">frame_system::limits::BlockWeights</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">BlockWeights</span> {
 		<span class="kw">fn</span> <span class="ident">get</span>() -&gt; <span class="ident">frame_system::limits::BlockWeights</span> {
 			<span class="ident">frame_system::limits::BlockWeights::builder</span>()
-				.<span class="ident">base_block</span>(<span class="number">0</span>)
+				.<span class="ident">base_block</span>(<span class="ident">Weight::zero</span>())
 				.<span class="ident">for_class</span>(<span class="ident">DispatchClass::all</span>(), <span class="op">|</span><span class="ident">weights</span><span class="op">|</span> {
 					<span class="ident">weights</span>.<span class="ident">base_extrinsic</span> <span class="op">=</span> <span class="ident">EXTRINSIC_BASE_WEIGHT</span>.<span class="ident">with</span>(<span class="op">|</span><span class="ident">v</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">v</span>.<span class="ident">borrow</span>()).<span class="ident">into</span>();
 				})
 				.<span class="ident">for_class</span>(<span class="ident">DispatchClass::non_mandatory</span>(), <span class="op">|</span><span class="ident">weights</span><span class="op">|</span> {
-					<span class="ident">weights</span>.<span class="ident">max_total</span> <span class="op">=</span> <span class="number">1024</span>.<span class="ident">into</span>();
+					<span class="ident">weights</span>.<span class="ident">max_total</span> <span class="op">=</span> <span class="ident">Weight::from_ref_time</span>(<span class="number">1024</span>).<span class="ident">into</span>();
 				})
 				.<span class="ident">build_or_panic</span>()
 		}
@@ -2594,7 +2642,7 @@
 		<span class="kw">type</span> <span class="ident">Balance</span> <span class="op">=</span> <span class="ident">u64</span>;
 
 		<span class="kw">fn</span> <span class="ident">weight_to_fee</span>(<span class="ident">weight</span>: <span class="kw-2">&amp;</span><span class="ident">Weight</span>) -&gt; <span class="ident"><span class="self">Self</span>::Balance</span> {
-			<span class="ident"><span class="self">Self</span>::Balance::saturated_from</span>(<span class="kw-2">*</span><span class="ident">weight</span>)
+			<span class="ident"><span class="self">Self</span>::Balance::saturated_from</span>(<span class="ident">weight</span>.<span class="ident">ref_time</span>())
 				.<span class="ident">saturating_mul</span>(<span class="ident">WEIGHT_TO_FEE</span>.<span class="ident">with</span>(<span class="op">|</span><span class="ident">v</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">v</span>.<span class="ident">borrow</span>()))
 		}
 	}
@@ -2603,7 +2651,7 @@
 		<span class="kw">type</span> <span class="ident">Balance</span> <span class="op">=</span> <span class="ident">u64</span>;
 
 		<span class="kw">fn</span> <span class="ident">weight_to_fee</span>(<span class="ident">weight</span>: <span class="kw-2">&amp;</span><span class="ident">Weight</span>) -&gt; <span class="ident"><span class="self">Self</span>::Balance</span> {
-			<span class="ident"><span class="self">Self</span>::Balance::saturated_from</span>(<span class="kw-2">*</span><span class="ident">weight</span>)
+			<span class="ident"><span class="self">Self</span>::Balance::saturated_from</span>(<span class="ident">weight</span>.<span class="ident">ref_time</span>())
 				.<span class="ident">saturating_mul</span>(<span class="ident">TRANSACTION_BYTE_FEE</span>.<span class="ident">with</span>(<span class="op">|</span><span class="ident">v</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">v</span>.<span class="ident">borrow</span>()))
 		}
 	}
@@ -2638,19 +2686,19 @@
 
 	<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ExtBuilder</span> {
 		<span class="ident">balance_factor</span>: <span class="ident">u64</span>,
-		<span class="ident">base_weight</span>: <span class="ident">u64</span>,
+		<span class="ident">base_weight</span>: <span class="ident">Weight</span>,
 		<span class="ident">byte_fee</span>: <span class="ident">u64</span>,
 		<span class="ident">weight_to_fee</span>: <span class="ident">u64</span>,
 	}
 
 	<span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">ExtBuilder</span> {
 		<span class="kw">fn</span> <span class="ident">default</span>() -&gt; <span class="self">Self</span> {
-			<span class="self">Self</span> { <span class="ident">balance_factor</span>: <span class="number">1</span>, <span class="ident">base_weight</span>: <span class="number">0</span>, <span class="ident">byte_fee</span>: <span class="number">1</span>, <span class="ident">weight_to_fee</span>: <span class="number">1</span> }
+			<span class="self">Self</span> { <span class="ident">balance_factor</span>: <span class="number">1</span>, <span class="ident">base_weight</span>: <span class="ident">Weight::zero</span>(), <span class="ident">byte_fee</span>: <span class="number">1</span>, <span class="ident">weight_to_fee</span>: <span class="number">1</span> }
 		}
 	}
 
 	<span class="kw">impl</span> <span class="ident">ExtBuilder</span> {
-		<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">base_weight</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">base_weight</span>: <span class="ident">u64</span>) -&gt; <span class="self">Self</span> {
+		<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">base_weight</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">base_weight</span>: <span class="ident">Weight</span>) -&gt; <span class="self">Self</span> {
 			<span class="self">self</span>.<span class="ident">base_weight</span> <span class="op">=</span> <span class="ident">base_weight</span>;
 			<span class="self">self</span>
 		}
@@ -2716,18 +2764,18 @@
 	<span class="kw">fn</span> <span class="ident">signed_extension_transaction_payment_work</span>() {
 		<span class="ident">ExtBuilder::default</span>()
 			.<span class="ident">balance_factor</span>(<span class="number">10</span>)
-			.<span class="ident">base_weight</span>(<span class="number">5</span>)
+			.<span class="ident">base_weight</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">5</span>))
 			.<span class="ident">build</span>()
 			.<span class="ident">execute_with</span>(<span class="op">|</span><span class="op">|</span> {
 				<span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="number">10</span>;
 				<span class="kw">let</span> <span class="ident">pre</span> <span class="op">=</span> <span class="ident">ChargeTransactionPayment</span>::<span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span><span class="ident">::from</span>(<span class="number">0</span>)
-					.<span class="ident">pre_dispatch</span>(<span class="kw-2">&amp;</span><span class="number">1</span>, <span class="ident">CALL</span>, <span class="kw-2">&amp;</span><span class="ident">info_from_weight</span>(<span class="number">5</span>), <span class="ident">len</span>)
+					.<span class="ident">pre_dispatch</span>(<span class="kw-2">&amp;</span><span class="number">1</span>, <span class="ident">CALL</span>, <span class="kw-2">&amp;</span><span class="ident">info_from_weight</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">5</span>)), <span class="ident">len</span>)
 					.<span class="ident">unwrap</span>();
 				<span class="macro">assert_eq!</span>(<span class="ident">Balances::free_balance</span>(<span class="number">1</span>), <span class="number">100</span> <span class="op">-</span> <span class="number">5</span> <span class="op">-</span> <span class="number">5</span> <span class="op">-</span> <span class="number">10</span>);
 
 				<span class="macro">assert_ok!</span>(<span class="ident">ChargeTransactionPayment</span>::<span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span><span class="ident">::post_dispatch</span>(
 					<span class="prelude-val">Some</span>(<span class="ident">pre</span>),
-					<span class="kw-2">&amp;</span><span class="ident">info_from_weight</span>(<span class="number">5</span>),
+					<span class="kw-2">&amp;</span><span class="ident">info_from_weight</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">5</span>)),
 					<span class="kw-2">&amp;</span><span class="ident">default_post_info</span>(),
 					<span class="ident">len</span>,
 					<span class="kw-2">&amp;</span><span class="prelude-val">Ok</span>(())
@@ -2739,14 +2787,14 @@
 				<span class="ident">FEE_UNBALANCED_AMOUNT</span>.<span class="ident">with</span>(<span class="op">|</span><span class="ident">a</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">a</span>.<span class="ident">borrow_mut</span>() <span class="op">=</span> <span class="number">0</span>);
 
 				<span class="kw">let</span> <span class="ident">pre</span> <span class="op">=</span> <span class="ident">ChargeTransactionPayment</span>::<span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span><span class="ident">::from</span>(<span class="number">5</span> <span class="comment">/* tipped */</span>)
-					.<span class="ident">pre_dispatch</span>(<span class="kw-2">&amp;</span><span class="number">2</span>, <span class="ident">CALL</span>, <span class="kw-2">&amp;</span><span class="ident">info_from_weight</span>(<span class="number">100</span>), <span class="ident">len</span>)
+					.<span class="ident">pre_dispatch</span>(<span class="kw-2">&amp;</span><span class="number">2</span>, <span class="ident">CALL</span>, <span class="kw-2">&amp;</span><span class="ident">info_from_weight</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">100</span>)), <span class="ident">len</span>)
 					.<span class="ident">unwrap</span>();
 				<span class="macro">assert_eq!</span>(<span class="ident">Balances::free_balance</span>(<span class="number">2</span>), <span class="number">200</span> <span class="op">-</span> <span class="number">5</span> <span class="op">-</span> <span class="number">10</span> <span class="op">-</span> <span class="number">100</span> <span class="op">-</span> <span class="number">5</span>);
 
 				<span class="macro">assert_ok!</span>(<span class="ident">ChargeTransactionPayment</span>::<span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span><span class="ident">::post_dispatch</span>(
 					<span class="prelude-val">Some</span>(<span class="ident">pre</span>),
-					<span class="kw-2">&amp;</span><span class="ident">info_from_weight</span>(<span class="number">100</span>),
-					<span class="kw-2">&amp;</span><span class="ident">post_info_from_weight</span>(<span class="number">50</span>),
+					<span class="kw-2">&amp;</span><span class="ident">info_from_weight</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">100</span>)),
+					<span class="kw-2">&amp;</span><span class="ident">post_info_from_weight</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">50</span>)),
 					<span class="ident">len</span>,
 					<span class="kw-2">&amp;</span><span class="prelude-val">Ok</span>(())
 				));
@@ -2760,22 +2808,22 @@
 	<span class="kw">fn</span> <span class="ident">signed_extension_transaction_payment_multiplied_refund_works</span>() {
 		<span class="ident">ExtBuilder::default</span>()
 			.<span class="ident">balance_factor</span>(<span class="number">10</span>)
-			.<span class="ident">base_weight</span>(<span class="number">5</span>)
+			.<span class="ident">base_weight</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">5</span>))
 			.<span class="ident">build</span>()
 			.<span class="ident">execute_with</span>(<span class="op">|</span><span class="op">|</span> {
 				<span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="number">10</span>;
 				<span class="op">&lt;</span><span class="ident">NextFeeMultiplier</span><span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::put</span>(<span class="ident">Multiplier::saturating_from_rational</span>(<span class="number">3</span>, <span class="number">2</span>));
 
 				<span class="kw">let</span> <span class="ident">pre</span> <span class="op">=</span> <span class="ident">ChargeTransactionPayment</span>::<span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span><span class="ident">::from</span>(<span class="number">5</span> <span class="comment">/* tipped */</span>)
-					.<span class="ident">pre_dispatch</span>(<span class="kw-2">&amp;</span><span class="number">2</span>, <span class="ident">CALL</span>, <span class="kw-2">&amp;</span><span class="ident">info_from_weight</span>(<span class="number">100</span>), <span class="ident">len</span>)
+					.<span class="ident">pre_dispatch</span>(<span class="kw-2">&amp;</span><span class="number">2</span>, <span class="ident">CALL</span>, <span class="kw-2">&amp;</span><span class="ident">info_from_weight</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">100</span>)), <span class="ident">len</span>)
 					.<span class="ident">unwrap</span>();
 				<span class="comment">// 5 base fee, 10 byte fee, 3/2 * 100 weight fee, 5 tip</span>
 				<span class="macro">assert_eq!</span>(<span class="ident">Balances::free_balance</span>(<span class="number">2</span>), <span class="number">200</span> <span class="op">-</span> <span class="number">5</span> <span class="op">-</span> <span class="number">10</span> <span class="op">-</span> <span class="number">150</span> <span class="op">-</span> <span class="number">5</span>);
 
 				<span class="macro">assert_ok!</span>(<span class="ident">ChargeTransactionPayment</span>::<span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span><span class="ident">::post_dispatch</span>(
 					<span class="prelude-val">Some</span>(<span class="ident">pre</span>),
-					<span class="kw-2">&amp;</span><span class="ident">info_from_weight</span>(<span class="number">100</span>),
-					<span class="kw-2">&amp;</span><span class="ident">post_info_from_weight</span>(<span class="number">50</span>),
+					<span class="kw-2">&amp;</span><span class="ident">info_from_weight</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">100</span>)),
+					<span class="kw-2">&amp;</span><span class="ident">post_info_from_weight</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">50</span>)),
 					<span class="ident">len</span>,
 					<span class="kw-2">&amp;</span><span class="prelude-val">Ok</span>(())
 				));
@@ -2791,13 +2839,14 @@
 			<span class="macro">assert_ok!</span>(<span class="ident">ChargeTransactionPayment</span>::<span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span><span class="ident">::from</span>(<span class="number">0</span>).<span class="ident">pre_dispatch</span>(
 				<span class="kw-2">&amp;</span><span class="number">1</span>,
 				<span class="ident">CALL</span>,
-				<span class="kw-2">&amp;</span><span class="ident">info_from_weight</span>(<span class="ident">Weight::max_value</span>()),
+				<span class="kw-2">&amp;</span><span class="ident">info_from_weight</span>(<span class="ident">Weight::MAX</span>),
 				<span class="number">10</span>
 			));
 			<span class="comment">// fee will be proportional to what is the actual maximum weight in the runtime.</span>
 			<span class="macro">assert_eq!</span>(
 				<span class="ident">Balances::free_balance</span>(<span class="kw-2">&amp;</span><span class="number">1</span>),
-				(<span class="number">10000</span> <span class="op">-</span> <span class="op">&lt;</span><span class="ident">Runtime</span> <span class="kw">as</span> <span class="ident">frame_system::Config</span><span class="op">&gt;</span><span class="ident">::BlockWeights::get</span>().<span class="ident">max_block</span>) <span class="kw">as</span> <span class="ident">u64</span>
+				(<span class="number">10000</span> <span class="op">-</span>
+					<span class="op">&lt;</span><span class="ident">Runtime</span> <span class="kw">as</span> <span class="ident">frame_system::Config</span><span class="op">&gt;</span><span class="ident">::BlockWeights::get</span>().<span class="ident">max_block</span>.<span class="ident">ref_time</span>()) <span class="kw">as</span> <span class="ident">u64</span>
 			);
 		});
 	}
@@ -2805,7 +2854,7 @@
 	<span class="attribute">#[<span class="ident">test</span>]</span>
 	<span class="kw">fn</span> <span class="ident">signed_extension_allows_free_transactions</span>() {
 		<span class="ident">ExtBuilder::default</span>()
-			.<span class="ident">base_weight</span>(<span class="number">100</span>)
+			.<span class="ident">base_weight</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">100</span>))
 			.<span class="ident">balance_factor</span>(<span class="number">0</span>)
 			.<span class="ident">build</span>()
 			.<span class="ident">execute_with</span>(<span class="op">|</span><span class="op">|</span> {
@@ -2816,7 +2865,7 @@
 
 				<span class="comment">// This is a completely free (and thus wholly insecure/DoS-ridden) transaction.</span>
 				<span class="kw">let</span> <span class="ident">operational_transaction</span> <span class="op">=</span> <span class="ident">DispatchInfo</span> {
-					<span class="ident">weight</span>: <span class="number">0</span>,
+					<span class="ident">weight</span>: <span class="ident">Weight::from_ref_time</span>(<span class="number">0</span>),
 					<span class="ident">class</span>: <span class="ident">DispatchClass::Operational</span>,
 					<span class="ident">pays_fee</span>: <span class="ident">Pays::No</span>,
 				};
@@ -2828,8 +2877,11 @@
 				));
 
 				<span class="comment">// like a InsecureFreeNormal</span>
-				<span class="kw">let</span> <span class="ident">free_transaction</span> <span class="op">=</span>
-					<span class="ident">DispatchInfo</span> { <span class="ident">weight</span>: <span class="number">0</span>, <span class="ident">class</span>: <span class="ident">DispatchClass::Normal</span>, <span class="ident">pays_fee</span>: <span class="ident">Pays::Yes</span> };
+				<span class="kw">let</span> <span class="ident">free_transaction</span> <span class="op">=</span> <span class="ident">DispatchInfo</span> {
+					<span class="ident">weight</span>: <span class="ident">Weight::from_ref_time</span>(<span class="number">0</span>),
+					<span class="ident">class</span>: <span class="ident">DispatchClass::Normal</span>,
+					<span class="ident">pays_fee</span>: <span class="ident">Pays::Yes</span>,
+				};
 				<span class="macro">assert_noop!</span>(
 					<span class="ident">ChargeTransactionPayment</span>::<span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span><span class="ident">::from</span>(<span class="number">0</span>).<span class="ident">validate</span>(
 						<span class="kw-2">&amp;</span><span class="number">1</span>,
@@ -2845,7 +2897,7 @@
 	<span class="attribute">#[<span class="ident">test</span>]</span>
 	<span class="kw">fn</span> <span class="ident">signed_ext_length_fee_is_also_updated_per_congestion</span>() {
 		<span class="ident">ExtBuilder::default</span>()
-			.<span class="ident">base_weight</span>(<span class="number">5</span>)
+			.<span class="ident">base_weight</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">5</span>))
 			.<span class="ident">balance_factor</span>(<span class="number">10</span>)
 			.<span class="ident">build</span>()
 			.<span class="ident">execute_with</span>(<span class="op">|</span><span class="op">|</span> {
@@ -2853,8 +2905,10 @@
 				<span class="op">&lt;</span><span class="ident">NextFeeMultiplier</span><span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::put</span>(<span class="ident">Multiplier::saturating_from_rational</span>(<span class="number">3</span>, <span class="number">2</span>));
 				<span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="number">10</span>;
 
-				<span class="macro">assert_ok!</span>(<span class="ident">ChargeTransactionPayment</span>::<span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span><span class="ident">::from</span>(<span class="number">10</span>) <span class="comment">// tipped</span>
-					.<span class="ident">pre_dispatch</span>(<span class="kw-2">&amp;</span><span class="number">1</span>, <span class="ident">CALL</span>, <span class="kw-2">&amp;</span><span class="ident">info_from_weight</span>(<span class="number">3</span>), <span class="ident">len</span>));
+				<span class="macro">assert_ok!</span>(
+					<span class="ident">ChargeTransactionPayment</span>::<span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span><span class="ident">::from</span>(<span class="number">10</span>) <span class="comment">// tipped</span>
+						.<span class="ident">pre_dispatch</span>(<span class="kw-2">&amp;</span><span class="number">1</span>, <span class="ident">CALL</span>, <span class="kw-2">&amp;</span><span class="ident">info_from_weight</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">3</span>)), <span class="ident">len</span>)
+				);
 				<span class="macro">assert_eq!</span>(
 					<span class="ident">Balances::free_balance</span>(<span class="number">1</span>),
 					<span class="number">100</span> <span class="comment">// original</span>
@@ -2879,48 +2933,54 @@
 		<span class="kw">let</span> <span class="ident">unsigned_xt</span> <span class="op">=</span> <span class="ident">TestXt</span>::<span class="op">&lt;</span><span class="kw">_</span>, ()<span class="op">&gt;</span><span class="ident">::new</span>(<span class="ident">call</span>, <span class="prelude-val">None</span>);
 		<span class="kw">let</span> <span class="ident">unsigned_xt_info</span> <span class="op">=</span> <span class="ident">unsigned_xt</span>.<span class="ident">get_dispatch_info</span>();
 
-		<span class="ident">ExtBuilder::default</span>().<span class="ident">base_weight</span>(<span class="number">5</span>).<span class="ident">weight_fee</span>(<span class="number">2</span>).<span class="ident">build</span>().<span class="ident">execute_with</span>(<span class="op">|</span><span class="op">|</span> {
-			<span class="comment">// all fees should be x1.5</span>
-			<span class="op">&lt;</span><span class="ident">NextFeeMultiplier</span><span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::put</span>(<span class="ident">Multiplier::saturating_from_rational</span>(<span class="number">3</span>, <span class="number">2</span>));
+		<span class="ident">ExtBuilder::default</span>()
+			.<span class="ident">base_weight</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">5</span>))
+			.<span class="ident">weight_fee</span>(<span class="number">2</span>)
+			.<span class="ident">build</span>()
+			.<span class="ident">execute_with</span>(<span class="op">|</span><span class="op">|</span> {
+				<span class="comment">// all fees should be x1.5</span>
+				<span class="op">&lt;</span><span class="ident">NextFeeMultiplier</span><span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::put</span>(<span class="ident">Multiplier::saturating_from_rational</span>(<span class="number">3</span>, <span class="number">2</span>));
 
-			<span class="macro">assert_eq!</span>(
-				<span class="ident">TransactionPayment::query_info</span>(<span class="ident">xt</span>.<span class="ident">clone</span>(), <span class="ident">len</span>),
-				<span class="ident">RuntimeDispatchInfo</span> {
-					<span class="ident">weight</span>: <span class="ident">info</span>.<span class="ident">weight</span>,
-					<span class="ident">class</span>: <span class="ident">info</span>.<span class="ident">class</span>,
-					<span class="ident">partial_fee</span>: <span class="number">5</span> <span class="op">*</span> <span class="number">2</span> <span class="comment">/* base * weight_fee */</span>
+				<span class="macro">assert_eq!</span>(
+					<span class="ident">TransactionPayment::query_info</span>(<span class="ident">xt</span>.<span class="ident">clone</span>(), <span class="ident">len</span>),
+					<span class="ident">RuntimeDispatchInfo</span> {
+						<span class="ident">weight</span>: <span class="ident">info</span>.<span class="ident">weight</span>,
+						<span class="ident">class</span>: <span class="ident">info</span>.<span class="ident">class</span>,
+						<span class="ident">partial_fee</span>: <span class="number">5</span> <span class="op">*</span> <span class="number">2</span> <span class="comment">/* base * weight_fee */</span>
 						<span class="op">+</span> <span class="ident">len</span> <span class="kw">as</span> <span class="ident">u64</span>  <span class="comment">/* len * 1 */</span>
-						<span class="op">+</span> <span class="ident">info</span>.<span class="ident">weight</span>.<span class="ident">min</span>(<span class="ident">BlockWeights::get</span>().<span class="ident">max_block</span>) <span class="kw">as</span> <span class="ident">u64</span> <span class="op">*</span> <span class="number">2</span> <span class="op">*</span> <span class="number">3</span> <span class="op">/</span> <span class="number">2</span> <span class="comment">/* weight */</span>
-				},
-			);
+						<span class="op">+</span> <span class="ident">info</span>.<span class="ident">weight</span>.<span class="ident">min</span>(<span class="ident">BlockWeights::get</span>().<span class="ident">max_block</span>).<span class="ident">ref_time</span>() <span class="kw">as</span> <span class="ident">u64</span> <span class="op">*</span> <span class="number">2</span> <span class="op">*</span> <span class="number">3</span> <span class="op">/</span> <span class="number">2</span> <span class="comment">/* weight */</span>
+					},
+				);
 
-			<span class="macro">assert_eq!</span>(
-				<span class="ident">TransactionPayment::query_info</span>(<span class="ident">unsigned_xt</span>.<span class="ident">clone</span>(), <span class="ident">len</span>),
-				<span class="ident">RuntimeDispatchInfo</span> {
-					<span class="ident">weight</span>: <span class="ident">unsigned_xt_info</span>.<span class="ident">weight</span>,
-					<span class="ident">class</span>: <span class="ident">unsigned_xt_info</span>.<span class="ident">class</span>,
-					<span class="ident">partial_fee</span>: <span class="number">0</span>,
-				},
-			);
+				<span class="macro">assert_eq!</span>(
+					<span class="ident">TransactionPayment::query_info</span>(<span class="ident">unsigned_xt</span>.<span class="ident">clone</span>(), <span class="ident">len</span>),
+					<span class="ident">RuntimeDispatchInfo</span> {
+						<span class="ident">weight</span>: <span class="ident">unsigned_xt_info</span>.<span class="ident">weight</span>,
+						<span class="ident">class</span>: <span class="ident">unsigned_xt_info</span>.<span class="ident">class</span>,
+						<span class="ident">partial_fee</span>: <span class="number">0</span>,
+					},
+				);
 
-			<span class="macro">assert_eq!</span>(
-				<span class="ident">TransactionPayment::query_fee_details</span>(<span class="ident">xt</span>, <span class="ident">len</span>),
-				<span class="ident">FeeDetails</span> {
-					<span class="ident">inclusion_fee</span>: <span class="prelude-val">Some</span>(<span class="ident">InclusionFee</span> {
-						<span class="ident">base_fee</span>: <span class="number">5</span> <span class="op">*</span> <span class="number">2</span>,
-						<span class="ident">len_fee</span>: <span class="ident">len</span> <span class="kw">as</span> <span class="ident">u64</span>,
-						<span class="ident">adjusted_weight_fee</span>: <span class="ident">info</span>.<span class="ident">weight</span>.<span class="ident">min</span>(<span class="ident">BlockWeights::get</span>().<span class="ident">max_block</span>) <span class="kw">as</span> <span class="ident">u64</span> <span class="op">*</span>
-							<span class="number">2</span> <span class="op">*</span> <span class="number">3</span> <span class="op">/</span> <span class="number">2</span>
-					}),
-					<span class="ident">tip</span>: <span class="number">0</span>,
-				},
-			);
+				<span class="macro">assert_eq!</span>(
+					<span class="ident">TransactionPayment::query_fee_details</span>(<span class="ident">xt</span>, <span class="ident">len</span>),
+					<span class="ident">FeeDetails</span> {
+						<span class="ident">inclusion_fee</span>: <span class="prelude-val">Some</span>(<span class="ident">InclusionFee</span> {
+							<span class="ident">base_fee</span>: <span class="number">5</span> <span class="op">*</span> <span class="number">2</span>,
+							<span class="ident">len_fee</span>: <span class="ident">len</span> <span class="kw">as</span> <span class="ident">u64</span>,
+							<span class="ident">adjusted_weight_fee</span>: <span class="ident">info</span>
+								.<span class="ident">weight</span>
+								.<span class="ident">min</span>(<span class="ident">BlockWeights::get</span>().<span class="ident">max_block</span>)
+								.<span class="ident">ref_time</span>() <span class="kw">as</span> <span class="ident">u64</span> <span class="op">*</span> <span class="number">2</span> <span class="op">*</span> <span class="number">3</span> <span class="op">/</span> <span class="number">2</span>
+						}),
+						<span class="ident">tip</span>: <span class="number">0</span>,
+					},
+				);
 
-			<span class="macro">assert_eq!</span>(
-				<span class="ident">TransactionPayment::query_fee_details</span>(<span class="ident">unsigned_xt</span>, <span class="ident">len</span>),
-				<span class="ident">FeeDetails</span> { <span class="ident">inclusion_fee</span>: <span class="prelude-val">None</span>, <span class="ident">tip</span>: <span class="number">0</span> },
-			);
-		});
+				<span class="macro">assert_eq!</span>(
+					<span class="ident">TransactionPayment::query_fee_details</span>(<span class="ident">unsigned_xt</span>, <span class="ident">len</span>),
+					<span class="ident">FeeDetails</span> { <span class="ident">inclusion_fee</span>: <span class="prelude-val">None</span>, <span class="ident">tip</span>: <span class="number">0</span> },
+				);
+			});
 	}
 
 	<span class="attribute">#[<span class="ident">test</span>]</span>
@@ -2930,40 +2990,46 @@
 		<span class="kw">let</span> <span class="ident">encoded_call</span> <span class="op">=</span> <span class="ident">call</span>.<span class="ident">encode</span>();
 		<span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="ident">encoded_call</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u32</span>;
 
-		<span class="ident">ExtBuilder::default</span>().<span class="ident">base_weight</span>(<span class="number">5</span>).<span class="ident">weight_fee</span>(<span class="number">2</span>).<span class="ident">build</span>().<span class="ident">execute_with</span>(<span class="op">|</span><span class="op">|</span> {
-			<span class="comment">// all fees should be x1.5</span>
-			<span class="op">&lt;</span><span class="ident">NextFeeMultiplier</span><span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::put</span>(<span class="ident">Multiplier::saturating_from_rational</span>(<span class="number">3</span>, <span class="number">2</span>));
+		<span class="ident">ExtBuilder::default</span>()
+			.<span class="ident">base_weight</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">5</span>))
+			.<span class="ident">weight_fee</span>(<span class="number">2</span>)
+			.<span class="ident">build</span>()
+			.<span class="ident">execute_with</span>(<span class="op">|</span><span class="op">|</span> {
+				<span class="comment">// all fees should be x1.5</span>
+				<span class="op">&lt;</span><span class="ident">NextFeeMultiplier</span><span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::put</span>(<span class="ident">Multiplier::saturating_from_rational</span>(<span class="number">3</span>, <span class="number">2</span>));
 
-			<span class="macro">assert_eq!</span>(
-				<span class="ident">TransactionPayment::query_call_info</span>(<span class="ident">call</span>.<span class="ident">clone</span>(), <span class="ident">len</span>),
-				<span class="ident">RuntimeDispatchInfo</span> {
-					<span class="ident">weight</span>: <span class="ident">info</span>.<span class="ident">weight</span>,
-					<span class="ident">class</span>: <span class="ident">info</span>.<span class="ident">class</span>,
-					<span class="ident">partial_fee</span>: <span class="number">5</span> <span class="op">*</span> <span class="number">2</span> <span class="comment">/* base * weight_fee */</span>
+				<span class="macro">assert_eq!</span>(
+					<span class="ident">TransactionPayment::query_call_info</span>(<span class="ident">call</span>.<span class="ident">clone</span>(), <span class="ident">len</span>),
+					<span class="ident">RuntimeDispatchInfo</span> {
+						<span class="ident">weight</span>: <span class="ident">info</span>.<span class="ident">weight</span>,
+						<span class="ident">class</span>: <span class="ident">info</span>.<span class="ident">class</span>,
+						<span class="ident">partial_fee</span>: <span class="number">5</span> <span class="op">*</span> <span class="number">2</span> <span class="comment">/* base * weight_fee */</span>
 						<span class="op">+</span> <span class="ident">len</span> <span class="kw">as</span> <span class="ident">u64</span>  <span class="comment">/* len * 1 */</span>
-						<span class="op">+</span> <span class="ident">info</span>.<span class="ident">weight</span>.<span class="ident">min</span>(<span class="ident">BlockWeights::get</span>().<span class="ident">max_block</span>) <span class="kw">as</span> <span class="ident">u64</span> <span class="op">*</span> <span class="number">2</span> <span class="op">*</span> <span class="number">3</span> <span class="op">/</span> <span class="number">2</span> <span class="comment">/* weight */</span>
-				},
-			);
+						<span class="op">+</span> <span class="ident">info</span>.<span class="ident">weight</span>.<span class="ident">min</span>(<span class="ident">BlockWeights::get</span>().<span class="ident">max_block</span>).<span class="ident">ref_time</span>() <span class="kw">as</span> <span class="ident">u64</span> <span class="op">*</span> <span class="number">2</span> <span class="op">*</span> <span class="number">3</span> <span class="op">/</span> <span class="number">2</span> <span class="comment">/* weight */</span>
+					},
+				);
 
-			<span class="macro">assert_eq!</span>(
-				<span class="ident">TransactionPayment::query_call_fee_details</span>(<span class="ident">call</span>, <span class="ident">len</span>),
-				<span class="ident">FeeDetails</span> {
-					<span class="ident">inclusion_fee</span>: <span class="prelude-val">Some</span>(<span class="ident">InclusionFee</span> {
-						<span class="ident">base_fee</span>: <span class="number">5</span> <span class="op">*</span> <span class="number">2</span>,     <span class="comment">/* base * weight_fee */</span>
-						<span class="ident">len_fee</span>: <span class="ident">len</span> <span class="kw">as</span> <span class="ident">u64</span>, <span class="comment">/* len * 1 */</span>
-						<span class="ident">adjusted_weight_fee</span>: <span class="ident">info</span>.<span class="ident">weight</span>.<span class="ident">min</span>(<span class="ident">BlockWeights::get</span>().<span class="ident">max_block</span>) <span class="kw">as</span> <span class="ident">u64</span> <span class="op">*</span>
-							<span class="number">2</span> <span class="op">*</span> <span class="number">3</span> <span class="op">/</span> <span class="number">2</span>  <span class="comment">/* weight * weight_fee * multipler */</span>
-					}),
-					<span class="ident">tip</span>: <span class="number">0</span>,
-				},
-			);
-		});
+				<span class="macro">assert_eq!</span>(
+					<span class="ident">TransactionPayment::query_call_fee_details</span>(<span class="ident">call</span>, <span class="ident">len</span>),
+					<span class="ident">FeeDetails</span> {
+						<span class="ident">inclusion_fee</span>: <span class="prelude-val">Some</span>(<span class="ident">InclusionFee</span> {
+							<span class="ident">base_fee</span>: <span class="number">5</span> <span class="op">*</span> <span class="number">2</span>,     <span class="comment">/* base * weight_fee */</span>
+							<span class="ident">len_fee</span>: <span class="ident">len</span> <span class="kw">as</span> <span class="ident">u64</span>, <span class="comment">/* len * 1 */</span>
+							<span class="ident">adjusted_weight_fee</span>: <span class="ident">info</span>
+								.<span class="ident">weight</span>
+								.<span class="ident">min</span>(<span class="ident">BlockWeights::get</span>().<span class="ident">max_block</span>)
+								.<span class="ident">ref_time</span>() <span class="kw">as</span> <span class="ident">u64</span> <span class="op">*</span> <span class="number">2</span> <span class="op">*</span> <span class="number">3</span> <span class="op">/</span> <span class="number">2</span>  <span class="comment">/* weight * weight_fee * multipler */</span>
+						}),
+						<span class="ident">tip</span>: <span class="number">0</span>,
+					},
+				);
+			});
 	}
 
 	<span class="attribute">#[<span class="ident">test</span>]</span>
 	<span class="kw">fn</span> <span class="ident">compute_fee_works_without_multiplier</span>() {
 		<span class="ident">ExtBuilder::default</span>()
-			.<span class="ident">base_weight</span>(<span class="number">100</span>)
+			.<span class="ident">base_weight</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">100</span>))
 			.<span class="ident">byte_fee</span>(<span class="number">10</span>)
 			.<span class="ident">balance_factor</span>(<span class="number">0</span>)
 			.<span class="ident">build</span>()
@@ -2973,14 +3039,14 @@
 
 				<span class="comment">// Tip only, no fees works</span>
 				<span class="kw">let</span> <span class="ident">dispatch_info</span> <span class="op">=</span> <span class="ident">DispatchInfo</span> {
-					<span class="ident">weight</span>: <span class="number">0</span>,
+					<span class="ident">weight</span>: <span class="ident">Weight::from_ref_time</span>(<span class="number">0</span>),
 					<span class="ident">class</span>: <span class="ident">DispatchClass::Operational</span>,
 					<span class="ident">pays_fee</span>: <span class="ident">Pays::No</span>,
 				};
 				<span class="macro">assert_eq!</span>(<span class="ident">Pallet</span>::<span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span><span class="ident">::compute_fee</span>(<span class="number">0</span>, <span class="kw-2">&amp;</span><span class="ident">dispatch_info</span>, <span class="number">10</span>), <span class="number">10</span>);
 				<span class="comment">// No tip, only base fee works</span>
 				<span class="kw">let</span> <span class="ident">dispatch_info</span> <span class="op">=</span> <span class="ident">DispatchInfo</span> {
-					<span class="ident">weight</span>: <span class="number">0</span>,
+					<span class="ident">weight</span>: <span class="ident">Weight::from_ref_time</span>(<span class="number">0</span>),
 					<span class="ident">class</span>: <span class="ident">DispatchClass::Operational</span>,
 					<span class="ident">pays_fee</span>: <span class="ident">Pays::Yes</span>,
 				};
@@ -2991,7 +3057,7 @@
 				<span class="macro">assert_eq!</span>(<span class="ident">Pallet</span>::<span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span><span class="ident">::compute_fee</span>(<span class="number">42</span>, <span class="kw-2">&amp;</span><span class="ident">dispatch_info</span>, <span class="number">0</span>), <span class="number">520</span>);
 				<span class="comment">// Weight fee + base fee works</span>
 				<span class="kw">let</span> <span class="ident">dispatch_info</span> <span class="op">=</span> <span class="ident">DispatchInfo</span> {
-					<span class="ident">weight</span>: <span class="number">1000</span>,
+					<span class="ident">weight</span>: <span class="ident">Weight::from_ref_time</span>(<span class="number">1000</span>),
 					<span class="ident">class</span>: <span class="ident">DispatchClass::Operational</span>,
 					<span class="ident">pays_fee</span>: <span class="ident">Pays::Yes</span>,
 				};
@@ -3002,7 +3068,7 @@
 	<span class="attribute">#[<span class="ident">test</span>]</span>
 	<span class="kw">fn</span> <span class="ident">compute_fee_works_with_multiplier</span>() {
 		<span class="ident">ExtBuilder::default</span>()
-			.<span class="ident">base_weight</span>(<span class="number">100</span>)
+			.<span class="ident">base_weight</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">100</span>))
 			.<span class="ident">byte_fee</span>(<span class="number">10</span>)
 			.<span class="ident">balance_factor</span>(<span class="number">0</span>)
 			.<span class="ident">build</span>()
@@ -3011,7 +3077,7 @@
 				<span class="op">&lt;</span><span class="ident">NextFeeMultiplier</span><span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::put</span>(<span class="ident">Multiplier::saturating_from_rational</span>(<span class="number">3</span>, <span class="number">2</span>));
 				<span class="comment">// Base fee is unaffected by multiplier</span>
 				<span class="kw">let</span> <span class="ident">dispatch_info</span> <span class="op">=</span> <span class="ident">DispatchInfo</span> {
-					<span class="ident">weight</span>: <span class="number">0</span>,
+					<span class="ident">weight</span>: <span class="ident">Weight::from_ref_time</span>(<span class="number">0</span>),
 					<span class="ident">class</span>: <span class="ident">DispatchClass::Operational</span>,
 					<span class="ident">pays_fee</span>: <span class="ident">Pays::Yes</span>,
 				};
@@ -3019,7 +3085,7 @@
 
 				<span class="comment">// Everything works together :)</span>
 				<span class="kw">let</span> <span class="ident">dispatch_info</span> <span class="op">=</span> <span class="ident">DispatchInfo</span> {
-					<span class="ident">weight</span>: <span class="number">123</span>,
+					<span class="ident">weight</span>: <span class="ident">Weight::from_ref_time</span>(<span class="number">123</span>),
 					<span class="ident">class</span>: <span class="ident">DispatchClass::Operational</span>,
 					<span class="ident">pays_fee</span>: <span class="ident">Pays::Yes</span>,
 				};
@@ -3034,7 +3100,7 @@
 	<span class="attribute">#[<span class="ident">test</span>]</span>
 	<span class="kw">fn</span> <span class="ident">compute_fee_works_with_negative_multiplier</span>() {
 		<span class="ident">ExtBuilder::default</span>()
-			.<span class="ident">base_weight</span>(<span class="number">100</span>)
+			.<span class="ident">base_weight</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">100</span>))
 			.<span class="ident">byte_fee</span>(<span class="number">10</span>)
 			.<span class="ident">balance_factor</span>(<span class="number">0</span>)
 			.<span class="ident">build</span>()
@@ -3044,7 +3110,7 @@
 
 				<span class="comment">// Base fee is unaffected by multiplier.</span>
 				<span class="kw">let</span> <span class="ident">dispatch_info</span> <span class="op">=</span> <span class="ident">DispatchInfo</span> {
-					<span class="ident">weight</span>: <span class="number">0</span>,
+					<span class="ident">weight</span>: <span class="ident">Weight::from_ref_time</span>(<span class="number">0</span>),
 					<span class="ident">class</span>: <span class="ident">DispatchClass::Operational</span>,
 					<span class="ident">pays_fee</span>: <span class="ident">Pays::Yes</span>,
 				};
@@ -3052,7 +3118,7 @@
 
 				<span class="comment">// Everything works together.</span>
 				<span class="kw">let</span> <span class="ident">dispatch_info</span> <span class="op">=</span> <span class="ident">DispatchInfo</span> {
-					<span class="ident">weight</span>: <span class="number">123</span>,
+					<span class="ident">weight</span>: <span class="ident">Weight::from_ref_time</span>(<span class="number">123</span>),
 					<span class="ident">class</span>: <span class="ident">DispatchClass::Operational</span>,
 					<span class="ident">pays_fee</span>: <span class="ident">Pays::Yes</span>,
 				};
@@ -3067,14 +3133,14 @@
 	<span class="attribute">#[<span class="ident">test</span>]</span>
 	<span class="kw">fn</span> <span class="ident">compute_fee_does_not_overflow</span>() {
 		<span class="ident">ExtBuilder::default</span>()
-			.<span class="ident">base_weight</span>(<span class="number">100</span>)
+			.<span class="ident">base_weight</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">100</span>))
 			.<span class="ident">byte_fee</span>(<span class="number">10</span>)
 			.<span class="ident">balance_factor</span>(<span class="number">0</span>)
 			.<span class="ident">build</span>()
 			.<span class="ident">execute_with</span>(<span class="op">|</span><span class="op">|</span> {
 				<span class="comment">// Overflow is handled</span>
 				<span class="kw">let</span> <span class="ident">dispatch_info</span> <span class="op">=</span> <span class="ident">DispatchInfo</span> {
-					<span class="ident">weight</span>: <span class="ident">Weight::max_value</span>(),
+					<span class="ident">weight</span>: <span class="ident">Weight::MAX</span>,
 					<span class="ident">class</span>: <span class="ident">DispatchClass::Operational</span>,
 					<span class="ident">pays_fee</span>: <span class="ident">Pays::Yes</span>,
 				};
@@ -3089,14 +3155,14 @@
 	<span class="kw">fn</span> <span class="ident">refund_does_not_recreate_account</span>() {
 		<span class="ident">ExtBuilder::default</span>()
 			.<span class="ident">balance_factor</span>(<span class="number">10</span>)
-			.<span class="ident">base_weight</span>(<span class="number">5</span>)
+			.<span class="ident">base_weight</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">5</span>))
 			.<span class="ident">build</span>()
 			.<span class="ident">execute_with</span>(<span class="op">|</span><span class="op">|</span> {
 				<span class="comment">// So events are emitted</span>
 				<span class="ident">System::set_block_number</span>(<span class="number">10</span>);
 				<span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="number">10</span>;
 				<span class="kw">let</span> <span class="ident">pre</span> <span class="op">=</span> <span class="ident">ChargeTransactionPayment</span>::<span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span><span class="ident">::from</span>(<span class="number">5</span> <span class="comment">/* tipped */</span>)
-					.<span class="ident">pre_dispatch</span>(<span class="kw-2">&amp;</span><span class="number">2</span>, <span class="ident">CALL</span>, <span class="kw-2">&amp;</span><span class="ident">info_from_weight</span>(<span class="number">100</span>), <span class="ident">len</span>)
+					.<span class="ident">pre_dispatch</span>(<span class="kw-2">&amp;</span><span class="number">2</span>, <span class="ident">CALL</span>, <span class="kw-2">&amp;</span><span class="ident">info_from_weight</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">100</span>)), <span class="ident">len</span>)
 					.<span class="ident">unwrap</span>();
 				<span class="macro">assert_eq!</span>(<span class="ident">Balances::free_balance</span>(<span class="number">2</span>), <span class="number">200</span> <span class="op">-</span> <span class="number">5</span> <span class="op">-</span> <span class="number">10</span> <span class="op">-</span> <span class="number">100</span> <span class="op">-</span> <span class="number">5</span>);
 
@@ -3106,8 +3172,8 @@
 
 				<span class="macro">assert_ok!</span>(<span class="ident">ChargeTransactionPayment</span>::<span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span><span class="ident">::post_dispatch</span>(
 					<span class="prelude-val">Some</span>(<span class="ident">pre</span>),
-					<span class="kw-2">&amp;</span><span class="ident">info_from_weight</span>(<span class="number">100</span>),
-					<span class="kw-2">&amp;</span><span class="ident">post_info_from_weight</span>(<span class="number">50</span>),
+					<span class="kw-2">&amp;</span><span class="ident">info_from_weight</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">100</span>)),
+					<span class="kw-2">&amp;</span><span class="ident">post_info_from_weight</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">50</span>)),
 					<span class="ident">len</span>,
 					<span class="kw-2">&amp;</span><span class="prelude-val">Ok</span>(())
 				));
@@ -3129,19 +3195,19 @@
 	<span class="kw">fn</span> <span class="ident">actual_weight_higher_than_max_refunds_nothing</span>() {
 		<span class="ident">ExtBuilder::default</span>()
 			.<span class="ident">balance_factor</span>(<span class="number">10</span>)
-			.<span class="ident">base_weight</span>(<span class="number">5</span>)
+			.<span class="ident">base_weight</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">5</span>))
 			.<span class="ident">build</span>()
 			.<span class="ident">execute_with</span>(<span class="op">|</span><span class="op">|</span> {
 				<span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="number">10</span>;
 				<span class="kw">let</span> <span class="ident">pre</span> <span class="op">=</span> <span class="ident">ChargeTransactionPayment</span>::<span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span><span class="ident">::from</span>(<span class="number">5</span> <span class="comment">/* tipped */</span>)
-					.<span class="ident">pre_dispatch</span>(<span class="kw-2">&amp;</span><span class="number">2</span>, <span class="ident">CALL</span>, <span class="kw-2">&amp;</span><span class="ident">info_from_weight</span>(<span class="number">100</span>), <span class="ident">len</span>)
+					.<span class="ident">pre_dispatch</span>(<span class="kw-2">&amp;</span><span class="number">2</span>, <span class="ident">CALL</span>, <span class="kw-2">&amp;</span><span class="ident">info_from_weight</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">100</span>)), <span class="ident">len</span>)
 					.<span class="ident">unwrap</span>();
 				<span class="macro">assert_eq!</span>(<span class="ident">Balances::free_balance</span>(<span class="number">2</span>), <span class="number">200</span> <span class="op">-</span> <span class="number">5</span> <span class="op">-</span> <span class="number">10</span> <span class="op">-</span> <span class="number">100</span> <span class="op">-</span> <span class="number">5</span>);
 
 				<span class="macro">assert_ok!</span>(<span class="ident">ChargeTransactionPayment</span>::<span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span><span class="ident">::post_dispatch</span>(
 					<span class="prelude-val">Some</span>(<span class="ident">pre</span>),
-					<span class="kw-2">&amp;</span><span class="ident">info_from_weight</span>(<span class="number">100</span>),
-					<span class="kw-2">&amp;</span><span class="ident">post_info_from_weight</span>(<span class="number">101</span>),
+					<span class="kw-2">&amp;</span><span class="ident">info_from_weight</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">100</span>)),
+					<span class="kw-2">&amp;</span><span class="ident">post_info_from_weight</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">101</span>)),
 					<span class="ident">len</span>,
 					<span class="kw-2">&amp;</span><span class="prelude-val">Ok</span>(())
 				));
@@ -3153,14 +3219,17 @@
 	<span class="kw">fn</span> <span class="ident">zero_transfer_on_free_transaction</span>() {
 		<span class="ident">ExtBuilder::default</span>()
 			.<span class="ident">balance_factor</span>(<span class="number">10</span>)
-			.<span class="ident">base_weight</span>(<span class="number">5</span>)
+			.<span class="ident">base_weight</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">5</span>))
 			.<span class="ident">build</span>()
 			.<span class="ident">execute_with</span>(<span class="op">|</span><span class="op">|</span> {
 				<span class="comment">// So events are emitted</span>
 				<span class="ident">System::set_block_number</span>(<span class="number">10</span>);
 				<span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="number">10</span>;
-				<span class="kw">let</span> <span class="ident">dispatch_info</span> <span class="op">=</span>
-					<span class="ident">DispatchInfo</span> { <span class="ident">weight</span>: <span class="number">100</span>, <span class="ident">pays_fee</span>: <span class="ident">Pays::No</span>, <span class="ident">class</span>: <span class="ident">DispatchClass::Normal</span> };
+				<span class="kw">let</span> <span class="ident">dispatch_info</span> <span class="op">=</span> <span class="ident">DispatchInfo</span> {
+					<span class="ident">weight</span>: <span class="ident">Weight::from_ref_time</span>(<span class="number">100</span>),
+					<span class="ident">pays_fee</span>: <span class="ident">Pays::No</span>,
+					<span class="ident">class</span>: <span class="ident">DispatchClass::Normal</span>,
+				};
 				<span class="kw">let</span> <span class="ident">user</span> <span class="op">=</span> <span class="number">69</span>;
 				<span class="kw">let</span> <span class="ident">pre</span> <span class="op">=</span> <span class="ident">ChargeTransactionPayment</span>::<span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span><span class="ident">::from</span>(<span class="number">0</span>)
 					.<span class="ident">pre_dispatch</span>(<span class="kw-2">&amp;</span><span class="ident">user</span>, <span class="ident">CALL</span>, <span class="kw-2">&amp;</span><span class="ident">dispatch_info</span>, <span class="ident">len</span>)
@@ -3189,11 +3258,11 @@
 	<span class="kw">fn</span> <span class="ident">refund_consistent_with_actual_weight</span>() {
 		<span class="ident">ExtBuilder::default</span>()
 			.<span class="ident">balance_factor</span>(<span class="number">10</span>)
-			.<span class="ident">base_weight</span>(<span class="number">7</span>)
+			.<span class="ident">base_weight</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">7</span>))
 			.<span class="ident">build</span>()
 			.<span class="ident">execute_with</span>(<span class="op">|</span><span class="op">|</span> {
-				<span class="kw">let</span> <span class="ident">info</span> <span class="op">=</span> <span class="ident">info_from_weight</span>(<span class="number">100</span>);
-				<span class="kw">let</span> <span class="ident">post_info</span> <span class="op">=</span> <span class="ident">post_info_from_weight</span>(<span class="number">33</span>);
+				<span class="kw">let</span> <span class="ident">info</span> <span class="op">=</span> <span class="ident">info_from_weight</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">100</span>));
+				<span class="kw">let</span> <span class="ident">post_info</span> <span class="op">=</span> <span class="ident">post_info_from_weight</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">33</span>));
 				<span class="kw">let</span> <span class="ident">prev_balance</span> <span class="op">=</span> <span class="ident">Balances::free_balance</span>(<span class="number">2</span>);
 				<span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="number">10</span>;
 				<span class="kw">let</span> <span class="ident">tip</span> <span class="op">=</span> <span class="number">5</span>;
@@ -3229,8 +3298,11 @@
 		<span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="number">10</span>;
 
 		<span class="ident">ExtBuilder::default</span>().<span class="ident">balance_factor</span>(<span class="number">100</span>).<span class="ident">build</span>().<span class="ident">execute_with</span>(<span class="op">|</span><span class="op">|</span> {
-			<span class="kw">let</span> <span class="ident">normal</span> <span class="op">=</span>
-				<span class="ident">DispatchInfo</span> { <span class="ident">weight</span>: <span class="number">100</span>, <span class="ident">class</span>: <span class="ident">DispatchClass::Normal</span>, <span class="ident">pays_fee</span>: <span class="ident">Pays::Yes</span> };
+			<span class="kw">let</span> <span class="ident">normal</span> <span class="op">=</span> <span class="ident">DispatchInfo</span> {
+				<span class="ident">weight</span>: <span class="ident">Weight::from_ref_time</span>(<span class="number">100</span>),
+				<span class="ident">class</span>: <span class="ident">DispatchClass::Normal</span>,
+				<span class="ident">pays_fee</span>: <span class="ident">Pays::Yes</span>,
+			};
 			<span class="kw">let</span> <span class="ident">priority</span> <span class="op">=</span> <span class="ident">ChargeTransactionPayment</span>::<span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span>(<span class="ident">tip</span>)
 				.<span class="ident">validate</span>(<span class="kw-2">&amp;</span><span class="number">2</span>, <span class="ident">CALL</span>, <span class="kw-2">&amp;</span><span class="ident">normal</span>, <span class="ident">len</span>)
 				.<span class="ident">unwrap</span>()
@@ -3248,7 +3320,7 @@
 
 		<span class="ident">ExtBuilder::default</span>().<span class="ident">balance_factor</span>(<span class="number">100</span>).<span class="ident">build</span>().<span class="ident">execute_with</span>(<span class="op">|</span><span class="op">|</span> {
 			<span class="kw">let</span> <span class="ident">op</span> <span class="op">=</span> <span class="ident">DispatchInfo</span> {
-				<span class="ident">weight</span>: <span class="number">100</span>,
+				<span class="ident">weight</span>: <span class="ident">Weight::from_ref_time</span>(<span class="number">100</span>),
 				<span class="ident">class</span>: <span class="ident">DispatchClass::Operational</span>,
 				<span class="ident">pays_fee</span>: <span class="ident">Pays::Yes</span>,
 			};
@@ -3272,8 +3344,11 @@
 		<span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="number">10</span>;
 
 		<span class="ident">ExtBuilder::default</span>().<span class="ident">balance_factor</span>(<span class="number">100</span>).<span class="ident">build</span>().<span class="ident">execute_with</span>(<span class="op">|</span><span class="op">|</span> {
-			<span class="kw">let</span> <span class="ident">normal</span> <span class="op">=</span>
-				<span class="ident">DispatchInfo</span> { <span class="ident">weight</span>: <span class="number">100</span>, <span class="ident">class</span>: <span class="ident">DispatchClass::Normal</span>, <span class="ident">pays_fee</span>: <span class="ident">Pays::Yes</span> };
+			<span class="kw">let</span> <span class="ident">normal</span> <span class="op">=</span> <span class="ident">DispatchInfo</span> {
+				<span class="ident">weight</span>: <span class="ident">Weight::from_ref_time</span>(<span class="number">100</span>),
+				<span class="ident">class</span>: <span class="ident">DispatchClass::Normal</span>,
+				<span class="ident">pays_fee</span>: <span class="ident">Pays::Yes</span>,
+			};
 			<span class="kw">let</span> <span class="ident">priority</span> <span class="op">=</span> <span class="ident">ChargeTransactionPayment</span>::<span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span>(<span class="ident">tip</span>)
 				.<span class="ident">validate</span>(<span class="kw-2">&amp;</span><span class="number">2</span>, <span class="ident">CALL</span>, <span class="kw-2">&amp;</span><span class="ident">normal</span>, <span class="ident">len</span>)
 				.<span class="ident">unwrap</span>()
@@ -3284,7 +3359,7 @@
 
 		<span class="ident">ExtBuilder::default</span>().<span class="ident">balance_factor</span>(<span class="number">100</span>).<span class="ident">build</span>().<span class="ident">execute_with</span>(<span class="op">|</span><span class="op">|</span> {
 			<span class="kw">let</span> <span class="ident">op</span> <span class="op">=</span> <span class="ident">DispatchInfo</span> {
-				<span class="ident">weight</span>: <span class="number">100</span>,
+				<span class="ident">weight</span>: <span class="ident">Weight::from_ref_time</span>(<span class="number">100</span>),
 				<span class="ident">class</span>: <span class="ident">DispatchClass::Operational</span>,
 				<span class="ident">pays_fee</span>: <span class="ident">Pays::Yes</span>,
 			};
@@ -3303,8 +3378,11 @@
 			<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">priority2</span> <span class="op">=</span> <span class="number">0</span>;
 			<span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="number">10</span>;
 			<span class="ident">ExtBuilder::default</span>().<span class="ident">balance_factor</span>(<span class="number">100</span>).<span class="ident">build</span>().<span class="ident">execute_with</span>(<span class="op">|</span><span class="op">|</span> {
-				<span class="kw">let</span> <span class="ident">normal</span> <span class="op">=</span>
-					<span class="ident">DispatchInfo</span> { <span class="ident">weight</span>: <span class="number">100</span>, <span class="ident">class</span>: <span class="ident">DispatchClass::Normal</span>, <span class="ident">pays_fee</span>: <span class="ident">Pays::Yes</span> };
+				<span class="kw">let</span> <span class="ident">normal</span> <span class="op">=</span> <span class="ident">DispatchInfo</span> {
+					<span class="ident">weight</span>: <span class="ident">Weight::from_ref_time</span>(<span class="number">100</span>),
+					<span class="ident">class</span>: <span class="ident">DispatchClass::Normal</span>,
+					<span class="ident">pays_fee</span>: <span class="ident">Pays::Yes</span>,
+				};
 				<span class="ident">priority1</span> <span class="op">=</span> <span class="ident">ChargeTransactionPayment</span>::<span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span>(<span class="ident">tip</span>)
 					.<span class="ident">validate</span>(<span class="kw-2">&amp;</span><span class="number">2</span>, <span class="ident">CALL</span>, <span class="kw-2">&amp;</span><span class="ident">normal</span>, <span class="ident">len</span>)
 					.<span class="ident">unwrap</span>()
@@ -3313,7 +3391,7 @@
 
 			<span class="ident">ExtBuilder::default</span>().<span class="ident">balance_factor</span>(<span class="number">100</span>).<span class="ident">build</span>().<span class="ident">execute_with</span>(<span class="op">|</span><span class="op">|</span> {
 				<span class="kw">let</span> <span class="ident">op</span> <span class="op">=</span> <span class="ident">DispatchInfo</span> {
-					<span class="ident">weight</span>: <span class="number">100</span>,
+					<span class="ident">weight</span>: <span class="ident">Weight::from_ref_time</span>(<span class="number">100</span>),
 					<span class="ident">class</span>: <span class="ident">DispatchClass::Operational</span>,
 					<span class="ident">pays_fee</span>: <span class="ident">Pays::Yes</span>,
 				};
@@ -3340,10 +3418,10 @@
 	<span class="kw">fn</span> <span class="ident">post_info_can_change_pays_fee</span>() {
 		<span class="ident">ExtBuilder::default</span>()
 			.<span class="ident">balance_factor</span>(<span class="number">10</span>)
-			.<span class="ident">base_weight</span>(<span class="number">7</span>)
+			.<span class="ident">base_weight</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">7</span>))
 			.<span class="ident">build</span>()
 			.<span class="ident">execute_with</span>(<span class="op">|</span><span class="op">|</span> {
-				<span class="kw">let</span> <span class="ident">info</span> <span class="op">=</span> <span class="ident">info_from_weight</span>(<span class="number">100</span>);
+				<span class="kw">let</span> <span class="ident">info</span> <span class="op">=</span> <span class="ident">info_from_weight</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">100</span>));
 				<span class="kw">let</span> <span class="ident">post_info</span> <span class="op">=</span> <span class="ident">post_info_from_pays</span>(<span class="ident">Pays::No</span>);
 				<span class="kw">let</span> <span class="ident">prev_balance</span> <span class="op">=</span> <span class="ident">Balances::free_balance</span>(<span class="number">2</span>);
 				<span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="number">10</span>;

@@ -2451,7 +2451,7 @@
 		<span class="kw">fn</span> <span class="ident">on_initialize</span>(<span class="ident">n</span>: <span class="ident">T::BlockNumber</span>) -&gt; <span class="ident">Weight</span> {
 			<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">members</span> <span class="op">=</span> <span class="macro">vec!</span>[];
 
-			<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">weight</span> <span class="op">=</span> <span class="number">0</span>;
+			<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">weight</span> <span class="op">=</span> <span class="ident">Weight::new</span>();
 			<span class="kw">let</span> <span class="ident">weights</span> <span class="op">=</span> <span class="ident">T::BlockWeights::get</span>();
 
 			<span class="comment">// Run a candidate/membership rotation</span>

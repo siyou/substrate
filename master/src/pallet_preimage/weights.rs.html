@@ -283,7 +283,7 @@
 <span class="attribute">#![<span class="ident">allow</span>(<span class="ident">unused_parens</span>)]</span>
 <span class="attribute">#![<span class="ident">allow</span>(<span class="ident">unused_imports</span>)]</span>
 
-<span class="kw">use</span> <span class="ident">frame_support</span>::{<span class="ident">traits::Get</span>, <span class="ident">weights</span>::{<span class="ident">Weight</span>, <span class="ident">constants::RocksDbWeight</span>}};
+<span class="kw">use</span> <span class="ident">frame_support</span>::{<span class="ident">traits::Get</span>, <span class="ident">weights</span>::{<span class="ident">RefTimeWeight</span>, <span class="ident">Weight</span>, <span class="ident">constants::RocksDbWeight</span>}};
 <span class="kw">use</span> <span class="ident">sp_std::marker::PhantomData</span>;
 
 <span class="doccomment">/// Weight functions needed for pallet_preimage.</span>
@@ -308,87 +308,87 @@
 	<span class="comment">// Storage: Preimage PreimageFor (r:1 w:1)</span>
 	<span class="comment">// Storage: Preimage StatusFor (r:1 w:1)</span>
 	<span class="kw">fn</span> <span class="ident">note_preimage</span>(<span class="ident">s</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
-		(<span class="number">0</span> <span class="kw">as</span> <span class="ident">Weight</span>)
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">0</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
 			<span class="comment">// Standard Error: 0</span>
-			.<span class="ident">saturating_add</span>((<span class="number">2_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">s</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">2_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">s</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Preimage PreimageFor (r:1 w:1)</span>
 	<span class="comment">// Storage: Preimage StatusFor (r:1 w:0)</span>
 	<span class="kw">fn</span> <span class="ident">note_requested_preimage</span>(<span class="ident">s</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
-		(<span class="number">0</span> <span class="kw">as</span> <span class="ident">Weight</span>)
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">0</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
 			<span class="comment">// Standard Error: 0</span>
-			.<span class="ident">saturating_add</span>((<span class="number">2_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">s</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">2_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">s</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Preimage PreimageFor (r:1 w:1)</span>
 	<span class="comment">// Storage: Preimage StatusFor (r:1 w:0)</span>
 	<span class="kw">fn</span> <span class="ident">note_no_deposit_preimage</span>(<span class="ident">s</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
-		(<span class="number">0</span> <span class="kw">as</span> <span class="ident">Weight</span>)
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">0</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
 			<span class="comment">// Standard Error: 0</span>
-			.<span class="ident">saturating_add</span>((<span class="number">2_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">s</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">2_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">s</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Preimage StatusFor (r:1 w:1)</span>
 	<span class="comment">// Storage: Preimage PreimageFor (r:0 w:1)</span>
 	<span class="kw">fn</span> <span class="ident">unnote_preimage</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">44_380_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">44_380_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Preimage StatusFor (r:1 w:1)</span>
 	<span class="comment">// Storage: Preimage PreimageFor (r:0 w:1)</span>
 	<span class="kw">fn</span> <span class="ident">unnote_no_deposit_preimage</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">30_280_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">30_280_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Preimage StatusFor (r:1 w:1)</span>
 	<span class="kw">fn</span> <span class="ident">request_preimage</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">42_809_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">42_809_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Preimage StatusFor (r:1 w:1)</span>
 	<span class="kw">fn</span> <span class="ident">request_no_deposit_preimage</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">28_964_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">28_964_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Preimage StatusFor (r:1 w:1)</span>
 	<span class="kw">fn</span> <span class="ident">request_unnoted_preimage</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">17_555_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">17_555_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Preimage StatusFor (r:1 w:1)</span>
 	<span class="kw">fn</span> <span class="ident">request_requested_preimage</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">7_745_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">7_745_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Preimage StatusFor (r:1 w:1)</span>
 	<span class="comment">// Storage: Preimage PreimageFor (r:0 w:1)</span>
 	<span class="kw">fn</span> <span class="ident">unrequest_preimage</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">29_758_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">29_758_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Preimage StatusFor (r:1 w:1)</span>
 	<span class="comment">// Storage: Preimage PreimageFor (r:0 w:1)</span>
 	<span class="kw">fn</span> <span class="ident">unrequest_unnoted_preimage</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">18_360_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">18_360_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Preimage StatusFor (r:1 w:1)</span>
 	<span class="kw">fn</span> <span class="ident">unrequest_multi_referenced_preimage</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">7_439_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">7_439_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 }
 
@@ -397,87 +397,87 @@
 	<span class="comment">// Storage: Preimage PreimageFor (r:1 w:1)</span>
 	<span class="comment">// Storage: Preimage StatusFor (r:1 w:1)</span>
 	<span class="kw">fn</span> <span class="ident">note_preimage</span>(<span class="ident">s</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
-		(<span class="number">0</span> <span class="kw">as</span> <span class="ident">Weight</span>)
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">0</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
 			<span class="comment">// Standard Error: 0</span>
-			.<span class="ident">saturating_add</span>((<span class="number">2_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">s</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">2_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">s</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Preimage PreimageFor (r:1 w:1)</span>
 	<span class="comment">// Storage: Preimage StatusFor (r:1 w:0)</span>
 	<span class="kw">fn</span> <span class="ident">note_requested_preimage</span>(<span class="ident">s</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
-		(<span class="number">0</span> <span class="kw">as</span> <span class="ident">Weight</span>)
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">0</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
 			<span class="comment">// Standard Error: 0</span>
-			.<span class="ident">saturating_add</span>((<span class="number">2_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">s</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">2_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">s</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Preimage PreimageFor (r:1 w:1)</span>
 	<span class="comment">// Storage: Preimage StatusFor (r:1 w:0)</span>
 	<span class="kw">fn</span> <span class="ident">note_no_deposit_preimage</span>(<span class="ident">s</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
-		(<span class="number">0</span> <span class="kw">as</span> <span class="ident">Weight</span>)
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">0</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
 			<span class="comment">// Standard Error: 0</span>
-			.<span class="ident">saturating_add</span>((<span class="number">2_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">s</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">2_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">s</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Preimage StatusFor (r:1 w:1)</span>
 	<span class="comment">// Storage: Preimage PreimageFor (r:0 w:1)</span>
 	<span class="kw">fn</span> <span class="ident">unnote_preimage</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">44_380_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">44_380_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Preimage StatusFor (r:1 w:1)</span>
 	<span class="comment">// Storage: Preimage PreimageFor (r:0 w:1)</span>
 	<span class="kw">fn</span> <span class="ident">unnote_no_deposit_preimage</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">30_280_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">30_280_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Preimage StatusFor (r:1 w:1)</span>
 	<span class="kw">fn</span> <span class="ident">request_preimage</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">42_809_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">42_809_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Preimage StatusFor (r:1 w:1)</span>
 	<span class="kw">fn</span> <span class="ident">request_no_deposit_preimage</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">28_964_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">28_964_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Preimage StatusFor (r:1 w:1)</span>
 	<span class="kw">fn</span> <span class="ident">request_unnoted_preimage</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">17_555_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">17_555_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Preimage StatusFor (r:1 w:1)</span>
 	<span class="kw">fn</span> <span class="ident">request_requested_preimage</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">7_745_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">7_745_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Preimage StatusFor (r:1 w:1)</span>
 	<span class="comment">// Storage: Preimage PreimageFor (r:0 w:1)</span>
 	<span class="kw">fn</span> <span class="ident">unrequest_preimage</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">29_758_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">29_758_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Preimage StatusFor (r:1 w:1)</span>
 	<span class="comment">// Storage: Preimage PreimageFor (r:0 w:1)</span>
 	<span class="kw">fn</span> <span class="ident">unrequest_unnoted_preimage</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">18_360_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">18_360_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Preimage StatusFor (r:1 w:1)</span>
 	<span class="kw">fn</span> <span class="ident">unrequest_multi_referenced_preimage</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">7_439_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">7_439_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 }
 </code></pre></div>

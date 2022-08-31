@@ -2440,6 +2440,8 @@
 <span id="2434">2434</span>
 <span id="2435">2435</span>
 <span id="2436">2436</span>
+<span id="2437">2437</span>
+<span id="2438">2438</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2018-2022 Parity Technologies (UK) Ltd.</span>
@@ -2769,14 +2771,14 @@
 			<span class="ident">EcdsaRecovery</span> =&gt; <span class="ident">s</span>.<span class="ident">ecdsa_recover</span>,
 			<span class="ident">ChainExtension</span>(<span class="ident">amount</span>) =&gt; <span class="ident">amount</span>,
 			<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;unstable-interface&quot;</span>)]</span>
-			<span class="ident">CallRuntime</span>(<span class="ident">weight</span>) =&gt; <span class="ident">weight</span>,
+			<span class="ident">CallRuntime</span>(<span class="ident">weight</span>) =&gt; <span class="ident">weight</span>.<span class="ident">ref_time</span>(),
 			<span class="ident">SetCodeHash</span> =&gt; <span class="ident">s</span>.<span class="ident">set_code_hash</span>,
 			<span class="ident">EcdsaToEthAddress</span> =&gt; <span class="ident">s</span>.<span class="ident">ecdsa_to_eth_address</span>,
 		};
 		<span class="ident">RuntimeToken</span> {
 			<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 			<span class="ident">_created_from</span>: <span class="kw-2">*</span><span class="self">self</span>,
-			<span class="ident">weight</span>,
+			<span class="ident">weight</span>: <span class="ident">Weight::from_ref_time</span>(<span class="ident">weight</span>),
 		}
 	}
 }
@@ -3299,7 +3301,7 @@
 					<span class="self">self</span>.<span class="ident">charge_gas</span>(<span class="ident">RuntimeCosts::CallSurchargeTransfer</span>)<span class="question-mark">?</span>;
 				}
 				<span class="self">self</span>.<span class="ident">ext</span>.<span class="ident">call</span>(
-					<span class="ident">gas</span>,
+					<span class="ident">Weight::from_ref_time</span>(<span class="ident">gas</span>),
 					<span class="ident">callee</span>,
 					<span class="ident">value</span>,
 					<span class="ident">input_data</span>,
@@ -3348,6 +3350,7 @@
 		<span class="ident">salt_ptr</span>: <span class="ident">u32</span>,
 		<span class="ident">salt_len</span>: <span class="ident">u32</span>,
 	) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ReturnCode</span>, <span class="ident">TrapReason</span><span class="op">&gt;</span> {
+		<span class="kw">let</span> <span class="ident">gas</span> <span class="op">=</span> <span class="ident">Weight::from_ref_time</span>(<span class="ident">gas</span>);
 		<span class="self">self</span>.<span class="ident">charge_gas</span>(<span class="ident">RuntimeCosts::InstantiateBase</span> { <span class="ident">input_data_len</span>, <span class="ident">salt_len</span> })<span class="question-mark">?</span>;
 		<span class="kw">let</span> <span class="ident">value</span>: <span class="ident">BalanceOf</span><span class="op">&lt;</span><span class="op">&lt;</span><span class="ident">E</span> <span class="kw">as</span> <span class="ident">Ext</span><span class="op">&gt;</span><span class="ident">::T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">read_sandbox_memory_as</span>(<span class="ident">value_ptr</span>)<span class="question-mark">?</span>;
 		<span class="kw">if</span> <span class="ident">value</span> <span class="op">&gt;</span> <span class="number">0u32</span>.<span class="ident">into</span>() {
@@ -4146,6 +4149,7 @@
 		<span class="ident">out_ptr</span>: <span class="ident">u32</span>,
 		<span class="ident">out_len_ptr</span>: <span class="ident">u32</span>,
 	) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">TrapReason</span><span class="op">&gt;</span> {
+		<span class="kw">let</span> <span class="ident">gas</span> <span class="op">=</span> <span class="ident">Weight::from_ref_time</span>(<span class="ident">gas</span>);
 		<span class="ident">ctx</span>.<span class="ident">charge_gas</span>(<span class="ident">RuntimeCosts::WeightToFee</span>)<span class="question-mark">?</span>;
 		<span class="prelude-val">Ok</span>(<span class="ident">ctx</span>.<span class="ident">write_sandbox_output</span>(
 			<span class="ident">out_ptr</span>,

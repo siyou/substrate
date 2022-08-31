@@ -455,6 +455,7 @@
 <span id="449">449</span>
 <span id="450">450</span>
 <span id="451">451</span>
+<span id="452">452</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2019-2022 Parity Technologies (UK) Ltd.</span>
@@ -620,13 +621,13 @@
 		<span class="kw">let</span> <span class="ident">previous_float</span> <span class="op">=</span> <span class="ident">previous_float</span>.<span class="ident">max</span>(<span class="ident">min_multiplier</span>().<span class="ident">into_inner</span>() <span class="kw">as</span> <span class="ident">f64</span> <span class="op">/</span> <span class="ident">accuracy</span>);
 
 		<span class="comment">// maximum tx weight</span>
-		<span class="kw">let</span> <span class="ident">m</span> <span class="op">=</span> <span class="ident">max_normal</span>() <span class="kw">as</span> <span class="ident">f64</span>;
+		<span class="kw">let</span> <span class="ident">m</span> <span class="op">=</span> <span class="ident">max_normal</span>().<span class="ident">ref_time</span>() <span class="kw">as</span> <span class="ident">f64</span>;
 		<span class="comment">// block weight always truncated to max weight</span>
-		<span class="kw">let</span> <span class="ident">block_weight</span> <span class="op">=</span> (<span class="ident">block_weight</span> <span class="kw">as</span> <span class="ident">f64</span>).<span class="ident">min</span>(<span class="ident">m</span>);
+		<span class="kw">let</span> <span class="ident">block_weight</span> <span class="op">=</span> (<span class="ident">block_weight</span>.<span class="ident">ref_time</span>() <span class="kw">as</span> <span class="ident">f64</span>).<span class="ident">min</span>(<span class="ident">m</span>);
 		<span class="kw">let</span> <span class="ident">v</span>: <span class="ident">f64</span> <span class="op">=</span> <span class="ident">AdjustmentVariable::get</span>().<span class="ident">to_float</span>();
 
 		<span class="comment">// Ideal saturation in terms of weight</span>
-		<span class="kw">let</span> <span class="ident">ss</span> <span class="op">=</span> <span class="ident">target</span>() <span class="kw">as</span> <span class="ident">f64</span>;
+		<span class="kw">let</span> <span class="ident">ss</span> <span class="op">=</span> <span class="ident">target</span>().<span class="ident">ref_time</span>() <span class="kw">as</span> <span class="ident">f64</span>;
 		<span class="comment">// Current saturation in terms of weight</span>
 		<span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="ident">block_weight</span>;
 
@@ -654,9 +655,9 @@
 	<span class="kw">fn</span> <span class="ident">truth_value_update_poc_works</span>() {
 		<span class="kw">let</span> <span class="ident">fm</span> <span class="op">=</span> <span class="ident">Multiplier::saturating_from_rational</span>(<span class="number">1</span>, <span class="number">2</span>);
 		<span class="kw">let</span> <span class="ident">test_set</span> <span class="op">=</span> <span class="macro">vec!</span>[
-			(<span class="number">0</span>, <span class="ident">fm</span>),
-			(<span class="number">100</span>, <span class="ident">fm</span>),
-			(<span class="number">1000</span>, <span class="ident">fm</span>),
+			(<span class="ident">Weight::zero</span>(), <span class="ident">fm</span>),
+			(<span class="ident">Weight::from_ref_time</span>(<span class="number">100</span>), <span class="ident">fm</span>),
+			(<span class="ident">Weight::from_ref_time</span>(<span class="number">1000</span>), <span class="ident">fm</span>),
 			(<span class="ident">target</span>(), <span class="ident">fm</span>),
 			(<span class="ident">max_normal</span>() <span class="op">/</span> <span class="number">2</span>, <span class="ident">fm</span>),
 			(<span class="ident">max_normal</span>(), <span class="ident">fm</span>),
@@ -686,7 +687,7 @@
 	<span class="attribute">#[<span class="ident">test</span>]</span>
 	<span class="kw">fn</span> <span class="ident">multiplier_cannot_go_below_limit</span>() {
 		<span class="comment">// will not go any further below even if block is empty.</span>
-		<span class="ident">run_with_system_weight</span>(<span class="number">0</span>, <span class="op">|</span><span class="op">|</span> {
+		<span class="ident">run_with_system_weight</span>(<span class="ident">Weight::new</span>(), <span class="op">|</span><span class="op">|</span> {
 			<span class="kw">let</span> <span class="ident">next</span> <span class="op">=</span> <span class="ident">runtime_multiplier_update</span>(<span class="ident">min_multiplier</span>());
 			<span class="macro">assert_eq!</span>(<span class="ident">next</span>, <span class="ident">min_multiplier</span>());
 		})
@@ -704,7 +705,7 @@
 		<span class="comment">// 1 &lt; 0.00001 * k * 0.1875</span>
 		<span class="comment">// 10^9 / 1875 &lt; k</span>
 		<span class="comment">// k &gt; 533_333 ~ 18,5 days.</span>
-		<span class="ident">run_with_system_weight</span>(<span class="number">0</span>, <span class="op">|</span><span class="op">|</span> {
+		<span class="ident">run_with_system_weight</span>(<span class="ident">Weight::new</span>(), <span class="op">|</span><span class="op">|</span> {
 			<span class="comment">// start from 1, the default.</span>
 			<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">fm</span> <span class="op">=</span> <span class="ident">Multiplier::one</span>();
 			<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">iterations</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">0</span>;
@@ -740,7 +741,8 @@
 		<span class="comment">// `cargo test congested_chain_simulation -- --nocapture` to get some insight.</span>
 
 		<span class="comment">// almost full. The entire quota of normal transactions is taken.</span>
-		<span class="kw">let</span> <span class="ident">block_weight</span> <span class="op">=</span> <span class="ident">BlockWeights::get</span>().<span class="ident">get</span>(<span class="ident">DispatchClass::Normal</span>).<span class="ident">max_total</span>.<span class="ident">unwrap</span>() <span class="op">-</span> <span class="number">100</span>;
+		<span class="kw">let</span> <span class="ident">block_weight</span> <span class="op">=</span> <span class="ident">BlockWeights::get</span>().<span class="ident">get</span>(<span class="ident">DispatchClass::Normal</span>).<span class="ident">max_total</span>.<span class="ident">unwrap</span>() <span class="op">-</span>
+			<span class="ident">Weight::from_ref_time</span>(<span class="number">100</span>);
 
 		<span class="comment">// Default substrate weight.</span>
 		<span class="kw">let</span> <span class="ident">tx_weight</span> <span class="op">=</span> <span class="ident">frame_support::weights::constants::ExtrinsicBaseWeight::get</span>();
@@ -864,27 +866,27 @@
 
 	<span class="attribute">#[<span class="ident">test</span>]</span>
 	<span class="kw">fn</span> <span class="ident">weight_to_fee_should_not_overflow_on_large_weights</span>() {
-		<span class="kw">let</span> <span class="ident">kb</span> <span class="op">=</span> <span class="number">1024</span> <span class="kw">as</span> <span class="ident">Weight</span>;
+		<span class="kw">let</span> <span class="ident">kb</span> <span class="op">=</span> <span class="ident">Weight::from_ref_time</span>(<span class="number">1024</span>);
 		<span class="kw">let</span> <span class="ident">mb</span> <span class="op">=</span> <span class="ident">kb</span> <span class="op">*</span> <span class="ident">kb</span>;
 		<span class="kw">let</span> <span class="ident">max_fm</span> <span class="op">=</span> <span class="ident">Multiplier::saturating_from_integer</span>(<span class="ident">i128::MAX</span>);
 
 		<span class="comment">// check that for all values it can compute, correctly.</span>
 		<span class="macro">vec!</span>[
-			<span class="number">0</span>,
-			<span class="number">1</span>,
-			<span class="number">10</span>,
-			<span class="number">1000</span>,
+			<span class="ident">Weight::zero</span>(),
+			<span class="ident">Weight::one</span>(),
+			<span class="ident">Weight::from_ref_time</span>(<span class="number">10</span>),
+			<span class="ident">Weight::from_ref_time</span>(<span class="number">1000</span>),
 			<span class="ident">kb</span>,
 			<span class="number">10</span> <span class="op">*</span> <span class="ident">kb</span>,
 			<span class="number">100</span> <span class="op">*</span> <span class="ident">kb</span>,
 			<span class="ident">mb</span>,
 			<span class="number">10</span> <span class="op">*</span> <span class="ident">mb</span>,
-			<span class="number">2147483647</span>,
-			<span class="number">4294967295</span>,
+			<span class="ident">Weight::from_ref_time</span>(<span class="number">2147483647</span>),
+			<span class="ident">Weight::from_ref_time</span>(<span class="number">4294967295</span>),
 			<span class="ident">BlockWeights::get</span>().<span class="ident">max_block</span> <span class="op">/</span> <span class="number">2</span>,
 			<span class="ident">BlockWeights::get</span>().<span class="ident">max_block</span>,
-			<span class="ident">Weight::max_value</span>() <span class="op">/</span> <span class="number">2</span>,
-			<span class="ident">Weight::max_value</span>(),
+			<span class="ident">Weight::MAX</span> <span class="op">/</span> <span class="number">2</span>,
+			<span class="ident">Weight::MAX</span>,
 		]
 		.<span class="ident">into_iter</span>()
 		.<span class="ident">for_each</span>(<span class="op">|</span><span class="ident">i</span><span class="op">|</span> {
@@ -897,7 +899,7 @@
 
 		<span class="comment">// Some values that are all above the target and will cause an increase.</span>
 		<span class="kw">let</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">target</span>();
-		<span class="macro">vec!</span>[<span class="ident">t</span> <span class="op">+</span> <span class="number">100</span>, <span class="ident">t</span> <span class="op">*</span> <span class="number">2</span>, <span class="ident">t</span> <span class="op">*</span> <span class="number">4</span>].<span class="ident">into_iter</span>().<span class="ident">for_each</span>(<span class="op">|</span><span class="ident">i</span><span class="op">|</span> {
+		<span class="macro">vec!</span>[<span class="ident">t</span> <span class="op">+</span> <span class="ident">Weight::from_ref_time</span>(<span class="number">100</span>), <span class="ident">t</span> <span class="op">*</span> <span class="number">2</span>, <span class="ident">t</span> <span class="op">*</span> <span class="number">4</span>].<span class="ident">into_iter</span>().<span class="ident">for_each</span>(<span class="op">|</span><span class="ident">i</span><span class="op">|</span> {
 			<span class="ident">run_with_system_weight</span>(<span class="ident">i</span>, <span class="op">|</span><span class="op">|</span> {
 				<span class="kw">let</span> <span class="ident">fm</span> <span class="op">=</span> <span class="ident">runtime_multiplier_update</span>(<span class="ident">max_fm</span>);
 				<span class="comment">// won&#39;t grow. The convert saturates everything.</span>

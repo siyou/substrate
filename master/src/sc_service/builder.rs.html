@@ -936,6 +936,11 @@
 <span id="930">930</span>
 <span id="931">931</span>
 <span id="932">932</span>
+<span id="933">933</span>
+<span id="934">934</span>
+<span id="935">935</span>
+<span id="936">936</span>
+<span id="937">937</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2017-2022 Parity Technologies (UK) Ltd.</span>
@@ -975,7 +980,7 @@
 <span class="kw">use</span> <span class="ident">sc_consensus::import_queue::ImportQueue</span>;
 <span class="kw">use</span> <span class="ident">sc_executor::RuntimeVersionOf</span>;
 <span class="kw">use</span> <span class="ident">sc_keystore::LocalKeystore</span>;
-<span class="kw">use</span> <span class="ident">sc_network</span>::{<span class="ident">config::SyncMode</span>, <span class="ident">NetworkService</span>};
+<span class="kw">use</span> <span class="ident">sc_network</span>::{<span class="ident">bitswap::Bitswap</span>, <span class="ident">config::SyncMode</span>, <span class="ident">NetworkService</span>};
 <span class="kw">use</span> <span class="ident">sc_network_common</span>::{
 	<span class="ident">service</span>::{<span class="ident">NetworkStateInfo</span>, <span class="ident">NetworkStatusProvider</span>, <span class="ident">NetworkTransaction</span>},
 	<span class="ident">sync::warp::WarpSyncProvider</span>,
@@ -1649,7 +1654,6 @@
 	<span class="doccomment">/// An optional warp sync provider.</span>
 	<span class="kw">pub</span> <span class="ident">warp_sync</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Arc</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">WarpSyncProvider</span><span class="op">&lt;</span><span class="ident">TBl</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 }
-
 <span class="doccomment">/// Build the network service, the network status sinks and an RPC sender.</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">build_network</span><span class="op">&lt;</span><span class="ident">TBl</span>, <span class="ident">TExPool</span>, <span class="ident">TImpQu</span>, <span class="ident">TCl</span><span class="op">&gt;</span>(
 	<span class="ident">params</span>: <span class="ident">BuildNetworkParams</span><span class="op">&lt;</span><span class="ident">TBl</span>, <span class="ident">TExPool</span>, <span class="ident">TImpQu</span>, <span class="ident">TCl</span><span class="op">&gt;</span>,
@@ -1795,6 +1799,7 @@
 		<span class="ident">fork_id</span>: <span class="ident">config</span>.<span class="ident">chain_spec</span>.<span class="ident">fork_id</span>().<span class="ident">map</span>(<span class="ident">ToOwned::to_owned</span>),
 		<span class="ident">import_queue</span>: <span class="ident">Box::new</span>(<span class="ident">import_queue</span>),
 		<span class="ident">chain_sync</span>: <span class="ident">Box::new</span>(<span class="ident">chain_sync</span>),
+		<span class="ident">bitswap</span>: <span class="ident">config</span>.<span class="ident">network</span>.<span class="ident">ipfs_server</span>.<span class="ident">then</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">Bitswap::from_client</span>(<span class="ident">client</span>.<span class="ident">clone</span>())),
 		<span class="ident">metrics_registry</span>: <span class="ident">config</span>.<span class="ident">prometheus_config</span>.<span class="ident">as_ref</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">config</span><span class="op">|</span> <span class="ident">config</span>.<span class="ident">registry</span>.<span class="ident">clone</span>()),
 		<span class="ident">block_request_protocol_config</span>,
 		<span class="ident">state_request_protocol_config</span>,
@@ -1861,6 +1866,11 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">NetworkStarter</span>(<span class="ident">oneshot::Sender</span><span class="op">&lt;</span>()<span class="op">&gt;</span>);
 
 <span class="kw">impl</span> <span class="ident">NetworkStarter</span> {
+	<span class="doccomment">/// Create a new NetworkStarter</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">sender</span>: <span class="ident">oneshot::Sender</span><span class="op">&lt;</span>()<span class="op">&gt;</span>) -&gt; <span class="self">Self</span> {
+		<span class="ident">NetworkStarter</span>(<span class="ident">sender</span>)
+	}
+
 	<span class="doccomment">/// Start the network. Call this after all sub-components have been initialized.</span>
 	<span class="doccomment">///</span>
 	<span class="doccomment">/// &gt; **Note**: If you don&#39;t call this function, the networking will not work.</span>

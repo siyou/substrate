@@ -58,9 +58,6 @@
 <span id="52">52</span>
 <span id="53">53</span>
 <span id="54">54</span>
-<span id="55">55</span>
-<span id="56">56</span>
-<span id="57">57</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2021-2022 Parity Technologies (UK) Ltd.</span>
@@ -80,10 +77,7 @@
 
 <span class="doccomment">//! Various pieces of common functionality.</span>
 <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
-<span class="kw">use</span> <span class="ident">frame_support</span>::{
-	<span class="ident">traits</span>::{<span class="ident">Get</span>, <span class="ident">GetStorageVersion</span>, <span class="ident">PalletInfoAccess</span>, <span class="ident">StorageVersion</span>},
-	<span class="ident">weights::Weight</span>,
-};
+<span class="kw">use</span> <span class="ident">frame_support::traits</span>::{<span class="ident">Get</span>, <span class="ident">GetStorageVersion</span>, <span class="ident">PalletInfoAccess</span>, <span class="ident">StorageVersion</span>};
 
 <span class="doccomment">/// Migrate the pallet storage to v1.</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">migrate_to_v1</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Config</span><span class="op">&lt;</span><span class="ident">I</span><span class="op">&gt;</span>, <span class="ident">I</span>: <span class="lifetime">&#39;static</span>, <span class="ident">P</span>: <span class="ident">GetStorageVersion</span> <span class="op">+</span> <span class="ident">PalletInfoAccess</span><span class="op">&gt;</span>(
@@ -108,7 +102,7 @@
 			<span class="ident">on_chain_storage_version</span>,
 		);
 		<span class="comment">// calculate and return migration weights</span>
-		<span class="ident">T::DbWeight::get</span>().<span class="ident">reads_writes</span>(<span class="ident">count</span> <span class="kw">as</span> <span class="ident">Weight</span> <span class="op">+</span> <span class="number">1</span>, <span class="ident">count</span> <span class="kw">as</span> <span class="ident">Weight</span> <span class="op">+</span> <span class="number">1</span>)
+		<span class="ident">T::DbWeight::get</span>().<span class="ident">reads_writes</span>(<span class="ident">count</span> <span class="kw">as</span> <span class="ident">u64</span> <span class="op">+</span> <span class="number">1</span>, <span class="ident">count</span> <span class="kw">as</span> <span class="ident">u64</span> <span class="op">+</span> <span class="number">1</span>)
 	} <span class="kw">else</span> {
 		<span class="macro">log::warn!</span>(
 			<span class="ident">target</span>: <span class="string">&quot;runtime::uniques&quot;</span>,

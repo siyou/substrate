@@ -2377,7 +2377,7 @@
 <span class="doccomment">/// by  Operational  extrinsics.</span>
 <span class="kw">const</span> <span class="ident">NORMAL_DISPATCH_RATIO</span>: <span class="ident">Perbill</span> <span class="op">=</span> <span class="ident">Perbill::from_percent</span>(<span class="number">75</span>);
 <span class="doccomment">/// We allow for 2 seconds of compute with a 6 second average block time.</span>
-<span class="kw">const</span> <span class="ident">MAXIMUM_BLOCK_WEIGHT</span>: <span class="ident">Weight</span> <span class="op">=</span> <span class="number">2</span> <span class="op">*</span> <span class="ident">WEIGHT_PER_SECOND</span>;
+<span class="kw">const</span> <span class="ident">MAXIMUM_BLOCK_WEIGHT</span>: <span class="ident">Weight</span> <span class="op">=</span> <span class="ident">WEIGHT_PER_SECOND</span>.<span class="ident">scalar_saturating_mul</span>(<span class="number">2</span>);
 
 <span class="macro">parameter_types!</span> {
 	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">BlockHashCount</span>: <span class="ident">BlockNumber</span> <span class="op">=</span> <span class="number">2400</span>;
@@ -4143,7 +4143,7 @@
 			<span class="ident">storage_deposit_limit</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Balance</span><span class="op">&gt;</span>,
 			<span class="ident">input_data</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>,
 		) -&gt; <span class="ident">pallet_contracts_primitives::ContractExecResult</span><span class="op">&lt;</span><span class="ident">Balance</span><span class="op">&gt;</span> {
-			<span class="ident">Contracts::bare_call</span>(<span class="ident">origin</span>, <span class="ident">dest</span>, <span class="ident">value</span>, <span class="ident">gas_limit</span>, <span class="ident">storage_deposit_limit</span>, <span class="ident">input_data</span>, <span class="bool-val">true</span>)
+			<span class="ident">Contracts::bare_call</span>(<span class="ident">origin</span>, <span class="ident">dest</span>, <span class="ident">value</span>, <span class="ident">Weight::from_ref_time</span>(<span class="ident">gas_limit</span>), <span class="ident">storage_deposit_limit</span>, <span class="ident">input_data</span>, <span class="bool-val">true</span>)
 		}
 
 		<span class="kw">fn</span> <span class="ident">instantiate</span>(
@@ -4156,7 +4156,7 @@
 			<span class="ident">salt</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>,
 		) -&gt; <span class="ident">pallet_contracts_primitives::ContractInstantiateResult</span><span class="op">&lt;</span><span class="ident">AccountId</span>, <span class="ident">Balance</span><span class="op">&gt;</span>
 		{
-			<span class="ident">Contracts::bare_instantiate</span>(<span class="ident">origin</span>, <span class="ident">value</span>, <span class="ident">gas_limit</span>, <span class="ident">storage_deposit_limit</span>, <span class="ident">code</span>, <span class="ident">data</span>, <span class="ident">salt</span>, <span class="bool-val">true</span>)
+			<span class="ident">Contracts::bare_instantiate</span>(<span class="ident">origin</span>, <span class="ident">value</span>, <span class="ident">Weight::from_ref_time</span>(<span class="ident">gas_limit</span>), <span class="ident">storage_deposit_limit</span>, <span class="ident">code</span>, <span class="ident">data</span>, <span class="ident">salt</span>, <span class="bool-val">true</span>)
 		}
 
 		<span class="kw">fn</span> <span class="ident">upload_code</span>(

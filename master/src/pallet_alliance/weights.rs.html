@@ -594,7 +594,7 @@
 <span class="attribute">#![<span class="ident">allow</span>(<span class="ident">unused_parens</span>)]</span>
 <span class="attribute">#![<span class="ident">allow</span>(<span class="ident">unused_imports</span>)]</span>
 
-<span class="kw">use</span> <span class="ident">frame_support</span>::{<span class="ident">traits::Get</span>, <span class="ident">weights</span>::{<span class="ident">Weight</span>, <span class="ident">constants::RocksDbWeight</span>}};
+<span class="kw">use</span> <span class="ident">frame_support</span>::{<span class="ident">traits::Get</span>, <span class="ident">weights</span>::{<span class="ident">RefTimeWeight</span>, <span class="ident">Weight</span>, <span class="ident">constants::RocksDbWeight</span>}};
 <span class="kw">use</span> <span class="ident">sp_std::marker::PhantomData</span>;
 
 <span class="doccomment">/// Weight functions needed for pallet_alliance.</span>
@@ -633,30 +633,30 @@
 	<span class="doccomment">/// The range of component `y` is `[0, 90]`.</span>
 	<span class="doccomment">/// The range of component `p` is `[1, 100]`.</span>
 	<span class="kw">fn</span> <span class="ident">propose_proposed</span>(<span class="ident">b</span>: <span class="ident">u32</span>, <span class="ident">x</span>: <span class="ident">u32</span>, <span class="ident">y</span>: <span class="ident">u32</span>, <span class="ident">p</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
-		(<span class="number">22_575_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">22_575_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
 			<span class="comment">// Standard Error: 0</span>
-			.<span class="ident">saturating_add</span>((<span class="number">11_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">b</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">11_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">b</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 			<span class="comment">// Standard Error: 23_000</span>
-			.<span class="ident">saturating_add</span>((<span class="number">158_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">x</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">158_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">x</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 			<span class="comment">// Standard Error: 2_000</span>
-			.<span class="ident">saturating_add</span>((<span class="number">90_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">y</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">90_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">y</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 			<span class="comment">// Standard Error: 2_000</span>
-			.<span class="ident">saturating_add</span>((<span class="number">216_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">p</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">4</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">4</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">216_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">p</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">4</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">4</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Alliance Members (r:2 w:0)</span>
 	<span class="comment">// Storage: AllianceMotion Voting (r:1 w:1)</span>
 	<span class="doccomment">/// The range of component `x` is `[3, 10]`.</span>
 	<span class="doccomment">/// The range of component `y` is `[2, 90]`.</span>
 	<span class="kw">fn</span> <span class="ident">vote</span>(<span class="ident">x</span>: <span class="ident">u32</span>, <span class="ident">y</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
-		(<span class="number">45_486_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">45_486_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
 			<span class="comment">// Standard Error: 29_000</span>
-			.<span class="ident">saturating_add</span>((<span class="number">78_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">x</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">78_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">x</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 			<span class="comment">// Standard Error: 2_000</span>
-			.<span class="ident">saturating_add</span>((<span class="number">128_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">y</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">3</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">128_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">y</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">3</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Alliance Members (r:1 w:0)</span>
 	<span class="comment">// Storage: AllianceMotion ProposalOf (r:1 w:1)</span>
@@ -664,11 +664,11 @@
 	<span class="comment">// Storage: AllianceMotion Voting (r:0 w:1)</span>
 	<span class="doccomment">/// The range of component `p` is `[1, 100]`.</span>
 	<span class="kw">fn</span> <span class="ident">veto</span>(<span class="ident">p</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
-		(<span class="number">35_296_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">35_296_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
 			<span class="comment">// Standard Error: 2_000</span>
-			.<span class="ident">saturating_add</span>((<span class="number">171_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">p</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">3</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">3</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">171_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">p</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">3</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">3</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Alliance Members (r:1 w:0)</span>
 	<span class="comment">// Storage: AllianceMotion Voting (r:1 w:1)</span>
@@ -679,15 +679,15 @@
 	<span class="doccomment">/// The range of component `y` is `[2, 90]`.</span>
 	<span class="doccomment">/// The range of component `p` is `[1, 100]`.</span>
 	<span class="kw">fn</span> <span class="ident">close_early_disapproved</span>(<span class="ident">x</span>: <span class="ident">u32</span>, <span class="ident">y</span>: <span class="ident">u32</span>, <span class="ident">p</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
-		(<span class="number">39_252_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">39_252_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
 			<span class="comment">// Standard Error: 18_000</span>
-			.<span class="ident">saturating_add</span>((<span class="number">75_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">x</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">75_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">x</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 			<span class="comment">// Standard Error: 1_000</span>
-			.<span class="ident">saturating_add</span>((<span class="number">107_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">y</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">107_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">y</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 			<span class="comment">// Standard Error: 1_000</span>
-			.<span class="ident">saturating_add</span>((<span class="number">170_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">p</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">4</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">3</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">170_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">p</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">4</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">3</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Alliance Members (r:1 w:0)</span>
 	<span class="comment">// Storage: AllianceMotion Voting (r:1 w:1)</span>
@@ -699,13 +699,13 @@
 	<span class="doccomment">/// The range of component `y` is `[2, 90]`.</span>
 	<span class="doccomment">/// The range of component `p` is `[1, 100]`.</span>
 	<span class="kw">fn</span> <span class="ident">close_early_approved</span>(<span class="ident">_b</span>: <span class="ident">u32</span>, <span class="ident">_x</span>: <span class="ident">u32</span>, <span class="ident">y</span>: <span class="ident">u32</span>, <span class="ident">p</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
-		(<span class="number">50_357_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">50_357_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
 			<span class="comment">// Standard Error: 1_000</span>
-			.<span class="ident">saturating_add</span>((<span class="number">103_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">y</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">103_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">y</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 			<span class="comment">// Standard Error: 1_000</span>
-			.<span class="ident">saturating_add</span>((<span class="number">204_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">p</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">5</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">3</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">204_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">p</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">5</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">3</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Alliance Members (r:1 w:0)</span>
 	<span class="comment">// Storage: AllianceMotion Voting (r:1 w:1)</span>
@@ -717,13 +717,13 @@
 	<span class="doccomment">/// The range of component `y` is `[2, 90]`.</span>
 	<span class="doccomment">/// The range of component `p` is `[1, 100]`.</span>
 	<span class="kw">fn</span> <span class="ident">close_disapproved</span>(<span class="ident">_x</span>: <span class="ident">u32</span>, <span class="ident">y</span>: <span class="ident">u32</span>, <span class="ident">p</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
-		(<span class="number">41_258_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">41_258_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
 			<span class="comment">// Standard Error: 1_000</span>
-			.<span class="ident">saturating_add</span>((<span class="number">111_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">y</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">111_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">y</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 			<span class="comment">// Standard Error: 1_000</span>
-			.<span class="ident">saturating_add</span>((<span class="number">186_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">p</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">5</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">3</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">186_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">p</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">5</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">3</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Alliance Members (r:1 w:0)</span>
 	<span class="comment">// Storage: AllianceMotion Voting (r:1 w:1)</span>
@@ -736,15 +736,15 @@
 	<span class="doccomment">/// The range of component `y` is `[2, 90]`.</span>
 	<span class="doccomment">/// The range of component `p` is `[1, 100]`.</span>
 	<span class="kw">fn</span> <span class="ident">close_approved</span>(<span class="ident">_b</span>: <span class="ident">u32</span>, <span class="ident">x</span>: <span class="ident">u32</span>, <span class="ident">y</span>: <span class="ident">u32</span>, <span class="ident">p</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
-		(<span class="number">40_490_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">40_490_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
 			<span class="comment">// Standard Error: 16_000</span>
-			.<span class="ident">saturating_add</span>((<span class="number">119_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">x</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">119_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">x</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 			<span class="comment">// Standard Error: 1_000</span>
-			.<span class="ident">saturating_add</span>((<span class="number">93_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">y</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">93_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">y</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 			<span class="comment">// Standard Error: 1_000</span>
-			.<span class="ident">saturating_add</span>((<span class="number">195_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">p</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">5</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">3</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">195_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">p</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">5</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">3</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Alliance Members (r:2 w:3)</span>
 	<span class="comment">// Storage: AllianceMotion Members (r:1 w:1)</span>
@@ -752,55 +752,55 @@
 	<span class="doccomment">/// The range of component `y` is `[0, 90]`.</span>
 	<span class="doccomment">/// The range of component `z` is `[0, 100]`.</span>
 	<span class="kw">fn</span> <span class="ident">init_members</span>(<span class="ident">_x</span>: <span class="ident">u32</span>, <span class="ident">y</span>: <span class="ident">u32</span>, <span class="ident">z</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
-		(<span class="number">35_186_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">35_186_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
 			<span class="comment">// Standard Error: 1_000</span>
-			.<span class="ident">saturating_add</span>((<span class="number">161_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">y</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">161_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">y</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 			<span class="comment">// Standard Error: 1_000</span>
-			.<span class="ident">saturating_add</span>((<span class="number">127_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">z</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">3</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">4</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">127_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">z</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">3</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">4</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Alliance Rule (r:0 w:1)</span>
 	<span class="kw">fn</span> <span class="ident">set_rule</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">18_189_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">18_189_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Alliance Announcements (r:1 w:1)</span>
 	<span class="kw">fn</span> <span class="ident">announce</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">21_106_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">21_106_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Alliance Announcements (r:1 w:1)</span>
 	<span class="kw">fn</span> <span class="ident">remove_announcement</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">22_208_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">22_208_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Alliance Members (r:4 w:1)</span>
 	<span class="comment">// Storage: Alliance UnscrupulousAccounts (r:1 w:0)</span>
 	<span class="comment">// Storage: System Account (r:1 w:1)</span>
 	<span class="comment">// Storage: Alliance DepositOf (r:0 w:1)</span>
 	<span class="kw">fn</span> <span class="ident">join_alliance</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">53_771_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">6</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">3</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">53_771_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">6</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">3</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Alliance Members (r:4 w:1)</span>
 	<span class="comment">// Storage: Alliance UnscrupulousAccounts (r:1 w:0)</span>
 	<span class="kw">fn</span> <span class="ident">nominate_ally</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">41_912_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">5</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">41_912_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">5</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Alliance Members (r:3 w:2)</span>
 	<span class="comment">// Storage: AllianceMotion Proposals (r:1 w:0)</span>
 	<span class="comment">// Storage: AllianceMotion Members (r:0 w:1)</span>
 	<span class="comment">// Storage: AllianceMotion Prime (r:0 w:1)</span>
 	<span class="kw">fn</span> <span class="ident">elevate_ally</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">36_811_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">4</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">4</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">36_811_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">4</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">4</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Alliance Members (r:4 w:2)</span>
 	<span class="comment">// Storage: AllianceMotion Proposals (r:1 w:0)</span>
@@ -808,18 +808,18 @@
 	<span class="comment">// Storage: AllianceMotion Prime (r:0 w:1)</span>
 	<span class="comment">// Storage: Alliance RetiringMembers (r:0 w:1)</span>
 	<span class="kw">fn</span> <span class="ident">give_retirement_notice</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">41_079_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">5</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">5</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">41_079_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">5</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">5</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Alliance RetiringMembers (r:1 w:1)</span>
 	<span class="comment">// Storage: Alliance Members (r:1 w:1)</span>
 	<span class="comment">// Storage: Alliance DepositOf (r:1 w:1)</span>
 	<span class="comment">// Storage: System Account (r:1 w:1)</span>
 	<span class="kw">fn</span> <span class="ident">retire</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">42_703_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">4</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">4</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">42_703_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">4</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">4</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Alliance Members (r:3 w:1)</span>
 	<span class="comment">// Storage: AllianceMotion Proposals (r:1 w:0)</span>
@@ -828,35 +828,35 @@
 	<span class="comment">// Storage: AllianceMotion Members (r:0 w:1)</span>
 	<span class="comment">// Storage: AllianceMotion Prime (r:0 w:1)</span>
 	<span class="kw">fn</span> <span class="ident">kick_member</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">61_370_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">6</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">5</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">61_370_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">6</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">5</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Alliance UnscrupulousAccounts (r:1 w:1)</span>
 	<span class="comment">// Storage: Alliance UnscrupulousWebsites (r:1 w:1)</span>
 	<span class="doccomment">/// The range of component `n` is `[1, 100]`.</span>
 	<span class="doccomment">/// The range of component `l` is `[1, 255]`.</span>
 	<span class="kw">fn</span> <span class="ident">add_unscrupulous_items</span>(<span class="ident">n</span>: <span class="ident">u32</span>, <span class="ident">l</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
-		(<span class="number">0</span> <span class="kw">as</span> <span class="ident">Weight</span>)
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">0</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
 			<span class="comment">// Standard Error: 2_000</span>
-			.<span class="ident">saturating_add</span>((<span class="number">1_385_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">n</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">1_385_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">n</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 			<span class="comment">// Standard Error: 1_000</span>
-			.<span class="ident">saturating_add</span>((<span class="number">119_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">l</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">119_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">l</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Alliance UnscrupulousAccounts (r:1 w:1)</span>
 	<span class="comment">// Storage: Alliance UnscrupulousWebsites (r:1 w:1)</span>
 	<span class="doccomment">/// The range of component `n` is `[1, 100]`.</span>
 	<span class="doccomment">/// The range of component `l` is `[1, 255]`.</span>
 	<span class="kw">fn</span> <span class="ident">remove_unscrupulous_items</span>(<span class="ident">n</span>: <span class="ident">u32</span>, <span class="ident">l</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
-		(<span class="number">0</span> <span class="kw">as</span> <span class="ident">Weight</span>)
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">0</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
 			<span class="comment">// Standard Error: 153_000</span>
-			.<span class="ident">saturating_add</span>((<span class="number">21_484_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">n</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">21_484_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">n</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 			<span class="comment">// Standard Error: 59_000</span>
-			.<span class="ident">saturating_add</span>((<span class="number">3_772_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">l</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">3_772_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">l</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 }
 
@@ -872,30 +872,30 @@
 	<span class="doccomment">/// The range of component `y` is `[0, 90]`.</span>
 	<span class="doccomment">/// The range of component `p` is `[1, 100]`.</span>
 	<span class="kw">fn</span> <span class="ident">propose_proposed</span>(<span class="ident">b</span>: <span class="ident">u32</span>, <span class="ident">x</span>: <span class="ident">u32</span>, <span class="ident">y</span>: <span class="ident">u32</span>, <span class="ident">p</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
-		(<span class="number">22_575_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">22_575_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
 			<span class="comment">// Standard Error: 0</span>
-			.<span class="ident">saturating_add</span>((<span class="number">11_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">b</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">11_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">b</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 			<span class="comment">// Standard Error: 23_000</span>
-			.<span class="ident">saturating_add</span>((<span class="number">158_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">x</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">158_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">x</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 			<span class="comment">// Standard Error: 2_000</span>
-			.<span class="ident">saturating_add</span>((<span class="number">90_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">y</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">90_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">y</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 			<span class="comment">// Standard Error: 2_000</span>
-			.<span class="ident">saturating_add</span>((<span class="number">216_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">p</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">4</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">4</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">216_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">p</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">4</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">4</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Alliance Members (r:2 w:0)</span>
 	<span class="comment">// Storage: AllianceMotion Voting (r:1 w:1)</span>
 	<span class="doccomment">/// The range of component `x` is `[3, 10]`.</span>
 	<span class="doccomment">/// The range of component `y` is `[2, 90]`.</span>
 	<span class="kw">fn</span> <span class="ident">vote</span>(<span class="ident">x</span>: <span class="ident">u32</span>, <span class="ident">y</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
-		(<span class="number">45_486_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">45_486_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
 			<span class="comment">// Standard Error: 29_000</span>
-			.<span class="ident">saturating_add</span>((<span class="number">78_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">x</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">78_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">x</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 			<span class="comment">// Standard Error: 2_000</span>
-			.<span class="ident">saturating_add</span>((<span class="number">128_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">y</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">3</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">128_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">y</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">3</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Alliance Members (r:1 w:0)</span>
 	<span class="comment">// Storage: AllianceMotion ProposalOf (r:1 w:1)</span>
@@ -903,11 +903,11 @@
 	<span class="comment">// Storage: AllianceMotion Voting (r:0 w:1)</span>
 	<span class="doccomment">/// The range of component `p` is `[1, 100]`.</span>
 	<span class="kw">fn</span> <span class="ident">veto</span>(<span class="ident">p</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
-		(<span class="number">35_296_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">35_296_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
 			<span class="comment">// Standard Error: 2_000</span>
-			.<span class="ident">saturating_add</span>((<span class="number">171_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">p</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">3</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">3</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">171_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">p</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">3</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">3</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Alliance Members (r:1 w:0)</span>
 	<span class="comment">// Storage: AllianceMotion Voting (r:1 w:1)</span>
@@ -918,15 +918,15 @@
 	<span class="doccomment">/// The range of component `y` is `[2, 90]`.</span>
 	<span class="doccomment">/// The range of component `p` is `[1, 100]`.</span>
 	<span class="kw">fn</span> <span class="ident">close_early_disapproved</span>(<span class="ident">x</span>: <span class="ident">u32</span>, <span class="ident">y</span>: <span class="ident">u32</span>, <span class="ident">p</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
-		(<span class="number">39_252_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">39_252_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
 			<span class="comment">// Standard Error: 18_000</span>
-			.<span class="ident">saturating_add</span>((<span class="number">75_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">x</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">75_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">x</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 			<span class="comment">// Standard Error: 1_000</span>
-			.<span class="ident">saturating_add</span>((<span class="number">107_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">y</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">107_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">y</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 			<span class="comment">// Standard Error: 1_000</span>
-			.<span class="ident">saturating_add</span>((<span class="number">170_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">p</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">4</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">3</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">170_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">p</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">4</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">3</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Alliance Members (r:1 w:0)</span>
 	<span class="comment">// Storage: AllianceMotion Voting (r:1 w:1)</span>
@@ -938,13 +938,13 @@
 	<span class="doccomment">/// The range of component `y` is `[2, 90]`.</span>
 	<span class="doccomment">/// The range of component `p` is `[1, 100]`.</span>
 	<span class="kw">fn</span> <span class="ident">close_early_approved</span>(<span class="ident">_b</span>: <span class="ident">u32</span>, <span class="ident">_x</span>: <span class="ident">u32</span>, <span class="ident">y</span>: <span class="ident">u32</span>, <span class="ident">p</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
-		(<span class="number">50_357_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">50_357_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
 			<span class="comment">// Standard Error: 1_000</span>
-			.<span class="ident">saturating_add</span>((<span class="number">103_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">y</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">103_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">y</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 			<span class="comment">// Standard Error: 1_000</span>
-			.<span class="ident">saturating_add</span>((<span class="number">204_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">p</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">5</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">3</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">204_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">p</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">5</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">3</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Alliance Members (r:1 w:0)</span>
 	<span class="comment">// Storage: AllianceMotion Voting (r:1 w:1)</span>
@@ -956,13 +956,13 @@
 	<span class="doccomment">/// The range of component `y` is `[2, 90]`.</span>
 	<span class="doccomment">/// The range of component `p` is `[1, 100]`.</span>
 	<span class="kw">fn</span> <span class="ident">close_disapproved</span>(<span class="ident">_x</span>: <span class="ident">u32</span>, <span class="ident">y</span>: <span class="ident">u32</span>, <span class="ident">p</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
-		(<span class="number">41_258_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">41_258_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
 			<span class="comment">// Standard Error: 1_000</span>
-			.<span class="ident">saturating_add</span>((<span class="number">111_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">y</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">111_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">y</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 			<span class="comment">// Standard Error: 1_000</span>
-			.<span class="ident">saturating_add</span>((<span class="number">186_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">p</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">5</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">3</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">186_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">p</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">5</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">3</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Alliance Members (r:1 w:0)</span>
 	<span class="comment">// Storage: AllianceMotion Voting (r:1 w:1)</span>
@@ -975,15 +975,15 @@
 	<span class="doccomment">/// The range of component `y` is `[2, 90]`.</span>
 	<span class="doccomment">/// The range of component `p` is `[1, 100]`.</span>
 	<span class="kw">fn</span> <span class="ident">close_approved</span>(<span class="ident">_b</span>: <span class="ident">u32</span>, <span class="ident">x</span>: <span class="ident">u32</span>, <span class="ident">y</span>: <span class="ident">u32</span>, <span class="ident">p</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
-		(<span class="number">40_490_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">40_490_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
 			<span class="comment">// Standard Error: 16_000</span>
-			.<span class="ident">saturating_add</span>((<span class="number">119_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">x</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">119_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">x</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 			<span class="comment">// Standard Error: 1_000</span>
-			.<span class="ident">saturating_add</span>((<span class="number">93_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">y</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">93_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">y</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 			<span class="comment">// Standard Error: 1_000</span>
-			.<span class="ident">saturating_add</span>((<span class="number">195_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">p</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">5</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">3</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">195_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">p</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">5</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">3</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Alliance Members (r:2 w:3)</span>
 	<span class="comment">// Storage: AllianceMotion Members (r:1 w:1)</span>
@@ -991,55 +991,55 @@
 	<span class="doccomment">/// The range of component `y` is `[0, 90]`.</span>
 	<span class="doccomment">/// The range of component `z` is `[0, 100]`.</span>
 	<span class="kw">fn</span> <span class="ident">init_members</span>(<span class="ident">_x</span>: <span class="ident">u32</span>, <span class="ident">y</span>: <span class="ident">u32</span>, <span class="ident">z</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
-		(<span class="number">35_186_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">35_186_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
 			<span class="comment">// Standard Error: 1_000</span>
-			.<span class="ident">saturating_add</span>((<span class="number">161_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">y</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">161_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">y</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 			<span class="comment">// Standard Error: 1_000</span>
-			.<span class="ident">saturating_add</span>((<span class="number">127_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">z</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">3</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">4</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">127_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">z</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">3</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">4</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Alliance Rule (r:0 w:1)</span>
 	<span class="kw">fn</span> <span class="ident">set_rule</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">18_189_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">18_189_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Alliance Announcements (r:1 w:1)</span>
 	<span class="kw">fn</span> <span class="ident">announce</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">21_106_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">21_106_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Alliance Announcements (r:1 w:1)</span>
 	<span class="kw">fn</span> <span class="ident">remove_announcement</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">22_208_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">22_208_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Alliance Members (r:4 w:1)</span>
 	<span class="comment">// Storage: Alliance UnscrupulousAccounts (r:1 w:0)</span>
 	<span class="comment">// Storage: System Account (r:1 w:1)</span>
 	<span class="comment">// Storage: Alliance DepositOf (r:0 w:1)</span>
 	<span class="kw">fn</span> <span class="ident">join_alliance</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">53_771_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">6</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">3</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">53_771_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">6</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">3</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Alliance Members (r:4 w:1)</span>
 	<span class="comment">// Storage: Alliance UnscrupulousAccounts (r:1 w:0)</span>
 	<span class="kw">fn</span> <span class="ident">nominate_ally</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">41_912_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">5</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">41_912_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">5</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Alliance Members (r:3 w:2)</span>
 	<span class="comment">// Storage: AllianceMotion Proposals (r:1 w:0)</span>
 	<span class="comment">// Storage: AllianceMotion Members (r:0 w:1)</span>
 	<span class="comment">// Storage: AllianceMotion Prime (r:0 w:1)</span>
 	<span class="kw">fn</span> <span class="ident">elevate_ally</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">36_811_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">4</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">4</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">36_811_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">4</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">4</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Alliance Members (r:4 w:2)</span>
 	<span class="comment">// Storage: AllianceMotion Proposals (r:1 w:0)</span>
@@ -1047,18 +1047,18 @@
 	<span class="comment">// Storage: AllianceMotion Prime (r:0 w:1)</span>
 	<span class="comment">// Storage: Alliance RetiringMembers (r:0 w:1)</span>
 	<span class="kw">fn</span> <span class="ident">give_retirement_notice</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">41_079_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">5</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">5</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">41_079_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">5</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">5</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Alliance RetiringMembers (r:1 w:1)</span>
 	<span class="comment">// Storage: Alliance Members (r:1 w:1)</span>
 	<span class="comment">// Storage: Alliance DepositOf (r:1 w:1)</span>
 	<span class="comment">// Storage: System Account (r:1 w:1)</span>
 	<span class="kw">fn</span> <span class="ident">retire</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">42_703_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">4</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">4</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">42_703_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">4</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">4</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Alliance Members (r:3 w:1)</span>
 	<span class="comment">// Storage: AllianceMotion Proposals (r:1 w:0)</span>
@@ -1067,35 +1067,35 @@
 	<span class="comment">// Storage: AllianceMotion Members (r:0 w:1)</span>
 	<span class="comment">// Storage: AllianceMotion Prime (r:0 w:1)</span>
 	<span class="kw">fn</span> <span class="ident">kick_member</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">61_370_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">6</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">5</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">61_370_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">6</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">5</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Alliance UnscrupulousAccounts (r:1 w:1)</span>
 	<span class="comment">// Storage: Alliance UnscrupulousWebsites (r:1 w:1)</span>
 	<span class="doccomment">/// The range of component `n` is `[1, 100]`.</span>
 	<span class="doccomment">/// The range of component `l` is `[1, 255]`.</span>
 	<span class="kw">fn</span> <span class="ident">add_unscrupulous_items</span>(<span class="ident">n</span>: <span class="ident">u32</span>, <span class="ident">l</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
-		(<span class="number">0</span> <span class="kw">as</span> <span class="ident">Weight</span>)
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">0</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
 			<span class="comment">// Standard Error: 2_000</span>
-			.<span class="ident">saturating_add</span>((<span class="number">1_385_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">n</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">1_385_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">n</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 			<span class="comment">// Standard Error: 1_000</span>
-			.<span class="ident">saturating_add</span>((<span class="number">119_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">l</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">119_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">l</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: Alliance UnscrupulousAccounts (r:1 w:1)</span>
 	<span class="comment">// Storage: Alliance UnscrupulousWebsites (r:1 w:1)</span>
 	<span class="doccomment">/// The range of component `n` is `[1, 100]`.</span>
 	<span class="doccomment">/// The range of component `l` is `[1, 255]`.</span>
 	<span class="kw">fn</span> <span class="ident">remove_unscrupulous_items</span>(<span class="ident">n</span>: <span class="ident">u32</span>, <span class="ident">l</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
-		(<span class="number">0</span> <span class="kw">as</span> <span class="ident">Weight</span>)
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">0</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
 			<span class="comment">// Standard Error: 153_000</span>
-			.<span class="ident">saturating_add</span>((<span class="number">21_484_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">n</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">21_484_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">n</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 			<span class="comment">// Standard Error: 59_000</span>
-			.<span class="ident">saturating_add</span>((<span class="number">3_772_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">l</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">3_772_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">l</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 }
 </code></pre></div>

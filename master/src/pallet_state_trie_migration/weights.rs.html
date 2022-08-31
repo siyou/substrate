@@ -184,7 +184,7 @@
 <span class="attribute">#![<span class="ident">allow</span>(<span class="ident">unused_parens</span>)]</span>
 <span class="attribute">#![<span class="ident">allow</span>(<span class="ident">unused_imports</span>)]</span>
 
-<span class="kw">use</span> <span class="ident">frame_support</span>::{<span class="ident">traits::Get</span>, <span class="ident">weights</span>::{<span class="ident">Weight</span>, <span class="ident">constants::RocksDbWeight</span>}};
+<span class="kw">use</span> <span class="ident">frame_support</span>::{<span class="ident">traits::Get</span>, <span class="ident">weights</span>::{<span class="ident">RefTimeWeight</span>, <span class="ident">Weight</span>, <span class="ident">constants::RocksDbWeight</span>}};
 <span class="kw">use</span> <span class="ident">sp_std::marker::PhantomData</span>;
 
 <span class="doccomment">/// Weight functions needed for pallet_state_trie_migration.</span>
@@ -204,40 +204,40 @@
 	<span class="comment">// Storage: StateTrieMigration SignedMigrationMaxLimits (r:1 w:0)</span>
 	<span class="comment">// Storage: StateTrieMigration MigrationProcess (r:1 w:1)</span>
 	<span class="kw">fn</span> <span class="ident">continue_migrate</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">19_019_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">19_019_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: StateTrieMigration SignedMigrationMaxLimits (r:1 w:0)</span>
 	<span class="kw">fn</span> <span class="ident">continue_migrate_wrong_witness</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">1_874_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">1_874_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="kw">fn</span> <span class="ident">migrate_custom_top_success</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">16_381_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">16_381_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
 	}
 	<span class="comment">// Storage: unknown [0x666f6f] (r:1 w:1)</span>
 	<span class="kw">fn</span> <span class="ident">migrate_custom_top_fail</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">25_966_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">25_966_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="kw">fn</span> <span class="ident">migrate_custom_child_success</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">16_712_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">16_712_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
 	}
 	<span class="comment">// Storage: unknown [0x666f6f] (r:1 w:1)</span>
 	<span class="kw">fn</span> <span class="ident">migrate_custom_child_fail</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">29_885_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">29_885_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: unknown [0x6b6579] (r:1 w:1)</span>
 	<span class="kw">fn</span> <span class="ident">process_top_key</span>(<span class="ident">v</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
-		(<span class="number">0</span> <span class="kw">as</span> <span class="ident">Weight</span>)
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">0</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
 			<span class="comment">// Standard Error: 0</span>
-			.<span class="ident">saturating_add</span>((<span class="number">2_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">v</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">2_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">v</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 }
 
@@ -246,40 +246,40 @@
 	<span class="comment">// Storage: StateTrieMigration SignedMigrationMaxLimits (r:1 w:0)</span>
 	<span class="comment">// Storage: StateTrieMigration MigrationProcess (r:1 w:1)</span>
 	<span class="kw">fn</span> <span class="ident">continue_migrate</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">19_019_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">19_019_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: StateTrieMigration SignedMigrationMaxLimits (r:1 w:0)</span>
 	<span class="kw">fn</span> <span class="ident">continue_migrate_wrong_witness</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">1_874_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">1_874_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="kw">fn</span> <span class="ident">migrate_custom_top_success</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">16_381_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">16_381_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
 	}
 	<span class="comment">// Storage: unknown [0x666f6f] (r:1 w:1)</span>
 	<span class="kw">fn</span> <span class="ident">migrate_custom_top_fail</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">25_966_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">25_966_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="kw">fn</span> <span class="ident">migrate_custom_child_success</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">16_712_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">16_712_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
 	}
 	<span class="comment">// Storage: unknown [0x666f6f] (r:1 w:1)</span>
 	<span class="kw">fn</span> <span class="ident">migrate_custom_child_fail</span>() -&gt; <span class="ident">Weight</span> {
-		(<span class="number">29_885_000</span> <span class="kw">as</span> <span class="ident">Weight</span>)
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">29_885_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 	<span class="comment">// Storage: unknown [0x6b6579] (r:1 w:1)</span>
 	<span class="kw">fn</span> <span class="ident">process_top_key</span>(<span class="ident">v</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
-		(<span class="number">0</span> <span class="kw">as</span> <span class="ident">Weight</span>)
+		<span class="ident">Weight::from_ref_time</span>(<span class="number">0</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
 			<span class="comment">// Standard Error: 0</span>
-			.<span class="ident">saturating_add</span>((<span class="number">2_000</span> <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="ident">v</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
-			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">Weight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">2_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">v</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
 }
 </code></pre></div>

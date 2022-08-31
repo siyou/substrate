@@ -1772,6 +1772,10 @@
 <span id="1766">1766</span>
 <span id="1767">1767</span>
 <span id="1768">1768</span>
+<span id="1769">1769</span>
+<span id="1770">1770</span>
+<span id="1771">1771</span>
+<span id="1772">1772</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2022 Parity Technologies (UK) Ltd.</span>
@@ -2613,9 +2617,10 @@
 	<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Config</span><span class="op">&gt;</span> <span class="ident">Pallet</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
 		<span class="doccomment">/// The real weight of a migration of the given number of `items` with total `size`.</span>
 		<span class="kw">fn</span> <span class="ident">dynamic_weight</span>(<span class="ident">items</span>: <span class="ident">u32</span>, <span class="ident">size</span>: <span class="ident">u32</span>) -&gt; <span class="ident">frame_support::pallet_prelude::Weight</span> {
-			<span class="kw">let</span> <span class="ident">items</span> <span class="op">=</span> <span class="ident">items</span> <span class="kw">as</span> <span class="ident">Weight</span>;
-			<span class="ident">items</span>
-				.<span class="ident">saturating_mul</span>(<span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">frame_system::Config</span><span class="op">&gt;</span><span class="ident">::DbWeight::get</span>().<span class="ident">reads_writes</span>(<span class="number">1</span>, <span class="number">1</span>))
+			<span class="kw">let</span> <span class="ident">items</span> <span class="op">=</span> <span class="ident">items</span> <span class="kw">as</span> <span class="ident">u64</span>;
+			<span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">frame_system::Config</span><span class="op">&gt;</span><span class="ident">::DbWeight::get</span>()
+				.<span class="ident">reads_writes</span>(<span class="number">1</span>, <span class="number">1</span>)
+				.<span class="ident">scalar_saturating_mul</span>(<span class="ident">items</span>)
 				<span class="comment">// we assume that the read/write per-byte weight is the same for child and top tree.</span>
 				.<span class="ident">saturating_add</span>(<span class="ident">T::WeightInfo::process_top_key</span>(<span class="ident">size</span>))
 		}
@@ -2903,25 +2908,25 @@
 
 	<span class="kw">impl</span> <span class="ident">WeightInfo</span> <span class="kw">for</span> <span class="ident">StateMigrationTestWeight</span> {
 		<span class="kw">fn</span> <span class="ident">process_top_key</span>(<span class="kw">_</span>: <span class="ident">u32</span>) -&gt; <span class="ident">Weight</span> {
-			<span class="number">1000000</span>
+			<span class="ident">Weight::from_ref_time</span>(<span class="number">1000000</span>)
 		}
 		<span class="kw">fn</span> <span class="ident">continue_migrate</span>() -&gt; <span class="ident">Weight</span> {
-			<span class="number">1000000</span>
+			<span class="ident">Weight::from_ref_time</span>(<span class="number">1000000</span>)
 		}
 		<span class="kw">fn</span> <span class="ident">continue_migrate_wrong_witness</span>() -&gt; <span class="ident">Weight</span> {
-			<span class="number">1000000</span>
+			<span class="ident">Weight::from_ref_time</span>(<span class="number">1000000</span>)
 		}
 		<span class="kw">fn</span> <span class="ident">migrate_custom_top_fail</span>() -&gt; <span class="ident">Weight</span> {
-			<span class="number">1000000</span>
+			<span class="ident">Weight::from_ref_time</span>(<span class="number">1000000</span>)
 		}
 		<span class="kw">fn</span> <span class="ident">migrate_custom_top_success</span>() -&gt; <span class="ident">Weight</span> {
-			<span class="number">1000000</span>
+			<span class="ident">Weight::from_ref_time</span>(<span class="number">1000000</span>)
 		}
 		<span class="kw">fn</span> <span class="ident">migrate_custom_child_fail</span>() -&gt; <span class="ident">Weight</span> {
-			<span class="number">1000000</span>
+			<span class="ident">Weight::from_ref_time</span>(<span class="number">1000000</span>)
 		}
 		<span class="kw">fn</span> <span class="ident">migrate_custom_child_success</span>() -&gt; <span class="ident">Weight</span> {
-			<span class="number">1000000</span>
+			<span class="ident">Weight::from_ref_time</span>(<span class="number">1000000</span>)
 		}
 	}
 
@@ -3017,9 +3022,9 @@
 		(<span class="ident">custom_storage</span>, <span class="ident">version</span>).<span class="ident">into</span>()
 	}
 
-	<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">run_to_block</span>(<span class="ident">n</span>: <span class="ident">u32</span>) -&gt; (<span class="ident">H256</span>, <span class="ident">u64</span>) {
+	<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">run_to_block</span>(<span class="ident">n</span>: <span class="ident">u32</span>) -&gt; (<span class="ident">H256</span>, <span class="ident">Weight</span>) {
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">root</span> <span class="op">=</span> <span class="ident">Default::default</span>();
-		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">weight_sum</span> <span class="op">=</span> <span class="number">0</span>;
+		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">weight_sum</span> <span class="op">=</span> <span class="ident">Weight::new</span>();
 		<span class="macro">log::trace!</span>(<span class="ident">target</span>: <span class="ident">LOG_TARGET</span>, <span class="string">&quot;running from {:?} to {:?}&quot;</span>, <span class="ident">System::block_number</span>(), <span class="ident">n</span>);
 		<span class="kw">while</span> <span class="ident">System::block_number</span>() <span class="op">&lt;</span> <span class="ident">n</span> {
 			<span class="ident">System::set_block_number</span>(<span class="ident">System::block_number</span>() <span class="op">+</span> <span class="number">1</span>);
@@ -3380,7 +3385,10 @@
 	<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">AutoLimits</span>, <span class="ident">MigrationLimits</span>, <span class="ident">Pallet</span> <span class="kw">as</span> <span class="ident">StateTrieMigration</span>, <span class="ident">LOG_TARGET</span>};
 	<span class="kw">use</span> <span class="ident">codec::Encode</span>;
 	<span class="kw">use</span> <span class="ident">frame_benchmarking::Zero</span>;
-	<span class="kw">use</span> <span class="ident">frame_support::traits</span>::{<span class="ident">Get</span>, <span class="ident">Hooks</span>};
+	<span class="kw">use</span> <span class="ident">frame_support</span>::{
+		<span class="ident">traits</span>::{<span class="ident">Get</span>, <span class="ident">Hooks</span>},
+		<span class="ident">weights::Weight</span>,
+	};
 	<span class="kw">use</span> <span class="ident">frame_system::Pallet</span> <span class="kw">as</span> <span class="ident">System</span>;
 	<span class="kw">use</span> <span class="ident">remote_externalities::Mode</span>;
 	<span class="kw">use</span> <span class="ident">sp_core::H256</span>;
@@ -3390,9 +3398,9 @@
 	<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">dead_code</span>)]</span>
 	<span class="kw">fn</span> <span class="ident">run_to_block</span><span class="op">&lt;</span><span class="ident">Runtime</span>: <span class="ident"><span class="kw">crate</span>::Config</span><span class="op">&lt;</span><span class="ident">Hash</span> <span class="op">=</span> <span class="ident">H256</span><span class="op">&gt;</span><span class="op">&gt;</span>(
 		<span class="ident">n</span>: <span class="op">&lt;</span><span class="ident">Runtime</span> <span class="kw">as</span> <span class="ident">frame_system::Config</span><span class="op">&gt;</span><span class="ident">::BlockNumber</span>,
-	) -&gt; (<span class="ident">H256</span>, <span class="ident">u64</span>) {
+	) -&gt; (<span class="ident">H256</span>, <span class="ident">Weight</span>) {
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">root</span> <span class="op">=</span> <span class="ident">Default::default</span>();
-		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">weight_sum</span> <span class="op">=</span> <span class="number">0</span>;
+		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">weight_sum</span> <span class="op">=</span> <span class="ident">Weight::new</span>();
 		<span class="kw">while</span> <span class="ident">System</span>::<span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span><span class="ident">::block_number</span>() <span class="op">&lt;</span> <span class="ident">n</span> {
 			<span class="ident">System</span>::<span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span><span class="ident">::set_block_number</span>(<span class="ident">System</span>::<span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span><span class="ident">::block_number</span>() <span class="op">+</span> <span class="ident">One::one</span>());
 			<span class="ident">System</span>::<span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span><span class="ident">::on_initialize</span>(<span class="ident">System</span>::<span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span><span class="ident">::block_number</span>());

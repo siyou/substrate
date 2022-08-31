@@ -76,7 +76,7 @@
 <span class="attribute">#![<span class="ident">allow</span>(<span class="ident">unused_parens</span>)]</span>
 <span class="attribute">#![<span class="ident">allow</span>(<span class="ident">unused_imports</span>)]</span>
 
-<span class="kw">use</span> <span class="ident">frame_support</span>::{<span class="ident">traits::Get</span>, <span class="ident">weights</span>::{<span class="ident">Weight</span>, <span class="ident">constants::RocksDbWeight</span>}};
+<span class="kw">use</span> <span class="ident">frame_support</span>::{<span class="ident">traits::Get</span>, <span class="ident">weights</span>::{<span class="ident">RefTimeWeight</span>, <span class="ident">Weight</span>, <span class="ident">constants::RocksDbWeight</span>}};
 <span class="kw">use</span> <span class="ident">sp_std::marker::PhantomData</span>;
 
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">WeightInfo</span> {
@@ -92,15 +92,15 @@
 }
 
 <span class="kw">impl</span> <span class="ident">WeightInfo</span> <span class="kw">for</span> () {
-	<span class="kw">fn</span> <span class="ident">add_well_known_node</span>() -&gt; <span class="ident">Weight</span> { <span class="number">50_000_000</span> }
-	<span class="kw">fn</span> <span class="ident">remove_well_known_node</span>() -&gt; <span class="ident">Weight</span> { <span class="number">50_000_000</span> }
-	<span class="kw">fn</span> <span class="ident">swap_well_known_node</span>() -&gt; <span class="ident">Weight</span> { <span class="number">50_000_000</span> }
-	<span class="kw">fn</span> <span class="ident">reset_well_known_nodes</span>() -&gt; <span class="ident">Weight</span> { <span class="number">50_000_000</span> }
-	<span class="kw">fn</span> <span class="ident">claim_node</span>() -&gt; <span class="ident">Weight</span> { <span class="number">50_000_000</span> }
-	<span class="kw">fn</span> <span class="ident">remove_claim</span>() -&gt; <span class="ident">Weight</span> { <span class="number">50_000_000</span> }
-	<span class="kw">fn</span> <span class="ident">transfer_node</span>() -&gt; <span class="ident">Weight</span> { <span class="number">50_000_000</span> }
-	<span class="kw">fn</span> <span class="ident">add_connections</span>() -&gt; <span class="ident">Weight</span> { <span class="number">50_000_000</span> }
-	<span class="kw">fn</span> <span class="ident">remove_connections</span>() -&gt; <span class="ident">Weight</span> { <span class="number">50_000_000</span> }
+	<span class="kw">fn</span> <span class="ident">add_well_known_node</span>() -&gt; <span class="ident">Weight</span> { <span class="ident">Weight::from_ref_time</span>(<span class="number">50_000_000</span>) }
+	<span class="kw">fn</span> <span class="ident">remove_well_known_node</span>() -&gt; <span class="ident">Weight</span> { <span class="ident">Weight::from_ref_time</span>(<span class="number">50_000_000</span>) }
+	<span class="kw">fn</span> <span class="ident">swap_well_known_node</span>() -&gt; <span class="ident">Weight</span> { <span class="ident">Weight::from_ref_time</span>(<span class="number">50_000_000</span>) }
+	<span class="kw">fn</span> <span class="ident">reset_well_known_nodes</span>() -&gt; <span class="ident">Weight</span> { <span class="ident">Weight::from_ref_time</span>(<span class="number">50_000_000</span>) }
+	<span class="kw">fn</span> <span class="ident">claim_node</span>() -&gt; <span class="ident">Weight</span> { <span class="ident">Weight::from_ref_time</span>(<span class="number">50_000_000</span>) }
+	<span class="kw">fn</span> <span class="ident">remove_claim</span>() -&gt; <span class="ident">Weight</span> { <span class="ident">Weight::from_ref_time</span>(<span class="number">50_000_000</span>) }
+	<span class="kw">fn</span> <span class="ident">transfer_node</span>() -&gt; <span class="ident">Weight</span> { <span class="ident">Weight::from_ref_time</span>(<span class="number">50_000_000</span>) }
+	<span class="kw">fn</span> <span class="ident">add_connections</span>() -&gt; <span class="ident">Weight</span> { <span class="ident">Weight::from_ref_time</span>(<span class="number">50_000_000</span>) }
+	<span class="kw">fn</span> <span class="ident">remove_connections</span>() -&gt; <span class="ident">Weight</span> { <span class="ident">Weight::from_ref_time</span>(<span class="number">50_000_000</span>) }
 }
 </code></pre></div>
 </section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="pallet_node_authorization" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (7fe022f5a 2022-07-24)" ></div>

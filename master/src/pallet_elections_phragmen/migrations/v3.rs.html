@@ -283,14 +283,14 @@
 
 		<span class="ident">StorageVersion::new</span>(<span class="number">3</span>).<span class="ident">put</span>::<span class="op">&lt;</span><span class="ident">Pallet</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>();
 
-		<span class="ident">Weight::max_value</span>()
+		<span class="ident">Weight::MAX</span>
 	} <span class="kw">else</span> {
 		<span class="macro">log::warn!</span>(
 			<span class="ident">target</span>: <span class="string">&quot;runtime::elections-phragmen&quot;</span>,
 			<span class="string">&quot;Attempted to apply migration to V3 but failed because storage version is {:?}&quot;</span>,
 			<span class="ident">storage_version</span>,
 		);
-		<span class="number">0</span>
+		<span class="ident">Weight::zero</span>()
 	}
 }
 

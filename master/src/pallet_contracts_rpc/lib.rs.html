@@ -759,7 +759,7 @@
 			<span class="ident">call_request</span>;
 
 		<span class="kw">let</span> <span class="ident">value</span>: <span class="ident">Balance</span> <span class="op">=</span> <span class="ident">decode_hex</span>(<span class="ident">value</span>, <span class="string">&quot;balance&quot;</span>)<span class="question-mark">?</span>;
-		<span class="kw">let</span> <span class="ident">gas_limit</span>: <span class="ident">Weight</span> <span class="op">=</span> <span class="ident">decode_hex</span>(<span class="ident">gas_limit</span>, <span class="string">&quot;weight&quot;</span>)<span class="question-mark">?</span>;
+		<span class="kw">let</span> <span class="ident">gas_limit</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="ident">decode_hex</span>(<span class="ident">gas_limit</span>, <span class="string">&quot;weight&quot;</span>)<span class="question-mark">?</span>;
 		<span class="kw">let</span> <span class="ident">storage_deposit_limit</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Balance</span><span class="op">&gt;</span> <span class="op">=</span>
 			<span class="ident">storage_deposit_limit</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">l</span><span class="op">|</span> <span class="ident">decode_hex</span>(<span class="ident">l</span>, <span class="string">&quot;balance&quot;</span>)).<span class="ident">transpose</span>()<span class="question-mark">?</span>;
 		<span class="ident">limit_gas</span>(<span class="ident">gas_limit</span>)<span class="question-mark">?</span>;
@@ -789,7 +789,7 @@
 		} <span class="op">=</span> <span class="ident">instantiate_request</span>;
 
 		<span class="kw">let</span> <span class="ident">value</span>: <span class="ident">Balance</span> <span class="op">=</span> <span class="ident">decode_hex</span>(<span class="ident">value</span>, <span class="string">&quot;balance&quot;</span>)<span class="question-mark">?</span>;
-		<span class="kw">let</span> <span class="ident">gas_limit</span>: <span class="ident">Weight</span> <span class="op">=</span> <span class="ident">decode_hex</span>(<span class="ident">gas_limit</span>, <span class="string">&quot;weight&quot;</span>)<span class="question-mark">?</span>;
+		<span class="kw">let</span> <span class="ident">gas_limit</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="ident">decode_hex</span>(<span class="ident">gas_limit</span>, <span class="string">&quot;weight&quot;</span>)<span class="question-mark">?</span>;
 		<span class="kw">let</span> <span class="ident">storage_deposit_limit</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Balance</span><span class="op">&gt;</span> <span class="op">=</span>
 			<span class="ident">storage_deposit_limit</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">l</span><span class="op">|</span> <span class="ident">decode_hex</span>(<span class="ident">l</span>, <span class="string">&quot;balance&quot;</span>)).<span class="ident">transpose</span>()<span class="question-mark">?</span>;
 		<span class="ident">limit_gas</span>(<span class="ident">gas_limit</span>)<span class="question-mark">?</span>;

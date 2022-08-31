@@ -95,7 +95,7 @@
 
 		<span class="comment">// checking membership proof</span>
 		(<span class="number">35</span> <span class="op">*</span> <span class="ident">WEIGHT_PER_MICROS</span>)
-			.<span class="ident">saturating_add</span>((<span class="number">175</span> <span class="op">*</span> <span class="ident">WEIGHT_PER_NANOS</span>).<span class="ident">saturating_mul</span>(<span class="ident">validator_count</span>))
+			.<span class="ident">saturating_add</span>((<span class="number">175</span> <span class="op">*</span> <span class="ident">WEIGHT_PER_NANOS</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">validator_count</span>))
 			.<span class="ident">saturating_add</span>(<span class="ident">DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">5</span>))
 			<span class="comment">// check equivocation proof</span>
 			.<span class="ident">saturating_add</span>(<span class="number">95</span> <span class="op">*</span> <span class="ident">WEIGHT_PER_MICROS</span>)

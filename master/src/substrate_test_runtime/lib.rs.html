@@ -1418,7 +1418,7 @@
 <span class="kw">use</span> <span class="ident">frame_support</span>::{
 	<span class="ident">parameter_types</span>,
 	<span class="ident">traits</span>::{<span class="ident">ConstU32</span>, <span class="ident">ConstU64</span>, <span class="ident">CrateVersion</span>, <span class="ident">KeyOwnerProofSystem</span>},
-	<span class="ident">weights::RuntimeDbWeight</span>,
+	<span class="ident">weights</span>::{<span class="ident">RuntimeDbWeight</span>, <span class="ident">Weight</span>},
 };
 <span class="kw">use</span> <span class="ident">frame_system::limits</span>::{<span class="ident">BlockLength</span>, <span class="ident">BlockWeights</span>};
 <span class="kw">use</span> <span class="ident">sp_api</span>::{<span class="ident">decl_runtime_apis</span>, <span class="ident">impl_runtime_apis</span>};
@@ -1956,7 +1956,7 @@
 	<span class="kw">pub</span> <span class="ident">RuntimeBlockLength</span>: <span class="ident">BlockLength</span> <span class="op">=</span>
 		<span class="ident">BlockLength::max</span>(<span class="number">4</span> <span class="op">*</span> <span class="number">1024</span> <span class="op">*</span> <span class="number">1024</span>);
 	<span class="kw">pub</span> <span class="ident">RuntimeBlockWeights</span>: <span class="ident">BlockWeights</span> <span class="op">=</span>
-		<span class="ident">BlockWeights::with_sensible_defaults</span>(<span class="number">4</span> <span class="op">*</span> <span class="number">1024</span> <span class="op">*</span> <span class="number">1024</span>, <span class="ident">Perbill::from_percent</span>(<span class="number">75</span>));
+		<span class="ident">BlockWeights::with_sensible_defaults</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">4</span> <span class="op">*</span> <span class="number">1024</span> <span class="op">*</span> <span class="number">1024</span>), <span class="ident">Perbill::from_percent</span>(<span class="number">75</span>));
 }
 
 <span class="kw">impl</span> <span class="ident">frame_system::Config</span> <span class="kw">for</span> <span class="ident">Runtime</span> {

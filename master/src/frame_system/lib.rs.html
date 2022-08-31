@@ -3035,18 +3035,18 @@
 			).<span class="ident">deconstruct</span>(),
 			<span class="ident"><span class="self">Self</span>::block_weight</span>().<span class="ident">get</span>(<span class="ident">DispatchClass::Normal</span>),
 			<span class="ident">sp_runtime::Percent::from_rational</span>(
-				<span class="kw-2">*</span><span class="ident"><span class="self">Self</span>::block_weight</span>().<span class="ident">get</span>(<span class="ident">DispatchClass::Normal</span>),
-				<span class="ident">T::BlockWeights::get</span>().<span class="ident">get</span>(<span class="ident">DispatchClass::Normal</span>).<span class="ident">max_total</span>.<span class="ident">unwrap_or</span>(<span class="ident">Bounded::max_value</span>())
+				<span class="ident"><span class="self">Self</span>::block_weight</span>().<span class="ident">get</span>(<span class="ident">DispatchClass::Normal</span>).<span class="ident">ref_time</span>(),
+				<span class="ident">T::BlockWeights::get</span>().<span class="ident">get</span>(<span class="ident">DispatchClass::Normal</span>).<span class="ident">max_total</span>.<span class="ident">unwrap_or</span>(<span class="ident">Bounded::max_value</span>()).<span class="ident">ref_time</span>()
 			).<span class="ident">deconstruct</span>(),
 			<span class="ident"><span class="self">Self</span>::block_weight</span>().<span class="ident">get</span>(<span class="ident">DispatchClass::Operational</span>),
 			<span class="ident">sp_runtime::Percent::from_rational</span>(
-				<span class="kw-2">*</span><span class="ident"><span class="self">Self</span>::block_weight</span>().<span class="ident">get</span>(<span class="ident">DispatchClass::Operational</span>),
-				<span class="ident">T::BlockWeights::get</span>().<span class="ident">get</span>(<span class="ident">DispatchClass::Operational</span>).<span class="ident">max_total</span>.<span class="ident">unwrap_or</span>(<span class="ident">Bounded::max_value</span>())
+				<span class="ident"><span class="self">Self</span>::block_weight</span>().<span class="ident">get</span>(<span class="ident">DispatchClass::Operational</span>).<span class="ident">ref_time</span>(),
+				<span class="ident">T::BlockWeights::get</span>().<span class="ident">get</span>(<span class="ident">DispatchClass::Operational</span>).<span class="ident">max_total</span>.<span class="ident">unwrap_or</span>(<span class="ident">Bounded::max_value</span>()).<span class="ident">ref_time</span>()
 			).<span class="ident">deconstruct</span>(),
 			<span class="ident"><span class="self">Self</span>::block_weight</span>().<span class="ident">get</span>(<span class="ident">DispatchClass::Mandatory</span>),
 			<span class="ident">sp_runtime::Percent::from_rational</span>(
-				<span class="kw-2">*</span><span class="ident"><span class="self">Self</span>::block_weight</span>().<span class="ident">get</span>(<span class="ident">DispatchClass::Mandatory</span>),
-				<span class="ident">T::BlockWeights::get</span>().<span class="ident">get</span>(<span class="ident">DispatchClass::Mandatory</span>).<span class="ident">max_total</span>.<span class="ident">unwrap_or</span>(<span class="ident">Bounded::max_value</span>())
+				<span class="ident"><span class="self">Self</span>::block_weight</span>().<span class="ident">get</span>(<span class="ident">DispatchClass::Mandatory</span>).<span class="ident">ref_time</span>(),
+				<span class="ident">T::BlockWeights::get</span>().<span class="ident">get</span>(<span class="ident">DispatchClass::Mandatory</span>).<span class="ident">max_total</span>.<span class="ident">unwrap_or</span>(<span class="ident">Bounded::max_value</span>()).<span class="ident">ref_time</span>()
 			).<span class="ident">deconstruct</span>(),
 		);
 		<span class="ident">ExecutionPhase</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::kill</span>();

@@ -5812,8 +5812,8 @@
 			<span class="macro">println!</span>(<span class="string">&quot;{:#?}&quot;</span>, <span class="ident">Schedule</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::default</span>());
 			<span class="macro">println!</span>(<span class="string">&quot;###############################################&quot;</span>);
 			<span class="macro">println!</span>(<span class="string">&quot;Lazy deletion throughput per block (empty queue, full queue): {}, {}&quot;</span>,
-				<span class="ident">weight_limit</span> <span class="op">/</span> <span class="ident">weight_per_key</span>,
-				(<span class="ident">weight_limit</span> <span class="op">-</span> <span class="ident">weight_per_queue_item</span> <span class="op">*</span> <span class="ident">queue_depth</span>) <span class="op">/</span> <span class="ident">weight_per_key</span>,
+				<span class="ident">weight_limit</span> <span class="op">/</span> <span class="ident">weight_per_key</span>.<span class="ident">ref_time</span>(),
+				(<span class="ident">weight_limit</span> <span class="op">-</span> <span class="ident">weight_per_queue_item</span> <span class="op">*</span> <span class="ident">queue_depth</span>) <span class="op">/</span> <span class="ident">weight_per_key</span>.<span class="ident">ref_time</span>(),
 			);
 		}
 		<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>))]</span>

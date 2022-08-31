@@ -173,9 +173,6 @@
 <span id="167">167</span>
 <span id="168">168</span>
 <span id="169">169</span>
-<span id="170">170</span>
-<span id="171">171</span>
-<span id="172">172</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2019-2022 Parity Technologies (UK) Ltd.</span>
@@ -207,7 +204,7 @@
 
 <span class="kw">pub</span> <span class="kw">use</span> <span class="kw">crate</span>::{
 	<span class="ident">service::Service</span>,
-	<span class="ident">worker</span>::{<span class="ident">NetworkProvider</span>, <span class="ident">Role</span>, <span class="ident">Worker</span>},
+	<span class="ident">worker</span>::{<span class="ident">AuthorityDiscovery</span>, <span class="ident">NetworkProvider</span>, <span class="ident">Role</span>, <span class="ident">Worker</span>},
 };
 
 <span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">collections::HashSet</span>, <span class="ident">sync::Arc</span>, <span class="ident">time::Duration</span>};
@@ -218,10 +215,9 @@
 };
 
 <span class="kw">use</span> <span class="ident">libp2p</span>::{<span class="ident">Multiaddr</span>, <span class="ident">PeerId</span>};
-<span class="kw">use</span> <span class="ident">sc_client_api::blockchain::HeaderBackend</span>;
 <span class="kw">use</span> <span class="ident">sc_network_common::protocol::event::DhtEvent</span>;
-<span class="kw">use</span> <span class="ident">sp_api::ProvideRuntimeApi</span>;
-<span class="kw">use</span> <span class="ident">sp_authority_discovery</span>::{<span class="ident">AuthorityDiscoveryApi</span>, <span class="ident">AuthorityId</span>};
+<span class="kw">use</span> <span class="ident">sp_authority_discovery::AuthorityId</span>;
+<span class="kw">use</span> <span class="ident">sp_blockchain::HeaderBackend</span>;
 <span class="kw">use</span> <span class="ident">sp_runtime::traits::Block</span> <span class="kw">as</span> <span class="ident">BlockT</span>;
 
 <span class="kw">mod</span> <span class="ident">error</span>;
@@ -300,8 +296,7 @@
 <span class="kw">where</span>
 	<span class="ident">Block</span>: <span class="ident">BlockT</span> <span class="op">+</span> <span class="ident">Unpin</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
 	<span class="ident">Network</span>: <span class="ident">NetworkProvider</span>,
-	<span class="ident">Client</span>: <span class="ident">ProvideRuntimeApi</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span> <span class="op">+</span> <span class="lifetime">&#39;static</span> <span class="op">+</span> <span class="ident">HeaderBackend</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span>,
-	<span class="op">&lt;</span><span class="ident">Client</span> <span class="kw">as</span> <span class="ident">ProvideRuntimeApi</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::Api</span>: <span class="ident">AuthorityDiscoveryApi</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span>,
+	<span class="ident">Client</span>: <span class="ident">AuthorityDiscovery</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span> <span class="op">+</span> <span class="lifetime">&#39;static</span> <span class="op">+</span> <span class="ident">HeaderBackend</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span>,
 	<span class="ident">DhtEventStream</span>: <span class="ident">Stream</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="ident">DhtEvent</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Unpin</span>,
 {
 	<span class="ident">new_worker_and_service_with_config</span>(
@@ -328,8 +323,7 @@
 <span class="kw">where</span>
 	<span class="ident">Block</span>: <span class="ident">BlockT</span> <span class="op">+</span> <span class="ident">Unpin</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
 	<span class="ident">Network</span>: <span class="ident">NetworkProvider</span>,
-	<span class="ident">Client</span>: <span class="ident">ProvideRuntimeApi</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span> <span class="op">+</span> <span class="lifetime">&#39;static</span> <span class="op">+</span> <span class="ident">HeaderBackend</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span>,
-	<span class="op">&lt;</span><span class="ident">Client</span> <span class="kw">as</span> <span class="ident">ProvideRuntimeApi</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::Api</span>: <span class="ident">AuthorityDiscoveryApi</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span>,
+	<span class="ident">Client</span>: <span class="ident">AuthorityDiscovery</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">HeaderBackend</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
 	<span class="ident">DhtEventStream</span>: <span class="ident">Stream</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="ident">DhtEvent</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Unpin</span>,
 {
 	<span class="kw">let</span> (<span class="ident">to_worker</span>, <span class="ident">from_service</span>) <span class="op">=</span> <span class="ident">mpsc::channel</span>(<span class="number">0</span>);

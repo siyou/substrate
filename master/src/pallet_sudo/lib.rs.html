@@ -299,7 +299,6 @@
 <span id="293">293</span>
 <span id="294">294</span>
 <span id="295">295</span>
-<span id="296">296</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2017-2022 Parity Technologies (UK) Ltd.</span>
@@ -441,7 +440,7 @@
 		<span class="doccomment">/// # &lt;/weight&gt;</span>
 		<span class="attribute">#[<span class="ident">pallet::weight</span>({
 			<span class="kw">let</span> <span class="ident">dispatch_info</span> <span class="op">=</span> <span class="ident">call</span>.<span class="ident">get_dispatch_info</span>();
-			(<span class="ident">dispatch_info</span>.<span class="ident">weight</span>.<span class="ident">saturating_add</span>(<span class="number">10_000</span>), <span class="ident">dispatch_info</span>.<span class="ident">class</span>)
+			(<span class="ident">dispatch_info</span>.<span class="ident">weight</span>, <span class="ident">dispatch_info</span>.<span class="ident">class</span>)
 		})]</span>
 		<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">sudo</span>(
 			<span class="ident">origin</span>: <span class="ident">OriginFor</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
@@ -524,7 +523,6 @@
 			<span class="kw">let</span> <span class="ident">dispatch_info</span> <span class="op">=</span> <span class="ident">call</span>.<span class="ident">get_dispatch_info</span>();
 			(
 				<span class="ident">dispatch_info</span>.<span class="ident">weight</span>
-					.<span class="ident">saturating_add</span>(<span class="number">10_000</span>)
 					<span class="comment">// AccountData for inner call origin accountdata.</span>
 					.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads_writes</span>(<span class="number">1</span>, <span class="number">1</span>)),
 				<span class="ident">dispatch_info</span>.<span class="ident">class</span>,

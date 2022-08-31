@@ -347,6 +347,7 @@
 <span id="341">341</span>
 <span id="342">342</span>
 <span id="343">343</span>
+<span id="344">344</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2017-2022 Parity Technologies (UK) Ltd.</span>
@@ -592,7 +593,7 @@
 		<span class="doccomment">/// - `duration`: Locked duration of the atomic swap. For safety reasons, it is recommended</span>
 		<span class="doccomment">///   that the revealer uses a shorter duration than the counterparty, to prevent the</span>
 		<span class="doccomment">///   situation where the revealer reveals the proof too late around the end block.</span>
-		<span class="attribute">#[<span class="ident">pallet::weight</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads_writes</span>(<span class="number">1</span>, <span class="number">1</span>).<span class="ident">saturating_add</span>(<span class="number">40_000_000</span>))]</span>
+		<span class="attribute">#[<span class="ident">pallet::weight</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads_writes</span>(<span class="number">1</span>, <span class="number">1</span>).<span class="ident">ref_time</span>().<span class="ident">saturating_add</span>(<span class="number">40_000_000</span>))]</span>
 		<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">create_swap</span>(
 			<span class="ident">origin</span>: <span class="ident">OriginFor</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
 			<span class="ident">target</span>: <span class="ident">T::AccountId</span>,
@@ -629,9 +630,10 @@
 		<span class="doccomment">///   the operation fails. This is used for weight calculation.</span>
 		<span class="attribute">#[<span class="ident">pallet::weight</span>(
 			<span class="ident">T::DbWeight::get</span>().<span class="ident">reads_writes</span>(<span class="number">1</span>, <span class="number">1</span>)
-				.<span class="ident">saturating_add</span>(<span class="number">40_000_000</span>)
-				.<span class="ident">saturating_add</span>((<span class="ident">proof</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">Weight</span>).<span class="ident">saturating_mul</span>(<span class="number">100</span>))
 				.<span class="ident">saturating_add</span>(<span class="ident">action</span>.<span class="ident">weight</span>())
+				.<span class="ident">ref_time</span>()
+				.<span class="ident">saturating_add</span>(<span class="number">40_000_000</span>)
+				.<span class="ident">saturating_add</span>((<span class="ident">proof</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u64</span>).<span class="ident">saturating_mul</span>(<span class="number">100</span>))
 		)]</span>
 		<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">claim_swap</span>(
 			<span class="ident">origin</span>: <span class="ident">OriginFor</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
@@ -666,7 +668,7 @@
 		<span class="doccomment">///</span>
 		<span class="doccomment">/// - `target`: Target of the original atomic swap.</span>
 		<span class="doccomment">/// - `hashed_proof`: Hashed proof of the original atomic swap.</span>
-		<span class="attribute">#[<span class="ident">pallet::weight</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads_writes</span>(<span class="number">1</span>, <span class="number">1</span>).<span class="ident">saturating_add</span>(<span class="number">40_000_000</span>))]</span>
+		<span class="attribute">#[<span class="ident">pallet::weight</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads_writes</span>(<span class="number">1</span>, <span class="number">1</span>).<span class="ident">ref_time</span>().<span class="ident">saturating_add</span>(<span class="number">40_000_000</span>))]</span>
 		<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">cancel_swap</span>(
 			<span class="ident">origin</span>: <span class="ident">OriginFor</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
 			<span class="ident">target</span>: <span class="ident">T::AccountId</span>,

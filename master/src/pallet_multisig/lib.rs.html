@@ -1017,9 +1017,9 @@
 			<span class="kw">let</span> <span class="ident">dispatch_info</span> <span class="op">=</span> <span class="ident">call</span>.<span class="ident">get_dispatch_info</span>();
 			(
 				<span class="ident">T::WeightInfo::as_multi_threshold_1</span>(<span class="ident">call</span>.<span class="ident">using_encoded</span>(<span class="op">|</span><span class="ident">c</span><span class="op">|</span> <span class="ident">c</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u32</span>))
-					.<span class="ident">saturating_add</span>(<span class="ident">dispatch_info</span>.<span class="ident">weight</span>)
 					<span class="comment">// AccountData for inner call origin accountdata.</span>
-					.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads_writes</span>(<span class="number">1</span>, <span class="number">1</span>)),
+					.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads_writes</span>(<span class="number">1</span>, <span class="number">1</span>))
+					.<span class="ident">saturating_add</span>(<span class="ident">dispatch_info</span>.<span class="ident">weight</span>),
 				<span class="ident">dispatch_info</span>.<span class="ident">class</span>,
 			)
 		})]</span>
