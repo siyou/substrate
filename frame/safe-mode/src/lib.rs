@@ -17,6 +17,13 @@
 
 #![cfg_attr(not(feature = "std"), no_std)]
 
+#[cfg(test)]
+pub mod mock;
+#[cfg(test)]
+mod tests;
+#[cfg(feature = "runtime-benchmarks")]
+mod benchmarking;
+
 use frame_support::{
 	pallet_prelude::*,
 	traits::{
@@ -27,10 +34,6 @@ use frame_support::{
 use frame_system::pallet_prelude::*;
 use sp_runtime::traits::Saturating;
 use sp_std::{convert::TryInto, prelude::*};
-
-mod benchmarking;
-mod mock;
-mod tests;
 
 pub use pallet::*;
 
@@ -124,10 +127,12 @@ pub mod pallet {
 	/// This is set to `None` if the safe-mode is disabled.
 	/// The safe-mode is automatically disabled when the current block number is greater than this.
 	#[pallet::storage]
+	#[pallet::getter(fn enabled)]
 	pub type Enabled<T: Config> = StorageValue<_, T::BlockNumber, OptionQuery>;
 
 	// Maps (account, block number) to the amount of stake that was staked at that block.
 	#[pallet::storage]
+	#[pallet::getter(fn stakes)]
 	pub type Stakes<T: Config> = StorageDoubleMap<
 		_,
 		Twox64Concat,
