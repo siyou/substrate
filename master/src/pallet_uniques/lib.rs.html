@@ -1502,6 +1502,10 @@
 <span id="1496">1496</span>
 <span id="1497">1497</span>
 <span id="1498">1498</span>
+<span id="1499">1499</span>
+<span id="1500">1500</span>
+<span id="1501">1501</span>
+<span id="1502">1502</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2017-2022 Parity Technologies (UK) Ltd.</span>
@@ -2110,6 +2114,8 @@
 
 		<span class="doccomment">/// Move an item from the sender account to another.</span>
 		<span class="doccomment">///</span>
+		<span class="doccomment">/// This resets the approved account of the item.</span>
+		<span class="doccomment">///</span>
 		<span class="doccomment">/// Origin must be Signed and the signing account must be either:</span>
 		<span class="doccomment">/// - the Admin of the `collection`;</span>
 		<span class="doccomment">/// - the Owner of the `item`;</span>
@@ -2417,6 +2423,8 @@
 		<span class="doccomment">/// - `collection`: The collection of the item to be approved for delegated transfer.</span>
 		<span class="doccomment">/// - `item`: The item of the item to be approved for delegated transfer.</span>
 		<span class="doccomment">/// - `delegate`: The account to delegate permission to transfer the item.</span>
+		<span class="doccomment">///</span>
+		<span class="doccomment">/// Important NOTE: The `approved` account gets reset after each transfer.</span>
 		<span class="doccomment">///</span>
 		<span class="doccomment">/// Emits `ApprovedTransfer` on success.</span>
 		<span class="doccomment">///</span>
