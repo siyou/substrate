@@ -652,7 +652,7 @@
 
 <span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">BlockWeights</span> {
 	<span class="kw">fn</span> <span class="ident">default</span>() -&gt; <span class="self">Self</span> {
-		<span class="ident"><span class="self">Self</span>::with_sensible_defaults</span>(<span class="number">1</span> <span class="op">*</span> <span class="ident">constants::WEIGHT_PER_SECOND</span>, <span class="ident">DEFAULT_NORMAL_RATIO</span>)
+		<span class="ident"><span class="self">Self</span>::with_sensible_defaults</span>(<span class="number">1u32</span> <span class="op">*</span> <span class="ident">constants::WEIGHT_PER_SECOND</span>, <span class="ident">DEFAULT_NORMAL_RATIO</span>)
 	}
 }
 
@@ -743,9 +743,9 @@
 	<span class="doccomment">/// is not suitable for production deployments.</span>
 	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">simple_max</span>(<span class="ident">block_weight</span>: <span class="ident">Weight</span>) -&gt; <span class="self">Self</span> {
 		<span class="ident"><span class="self">Self</span>::builder</span>()
-			.<span class="ident">base_block</span>(<span class="ident">Weight::new</span>())
+			.<span class="ident">base_block</span>(<span class="ident">Weight::zero</span>())
 			.<span class="ident">for_class</span>(<span class="ident">DispatchClass::all</span>(), <span class="op">|</span><span class="ident">weights</span><span class="op">|</span> {
-				<span class="ident">weights</span>.<span class="ident">base_extrinsic</span> <span class="op">=</span> <span class="ident">Weight::new</span>();
+				<span class="ident">weights</span>.<span class="ident">base_extrinsic</span> <span class="op">=</span> <span class="ident">Weight::zero</span>();
 			})
 			.<span class="ident">for_class</span>(<span class="ident">DispatchClass::non_mandatory</span>(), <span class="op">|</span><span class="ident">weights</span><span class="op">|</span> {
 				<span class="ident">weights</span>.<span class="ident">max_total</span> <span class="op">=</span> <span class="ident">block_weight</span>.<span class="ident">into</span>();

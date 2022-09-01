@@ -279,7 +279,7 @@
 	<span class="kw">fn</span> <span class="ident">create_recovery</span>(<span class="ident">n</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
 		<span class="ident">Weight::from_ref_time</span>(<span class="number">28_217_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
 			<span class="comment">// Standard Error: 13_000</span>
-			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">172_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">n</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">172_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">saturating_mul</span>(<span class="ident">n</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
@@ -295,7 +295,7 @@
 	<span class="kw">fn</span> <span class="ident">vouch_recovery</span>(<span class="ident">n</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
 		<span class="ident">Weight::from_ref_time</span>(<span class="number">22_038_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
 			<span class="comment">// Standard Error: 19_000</span>
-			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">307_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">n</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">307_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">saturating_mul</span>(<span class="ident">n</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
@@ -305,7 +305,7 @@
 	<span class="kw">fn</span> <span class="ident">claim_recovery</span>(<span class="ident">n</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
 		<span class="ident">Weight::from_ref_time</span>(<span class="number">28_621_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
 			<span class="comment">// Standard Error: 13_000</span>
-			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">353_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">n</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">353_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">saturating_mul</span>(<span class="ident">n</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">3</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
@@ -314,7 +314,7 @@
 	<span class="kw">fn</span> <span class="ident">close_recovery</span>(<span class="ident">n</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
 		<span class="ident">Weight::from_ref_time</span>(<span class="number">33_287_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
 			<span class="comment">// Standard Error: 19_000</span>
-			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">264_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">n</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">264_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">saturating_mul</span>(<span class="ident">n</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
@@ -323,7 +323,7 @@
 	<span class="kw">fn</span> <span class="ident">remove_recovery</span>(<span class="ident">n</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
 		<span class="ident">Weight::from_ref_time</span>(<span class="number">31_964_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
 			<span class="comment">// Standard Error: 13_000</span>
-			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">222_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">n</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">222_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">saturating_mul</span>(<span class="ident">n</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 			.<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
@@ -351,7 +351,7 @@
 	<span class="kw">fn</span> <span class="ident">create_recovery</span>(<span class="ident">n</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
 		<span class="ident">Weight::from_ref_time</span>(<span class="number">28_217_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
 			<span class="comment">// Standard Error: 13_000</span>
-			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">172_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">n</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">172_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">saturating_mul</span>(<span class="ident">n</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
@@ -367,7 +367,7 @@
 	<span class="kw">fn</span> <span class="ident">vouch_recovery</span>(<span class="ident">n</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
 		<span class="ident">Weight::from_ref_time</span>(<span class="number">22_038_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
 			<span class="comment">// Standard Error: 19_000</span>
-			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">307_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">n</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">307_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">saturating_mul</span>(<span class="ident">n</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
@@ -377,7 +377,7 @@
 	<span class="kw">fn</span> <span class="ident">claim_recovery</span>(<span class="ident">n</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
 		<span class="ident">Weight::from_ref_time</span>(<span class="number">28_621_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
 			<span class="comment">// Standard Error: 13_000</span>
-			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">353_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">n</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">353_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">saturating_mul</span>(<span class="ident">n</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">3</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
@@ -386,7 +386,7 @@
 	<span class="kw">fn</span> <span class="ident">close_recovery</span>(<span class="ident">n</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
 		<span class="ident">Weight::from_ref_time</span>(<span class="number">33_287_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
 			<span class="comment">// Standard Error: 19_000</span>
-			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">264_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">n</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">264_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">saturating_mul</span>(<span class="ident">n</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}
@@ -395,7 +395,7 @@
 	<span class="kw">fn</span> <span class="ident">remove_recovery</span>(<span class="ident">n</span>: <span class="ident">u32</span>, ) -&gt; <span class="ident">Weight</span> {
 		<span class="ident">Weight::from_ref_time</span>(<span class="number">31_964_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>)
 			<span class="comment">// Standard Error: 13_000</span>
-			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">222_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">n</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
+			.<span class="ident">saturating_add</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">222_000</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>).<span class="ident">saturating_mul</span>(<span class="ident">n</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">reads</span>(<span class="number">2</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 			.<span class="ident">saturating_add</span>(<span class="ident">RocksDbWeight::get</span>().<span class="ident">writes</span>(<span class="number">1</span> <span class="kw">as</span> <span class="ident">RefTimeWeight</span>))
 	}

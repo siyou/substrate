@@ -134,7 +134,7 @@
 	<span class="doccomment">///   99th: 5_489_273</span>
 	<span class="doccomment">///   95th: 5_433_314</span>
 	<span class="doccomment">///   75th: 5_354_812</span>
-	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">BlockExecutionWeight</span>: <span class="ident">Weight</span> <span class="op">=</span> <span class="ident">WEIGHT_PER_NANOS</span>.<span class="ident">scalar_saturating_mul</span>(<span class="number">5_346_284</span>);
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">BlockExecutionWeight</span>: <span class="ident">Weight</span> <span class="op">=</span> <span class="ident">WEIGHT_PER_NANOS</span>.<span class="ident">saturating_mul</span>(<span class="number">5_346_284</span>);
 }
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
@@ -149,9 +149,9 @@
 		<span class="kw">let</span> <span class="ident">w</span> <span class="op">=</span> <span class="ident"><span class="kw">super</span>::BlockExecutionWeight::get</span>();
 
 		<span class="comment">// At least 100 µs.</span>
-		<span class="macro">assert!</span>(<span class="ident">w</span> <span class="op">&gt;</span><span class="op">=</span> <span class="number">100</span> <span class="op">*</span> <span class="ident">constants::WEIGHT_PER_MICROS</span>, <span class="string">&quot;Weight should be at least 100 µs.&quot;</span>);
+		<span class="macro">assert!</span>(<span class="ident">w</span> <span class="op">&gt;</span><span class="op">=</span> <span class="number">100u32</span> <span class="op">*</span> <span class="ident">constants::WEIGHT_PER_MICROS</span>, <span class="string">&quot;Weight should be at least 100 µs.&quot;</span>);
 		<span class="comment">// At most 50 ms.</span>
-		<span class="macro">assert!</span>(<span class="ident">w</span> <span class="op">&lt;</span><span class="op">=</span> <span class="number">50</span> <span class="op">*</span> <span class="ident">constants::WEIGHT_PER_MILLIS</span>, <span class="string">&quot;Weight should be at most 50 ms.&quot;</span>);
+		<span class="macro">assert!</span>(<span class="ident">w</span> <span class="op">&lt;</span><span class="op">=</span> <span class="number">50u32</span> <span class="op">*</span> <span class="ident">constants::WEIGHT_PER_MILLIS</span>, <span class="string">&quot;Weight should be at most 50 ms.&quot;</span>);
 	}
 }
 </code></pre></div>

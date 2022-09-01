@@ -707,7 +707,7 @@
 	<span class="attribute">#[<span class="ident">test</span>]</span>
 	<span class="kw">fn</span> <span class="ident">multiplier_cannot_go_below_limit</span>() {
 		<span class="comment">// will not go any further below even if block is empty.</span>
-		<span class="ident">run_with_system_weight</span>(<span class="ident">Weight::new</span>(), <span class="op">|</span><span class="op">|</span> {
+		<span class="ident">run_with_system_weight</span>(<span class="ident">Weight::zero</span>(), <span class="op">|</span><span class="op">|</span> {
 			<span class="kw">let</span> <span class="ident">next</span> <span class="op">=</span> <span class="ident">runtime_multiplier_update</span>(<span class="ident">min_multiplier</span>());
 			<span class="macro">assert_eq!</span>(<span class="ident">next</span>, <span class="ident">min_multiplier</span>());
 		})
@@ -725,7 +725,7 @@
 		<span class="comment">// 1 &lt; 0.00001 * k * 0.1875</span>
 		<span class="comment">// 10^9 / 1875 &lt; k</span>
 		<span class="comment">// k &gt; 533_333 ~ 18,5 days.</span>
-		<span class="ident">run_with_system_weight</span>(<span class="ident">Weight::new</span>(), <span class="op">|</span><span class="op">|</span> {
+		<span class="ident">run_with_system_weight</span>(<span class="ident">Weight::zero</span>(), <span class="op">|</span><span class="op">|</span> {
 			<span class="comment">// start from 1, the default.</span>
 			<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">fm</span> <span class="op">=</span> <span class="ident">Multiplier::one</span>();
 			<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">iterations</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">0</span>;
@@ -887,20 +887,20 @@
 	<span class="attribute">#[<span class="ident">test</span>]</span>
 	<span class="kw">fn</span> <span class="ident">weight_to_fee_should_not_overflow_on_large_weights</span>() {
 		<span class="kw">let</span> <span class="ident">kb</span> <span class="op">=</span> <span class="ident">Weight::from_ref_time</span>(<span class="number">1024</span>);
-		<span class="kw">let</span> <span class="ident">mb</span> <span class="op">=</span> <span class="ident">kb</span> <span class="op">*</span> <span class="ident">kb</span>;
+		<span class="kw">let</span> <span class="ident">mb</span> <span class="op">=</span> <span class="number">1024u64</span> <span class="op">*</span> <span class="ident">kb</span>;
 		<span class="kw">let</span> <span class="ident">max_fm</span> <span class="op">=</span> <span class="ident">Multiplier::saturating_from_integer</span>(<span class="ident">i128::MAX</span>);
 
 		<span class="comment">// check that for all values it can compute, correctly.</span>
 		<span class="macro">vec!</span>[
 			<span class="ident">Weight::zero</span>(),
-			<span class="ident">Weight::one</span>(),
+			<span class="ident">Weight::from_ref_time</span>(<span class="number">1</span>),
 			<span class="ident">Weight::from_ref_time</span>(<span class="number">10</span>),
 			<span class="ident">Weight::from_ref_time</span>(<span class="number">1000</span>),
 			<span class="ident">kb</span>,
-			<span class="number">10</span> <span class="op">*</span> <span class="ident">kb</span>,
-			<span class="number">100</span> <span class="op">*</span> <span class="ident">kb</span>,
+			<span class="number">10u64</span> <span class="op">*</span> <span class="ident">kb</span>,
+			<span class="number">100u64</span> <span class="op">*</span> <span class="ident">kb</span>,
 			<span class="ident">mb</span>,
-			<span class="number">10</span> <span class="op">*</span> <span class="ident">mb</span>,
+			<span class="number">10u64</span> <span class="op">*</span> <span class="ident">mb</span>,
 			<span class="ident">Weight::from_ref_time</span>(<span class="number">2147483647</span>),
 			<span class="ident">Weight::from_ref_time</span>(<span class="number">4294967295</span>),
 			<span class="ident">BlockWeights::get</span>().<span class="ident">max_block</span> <span class="op">/</span> <span class="number">2</span>,

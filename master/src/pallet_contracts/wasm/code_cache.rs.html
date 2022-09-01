@@ -462,7 +462,7 @@
 			<span class="ident">Load</span>(<span class="ident">len</span>) =&gt; {
 				<span class="kw">let</span> <span class="ident">computation</span> <span class="op">=</span> <span class="ident">T::WeightInfo::call_with_code_per_byte</span>(<span class="ident">len</span>)
 					.<span class="ident">saturating_sub</span>(<span class="ident">T::WeightInfo::call_with_code_per_byte</span>(<span class="number">0</span>));
-				<span class="kw">let</span> <span class="ident">bandwidth</span> <span class="op">=</span> <span class="ident">T::ContractAccessWeight::get</span>().<span class="ident">scalar_saturating_mul</span>(<span class="ident">len</span> <span class="kw">as</span> <span class="ident">u64</span>);
+				<span class="kw">let</span> <span class="ident">bandwidth</span> <span class="op">=</span> <span class="ident">T::ContractAccessWeight::get</span>().<span class="ident">saturating_mul</span>(<span class="ident">len</span> <span class="kw">as</span> <span class="ident">u64</span>);
 				<span class="ident">computation</span>.<span class="ident">max</span>(<span class="ident">bandwidth</span>)
 			},
 		};

@@ -1900,7 +1900,7 @@
 		<span class="comment">// This means the format of all the event related storages must always be compatible.</span>
 		<span class="op">&lt;</span><span class="ident">frame_system::Pallet</span><span class="op">&lt;</span><span class="ident">System</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::reset_events</span>();
 
-		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">weight</span> <span class="op">=</span> <span class="ident">Weight::new</span>();
+		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">weight</span> <span class="op">=</span> <span class="ident">Weight::zero</span>();
 		<span class="kw">if</span> <span class="ident"><span class="self">Self</span>::runtime_upgraded</span>() {
 			<span class="ident">weight</span> <span class="op">=</span> <span class="ident">weight</span>.<span class="ident">saturating_add</span>(<span class="ident"><span class="self">Self</span>::execute_on_runtime_upgrade</span>());
 		}
@@ -2673,7 +2673,7 @@
 					.<span class="ident">base_extrinsic</span>;
 			<span class="macro">assert_eq!</span>(
 				<span class="op">&lt;</span><span class="ident">frame_system::Pallet</span><span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::block_weight</span>().<span class="ident">total</span>(),
-				<span class="ident">base_block_weight</span> <span class="op">+</span> <span class="number">3</span> <span class="op">*</span> <span class="ident">extrinsic_weight</span>,
+				<span class="ident">base_block_weight</span> <span class="op">+</span> <span class="number">3u64</span> <span class="op">*</span> <span class="ident">extrinsic_weight</span>,
 			);
 			<span class="macro">assert_eq!</span>(<span class="op">&lt;</span><span class="ident">frame_system::Pallet</span><span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::all_extrinsics_len</span>(), <span class="number">3</span> <span class="op">*</span> <span class="ident">len</span>);
 

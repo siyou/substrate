@@ -669,7 +669,7 @@
 			<span class="kw">let</span> <span class="ident">dispatch_infos</span> <span class="op">=</span> <span class="ident">calls</span>.<span class="ident">iter</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">call</span><span class="op">|</span> <span class="ident">call</span>.<span class="ident">get_dispatch_info</span>()).<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>();
 			<span class="kw">let</span> <span class="ident">dispatch_weight</span> <span class="op">=</span> <span class="ident">dispatch_infos</span>.<span class="ident">iter</span>()
 				.<span class="ident">map</span>(<span class="op">|</span><span class="ident">di</span><span class="op">|</span> <span class="ident">di</span>.<span class="ident">weight</span>)
-				.<span class="ident">fold</span>(<span class="ident">Weight::new</span>(), <span class="op">|</span><span class="ident">total</span>: <span class="ident">Weight</span>, <span class="ident">weight</span>: <span class="ident">Weight</span><span class="op">|</span> <span class="ident">total</span>.<span class="ident">saturating_add</span>(<span class="ident">weight</span>))
+				.<span class="ident">fold</span>(<span class="ident">Weight::zero</span>(), <span class="op">|</span><span class="ident">total</span>: <span class="ident">Weight</span>, <span class="ident">weight</span>: <span class="ident">Weight</span><span class="op">|</span> <span class="ident">total</span>.<span class="ident">saturating_add</span>(<span class="ident">weight</span>))
 				.<span class="ident">saturating_add</span>(<span class="ident">T::WeightInfo::batch</span>(<span class="ident">calls</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u32</span>));
 			<span class="kw">let</span> <span class="ident">dispatch_class</span> <span class="op">=</span> {
 				<span class="kw">let</span> <span class="ident">all_operational</span> <span class="op">=</span> <span class="ident">dispatch_infos</span>.<span class="ident">iter</span>()
@@ -692,7 +692,7 @@
 			<span class="macro">ensure!</span>(<span class="ident">calls_len</span> <span class="op">&lt;</span><span class="op">=</span> <span class="ident"><span class="self">Self</span>::batched_calls_limit</span>() <span class="kw">as</span> <span class="ident">usize</span>, <span class="ident">Error</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::TooManyCalls</span>);
 
 			<span class="comment">// Track the actual weight of each of the batch calls.</span>
-			<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">weight</span> <span class="op">=</span> <span class="ident">Weight::new</span>();
+			<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">weight</span> <span class="op">=</span> <span class="ident">Weight::zero</span>();
 			<span class="kw">for</span> (<span class="ident">index</span>, <span class="ident">call</span>) <span class="kw">in</span> <span class="ident">calls</span>.<span class="ident">into_iter</span>().<span class="ident">enumerate</span>() {
 				<span class="kw">let</span> <span class="ident">info</span> <span class="op">=</span> <span class="ident">call</span>.<span class="ident">get_dispatch_info</span>();
 				<span class="comment">// If origin is root, don&#39;t apply any dispatch filters; root can call anything.</span>
@@ -785,7 +785,7 @@
 			<span class="kw">let</span> <span class="ident">dispatch_infos</span> <span class="op">=</span> <span class="ident">calls</span>.<span class="ident">iter</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">call</span><span class="op">|</span> <span class="ident">call</span>.<span class="ident">get_dispatch_info</span>()).<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>();
 			<span class="kw">let</span> <span class="ident">dispatch_weight</span> <span class="op">=</span> <span class="ident">dispatch_infos</span>.<span class="ident">iter</span>()
 				.<span class="ident">map</span>(<span class="op">|</span><span class="ident">di</span><span class="op">|</span> <span class="ident">di</span>.<span class="ident">weight</span>)
-				.<span class="ident">fold</span>(<span class="ident">Weight::new</span>(), <span class="op">|</span><span class="ident">total</span>: <span class="ident">Weight</span>, <span class="ident">weight</span>: <span class="ident">Weight</span><span class="op">|</span> <span class="ident">total</span>.<span class="ident">saturating_add</span>(<span class="ident">weight</span>))
+				.<span class="ident">fold</span>(<span class="ident">Weight::zero</span>(), <span class="op">|</span><span class="ident">total</span>: <span class="ident">Weight</span>, <span class="ident">weight</span>: <span class="ident">Weight</span><span class="op">|</span> <span class="ident">total</span>.<span class="ident">saturating_add</span>(<span class="ident">weight</span>))
 				.<span class="ident">saturating_add</span>(<span class="ident">T::WeightInfo::batch_all</span>(<span class="ident">calls</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u32</span>));
 			<span class="kw">let</span> <span class="ident">dispatch_class</span> <span class="op">=</span> {
 				<span class="kw">let</span> <span class="ident">all_operational</span> <span class="op">=</span> <span class="ident">dispatch_infos</span>.<span class="ident">iter</span>()
@@ -808,7 +808,7 @@
 			<span class="macro">ensure!</span>(<span class="ident">calls_len</span> <span class="op">&lt;</span><span class="op">=</span> <span class="ident"><span class="self">Self</span>::batched_calls_limit</span>() <span class="kw">as</span> <span class="ident">usize</span>, <span class="ident">Error</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::TooManyCalls</span>);
 
 			<span class="comment">// Track the actual weight of each of the batch calls.</span>
-			<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">weight</span> <span class="op">=</span> <span class="ident">Weight::new</span>();
+			<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">weight</span> <span class="op">=</span> <span class="ident">Weight::zero</span>();
 			<span class="kw">for</span> (<span class="ident">index</span>, <span class="ident">call</span>) <span class="kw">in</span> <span class="ident">calls</span>.<span class="ident">into_iter</span>().<span class="ident">enumerate</span>() {
 				<span class="kw">let</span> <span class="ident">info</span> <span class="op">=</span> <span class="ident">call</span>.<span class="ident">get_dispatch_info</span>();
 				<span class="comment">// If origin is root, bypass any dispatch filter; root can call anything.</span>
@@ -913,7 +913,7 @@
 			<span class="macro">ensure!</span>(<span class="ident">calls_len</span> <span class="op">&lt;</span><span class="op">=</span> <span class="ident"><span class="self">Self</span>::batched_calls_limit</span>() <span class="kw">as</span> <span class="ident">usize</span>, <span class="ident">Error</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::TooManyCalls</span>);
 
 			<span class="comment">// Track the actual weight of each of the batch calls.</span>
-			<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">weight</span> <span class="op">=</span> <span class="ident">Weight::new</span>();
+			<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">weight</span> <span class="op">=</span> <span class="ident">Weight::zero</span>();
 			<span class="comment">// Track failed dispatch occur.</span>
 			<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">has_error</span>: <span class="ident">bool</span> <span class="op">=</span> <span class="bool-val">false</span>;
 			<span class="kw">for</span> <span class="ident">call</span> <span class="kw">in</span> <span class="ident">calls</span>.<span class="ident">into_iter</span>() {

@@ -98,14 +98,14 @@
 		<span class="kw">const</span> <span class="ident">MAX_NOMINATORS</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">200</span>;
 
 		<span class="comment">// checking membership proof</span>
-		<span class="kw">let</span> <span class="ident">ref_time_weight</span> <span class="op">=</span> (<span class="number">35</span> <span class="op">*</span> <span class="ident">WEIGHT_PER_MICROS</span>)
-			.<span class="ident">saturating_add</span>((<span class="number">175</span> <span class="op">*</span> <span class="ident">WEIGHT_PER_NANOS</span>).<span class="ident">scalar_saturating_mul</span>(<span class="ident">validator_count</span>))
+		<span class="kw">let</span> <span class="ident">ref_time_weight</span> <span class="op">=</span> (<span class="number">35u64</span> <span class="op">*</span> <span class="ident">WEIGHT_PER_MICROS</span>)
+			.<span class="ident">saturating_add</span>((<span class="number">175u64</span> <span class="op">*</span> <span class="ident">WEIGHT_PER_NANOS</span>).<span class="ident">saturating_mul</span>(<span class="ident">validator_count</span>))
 			.<span class="ident">saturating_add</span>(<span class="ident">DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">5</span>))
 			<span class="comment">// check equivocation proof</span>
-			.<span class="ident">saturating_add</span>(<span class="number">110</span> <span class="op">*</span> <span class="ident">WEIGHT_PER_MICROS</span>)
+			.<span class="ident">saturating_add</span>(<span class="number">110u64</span> <span class="op">*</span> <span class="ident">WEIGHT_PER_MICROS</span>)
 			<span class="comment">// report offence</span>
-			.<span class="ident">saturating_add</span>(<span class="number">110</span> <span class="op">*</span> <span class="ident">WEIGHT_PER_MICROS</span>)
-			.<span class="ident">saturating_add</span>(<span class="number">25</span> <span class="op">*</span> <span class="ident">WEIGHT_PER_MICROS</span> <span class="op">*</span> <span class="ident">MAX_NOMINATORS</span>)
+			.<span class="ident">saturating_add</span>(<span class="number">110u64</span> <span class="op">*</span> <span class="ident">WEIGHT_PER_MICROS</span>)
+			.<span class="ident">saturating_add</span>(<span class="number">25u64</span> <span class="op">*</span> <span class="ident">WEIGHT_PER_MICROS</span> <span class="op">*</span> <span class="ident">MAX_NOMINATORS</span>)
 			.<span class="ident">saturating_add</span>(<span class="ident">DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">14</span> <span class="op">+</span> <span class="number">3</span> <span class="op">*</span> <span class="ident">MAX_NOMINATORS</span>))
 			.<span class="ident">saturating_add</span>(<span class="ident">DbWeight::get</span>().<span class="ident">writes</span>(<span class="number">10</span> <span class="op">+</span> <span class="number">3</span> <span class="op">*</span> <span class="ident">MAX_NOMINATORS</span>));
 

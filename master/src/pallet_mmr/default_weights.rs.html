@@ -74,7 +74,7 @@
 		<span class="comment">// Reading the parent hash.</span>
 		<span class="kw">let</span> <span class="ident">leaf_weight</span> <span class="op">=</span> <span class="ident">DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span>);
 		<span class="comment">// Blake2 hash cost.</span>
-		<span class="kw">let</span> <span class="ident">hash_weight</span> <span class="op">=</span> <span class="number">2</span> <span class="op">*</span> <span class="ident">WEIGHT_PER_NANOS</span>;
+		<span class="kw">let</span> <span class="ident">hash_weight</span> <span class="op">=</span> <span class="number">2u64</span> <span class="op">*</span> <span class="ident">WEIGHT_PER_NANOS</span>;
 		<span class="comment">// No-op hook.</span>
 		<span class="kw">let</span> <span class="ident">hook_weight</span> <span class="op">=</span> <span class="ident">Weight::zero</span>();
 
