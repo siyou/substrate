@@ -1216,6 +1216,7 @@
 <span id="1210">1210</span>
 <span id="1211">1211</span>
 <span id="1212">1212</span>
+<span id="1213">1213</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2017-2022 Parity Technologies (UK) Ltd.</span>
@@ -1246,7 +1247,7 @@
 <span class="kw">use</span> <span class="ident">std::collections</span>::{<span class="ident">hash_map::Entry</span>, <span class="ident">HashMap</span>, <span class="ident">VecDeque</span>};
 
 <span class="kw">const</span> <span class="ident">NON_CANONICAL_JOURNAL</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>] <span class="op">=</span> <span class="string">b&quot;noncanonical_journal&quot;</span>;
-<span class="kw">const</span> <span class="ident">LAST_CANONICAL</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>] <span class="op">=</span> <span class="string">b&quot;last_canonical&quot;</span>;
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const</span> <span class="ident">LAST_CANONICAL</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>] <span class="op">=</span> <span class="string">b&quot;last_canonical&quot;</span>;
 <span class="kw">const</span> <span class="ident">MAX_BLOCKS_PER_LEVEL</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">32</span>;
 
 <span class="doccomment">/// See module documentation.</span>
@@ -1594,12 +1595,13 @@
 	}
 
 	<span class="doccomment">/// Select a top-level root and canonicalized it. Discards all sibling subtrees and the root.</span>
-	<span class="doccomment">/// Returns a set of changes that need to be added to the DB.</span>
+	<span class="doccomment">/// Add a set of changes of the canonicalized block to `CommitSet`</span>
+	<span class="doccomment">/// Return the block number of the canonicalized block</span>
 	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">canonicalize</span>(
 		<span class="kw-2">&amp;mut</span> <span class="self">self</span>,
 		<span class="ident">hash</span>: <span class="kw-2">&amp;</span><span class="ident">BlockHash</span>,
 		<span class="ident">commit</span>: <span class="kw-2">&amp;mut</span> <span class="ident">CommitSet</span><span class="op">&lt;</span><span class="ident">Key</span><span class="op">&gt;</span>,
-	) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">StateDbError</span><span class="op">&gt;</span> {
+	) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">u64</span>, <span class="ident">StateDbError</span><span class="op">&gt;</span> {
 		<span class="macro">trace!</span>(<span class="ident">target</span>: <span class="string">&quot;state-db&quot;</span>, <span class="string">&quot;Canonicalizing {:?}&quot;</span>, <span class="ident">hash</span>);
 		<span class="kw">let</span> <span class="ident">level</span> <span class="op">=</span> <span class="self">self</span>
 			.<span class="ident">levels</span>
@@ -1649,7 +1651,7 @@
 			.<span class="ident">push</span>((<span class="ident">to_meta_key</span>(<span class="ident">LAST_CANONICAL</span>, <span class="kw-2">&amp;</span>()), <span class="ident">canonicalized</span>.<span class="ident">encode</span>()));
 		<span class="macro">trace!</span>(<span class="ident">target</span>: <span class="string">&quot;state-db&quot;</span>, <span class="string">&quot;Discarding {} records&quot;</span>, <span class="ident">commit</span>.<span class="ident">meta</span>.<span class="ident">deleted</span>.<span class="ident">len</span>());
 		<span class="self">self</span>.<span class="ident">pending_canonicalizations</span>.<span class="ident">push</span>(<span class="ident">hash</span>.<span class="ident">clone</span>());
-		<span class="prelude-val">Ok</span>(())
+		<span class="prelude-val">Ok</span>(<span class="ident">canonicalized</span>.<span class="number">1</span>)
 	}
 
 	<span class="kw">fn</span> <span class="ident">apply_canonicalizations</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
@@ -1973,7 +1975,7 @@
 				.<span class="ident">unwrap</span>(),
 		);
 		<span class="ident">db</span>.<span class="ident">commit</span>(<span class="kw-2">&amp;</span><span class="ident">overlay</span>.<span class="ident">insert</span>(<span class="kw-2">&amp;</span><span class="ident">h2</span>, <span class="number">11</span>, <span class="kw-2">&amp;</span><span class="ident">h1</span>, <span class="ident">make_changeset</span>(<span class="kw-2">&amp;</span>[<span class="number">5</span>], <span class="kw-2">&amp;</span>[<span class="number">3</span>])).<span class="ident">unwrap</span>());
-		<span class="macro">assert_eq!</span>(<span class="ident">db</span>.<span class="ident">meta</span>.<span class="ident">len</span>(), <span class="number">3</span>);
+		<span class="macro">assert_eq!</span>(<span class="ident">db</span>.<span class="ident">meta_len</span>(), <span class="number">3</span>);
 
 		<span class="kw">let</span> <span class="ident">overlay2</span> <span class="op">=</span> <span class="ident">NonCanonicalOverlay</span>::<span class="op">&lt;</span><span class="ident">H256</span>, <span class="ident">H256</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="kw-2">&amp;</span><span class="ident">db</span>).<span class="ident">unwrap</span>();
 		<span class="macro">assert_eq!</span>(<span class="ident">overlay</span>.<span class="ident">levels</span>, <span class="ident">overlay2</span>.<span class="ident">levels</span>);
