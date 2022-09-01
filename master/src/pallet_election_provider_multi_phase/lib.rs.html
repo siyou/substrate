@@ -2219,6 +2219,102 @@
 <span id="2213">2213</span>
 <span id="2214">2214</span>
 <span id="2215">2215</span>
+<span id="2216">2216</span>
+<span id="2217">2217</span>
+<span id="2218">2218</span>
+<span id="2219">2219</span>
+<span id="2220">2220</span>
+<span id="2221">2221</span>
+<span id="2222">2222</span>
+<span id="2223">2223</span>
+<span id="2224">2224</span>
+<span id="2225">2225</span>
+<span id="2226">2226</span>
+<span id="2227">2227</span>
+<span id="2228">2228</span>
+<span id="2229">2229</span>
+<span id="2230">2230</span>
+<span id="2231">2231</span>
+<span id="2232">2232</span>
+<span id="2233">2233</span>
+<span id="2234">2234</span>
+<span id="2235">2235</span>
+<span id="2236">2236</span>
+<span id="2237">2237</span>
+<span id="2238">2238</span>
+<span id="2239">2239</span>
+<span id="2240">2240</span>
+<span id="2241">2241</span>
+<span id="2242">2242</span>
+<span id="2243">2243</span>
+<span id="2244">2244</span>
+<span id="2245">2245</span>
+<span id="2246">2246</span>
+<span id="2247">2247</span>
+<span id="2248">2248</span>
+<span id="2249">2249</span>
+<span id="2250">2250</span>
+<span id="2251">2251</span>
+<span id="2252">2252</span>
+<span id="2253">2253</span>
+<span id="2254">2254</span>
+<span id="2255">2255</span>
+<span id="2256">2256</span>
+<span id="2257">2257</span>
+<span id="2258">2258</span>
+<span id="2259">2259</span>
+<span id="2260">2260</span>
+<span id="2261">2261</span>
+<span id="2262">2262</span>
+<span id="2263">2263</span>
+<span id="2264">2264</span>
+<span id="2265">2265</span>
+<span id="2266">2266</span>
+<span id="2267">2267</span>
+<span id="2268">2268</span>
+<span id="2269">2269</span>
+<span id="2270">2270</span>
+<span id="2271">2271</span>
+<span id="2272">2272</span>
+<span id="2273">2273</span>
+<span id="2274">2274</span>
+<span id="2275">2275</span>
+<span id="2276">2276</span>
+<span id="2277">2277</span>
+<span id="2278">2278</span>
+<span id="2279">2279</span>
+<span id="2280">2280</span>
+<span id="2281">2281</span>
+<span id="2282">2282</span>
+<span id="2283">2283</span>
+<span id="2284">2284</span>
+<span id="2285">2285</span>
+<span id="2286">2286</span>
+<span id="2287">2287</span>
+<span id="2288">2288</span>
+<span id="2289">2289</span>
+<span id="2290">2290</span>
+<span id="2291">2291</span>
+<span id="2292">2292</span>
+<span id="2293">2293</span>
+<span id="2294">2294</span>
+<span id="2295">2295</span>
+<span id="2296">2296</span>
+<span id="2297">2297</span>
+<span id="2298">2298</span>
+<span id="2299">2299</span>
+<span id="2300">2300</span>
+<span id="2301">2301</span>
+<span id="2302">2302</span>
+<span id="2303">2303</span>
+<span id="2304">2304</span>
+<span id="2305">2305</span>
+<span id="2306">2306</span>
+<span id="2307">2307</span>
+<span id="2308">2308</span>
+<span id="2309">2309</span>
+<span id="2310">2310</span>
+<span id="2311">2311</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2021-2022 Parity Technologies (UK) Ltd.</span>
@@ -2715,6 +2811,8 @@
 	<span class="ident">DataProvider</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span>),
 	<span class="doccomment">/// An error nested in the fallback.</span>
 	<span class="ident">Fallback</span>(<span class="ident">FallbackErrorOf</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>),
+	<span class="doccomment">/// No solution has been queued.</span>
+	<span class="ident">NothingQueued</span>,
 }
 
 <span class="comment">// NOTE: we have to do this manually because of the additional where clause needed on</span>
@@ -3121,7 +3219,7 @@
 			<span class="kw">let</span> <span class="ident">ejected_a_solution</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">QueuedSolution</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::exists</span>();
 			<span class="op">&lt;</span><span class="ident">QueuedSolution</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::put</span>(<span class="ident">ready</span>);
 			<span class="ident"><span class="self">Self</span>::deposit_event</span>(<span class="ident">Event::SolutionStored</span> {
-				<span class="ident">election_compute</span>: <span class="ident">ElectionCompute::Unsigned</span>,
+				<span class="ident">compute</span>: <span class="ident">ElectionCompute::Unsigned</span>,
 				<span class="ident">prev_ejected</span>: <span class="ident">ejected_a_solution</span>,
 			});
 
@@ -3169,7 +3267,7 @@
 			};
 
 			<span class="ident"><span class="self">Self</span>::deposit_event</span>(<span class="ident">Event::SolutionStored</span> {
-				<span class="ident">election_compute</span>: <span class="ident">ElectionCompute::Emergency</span>,
+				<span class="ident">compute</span>: <span class="ident">ElectionCompute::Emergency</span>,
 				<span class="ident">prev_ejected</span>: <span class="ident">QueuedSolution</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::exists</span>(),
 			});
 
@@ -3245,7 +3343,7 @@
 
 			<span class="ident">signed_submissions</span>.<span class="ident">put</span>();
 			<span class="ident"><span class="self">Self</span>::deposit_event</span>(<span class="ident">Event::SolutionStored</span> {
-				<span class="ident">election_compute</span>: <span class="ident">ElectionCompute::Signed</span>,
+				<span class="ident">compute</span>: <span class="ident">ElectionCompute::Signed</span>,
 				<span class="ident">prev_ejected</span>: <span class="ident">ejected_a_solution</span>,
 			});
 			<span class="prelude-val">Ok</span>(())
@@ -3283,7 +3381,7 @@
 			};
 
 			<span class="ident"><span class="self">Self</span>::deposit_event</span>(<span class="ident">Event::SolutionStored</span> {
-				<span class="ident">election_compute</span>: <span class="ident">ElectionCompute::Fallback</span>,
+				<span class="ident">compute</span>: <span class="ident">ElectionCompute::Fallback</span>,
 				<span class="ident">prev_ejected</span>: <span class="ident">QueuedSolution</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::exists</span>(),
 			});
 
@@ -3301,10 +3399,13 @@
 		<span class="doccomment">/// solution is unsigned, this means that it has also been processed.</span>
 		<span class="doccomment">///</span>
 		<span class="doccomment">/// The `bool` is `true` when a previous solution was ejected to make room for this one.</span>
-		<span class="ident">SolutionStored</span> { <span class="ident">election_compute</span>: <span class="ident">ElectionCompute</span>, <span class="ident">prev_ejected</span>: <span class="ident">bool</span> },
-		<span class="doccomment">/// The election has been finalized, with `Some` of the given computation, or else if the</span>
-		<span class="doccomment">/// election failed, `None`.</span>
-		<span class="ident">ElectionFinalized</span> { <span class="ident">election_compute</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ElectionCompute</span><span class="op">&gt;</span> },
+		<span class="ident">SolutionStored</span> { <span class="ident">compute</span>: <span class="ident">ElectionCompute</span>, <span class="ident">prev_ejected</span>: <span class="ident">bool</span> },
+		<span class="doccomment">/// The election has been finalized, with the given computation and score.</span>
+		<span class="ident">ElectionFinalized</span> { <span class="ident">compute</span>: <span class="ident">ElectionCompute</span>, <span class="ident">score</span>: <span class="ident">ElectionScore</span> },
+		<span class="doccomment">/// An election failed.</span>
+		<span class="doccomment">///</span>
+		<span class="doccomment">/// Not much can be said about which computes failed in the process.</span>
+		<span class="ident">ElectionFailed</span>,
 		<span class="doccomment">/// An account has been rewarded for their signed submission being finalized.</span>
 		<span class="ident">Rewarded</span> { <span class="ident">account</span>: <span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">frame_system::Config</span><span class="op">&gt;</span><span class="ident">::AccountId</span>, <span class="ident">value</span>: <span class="ident">BalanceOf</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> },
 		<span class="doccomment">/// An account has been slashed for submitting an invalid signed submission.</span>
@@ -3751,23 +3852,25 @@
 		<span class="comment">//   inexpensive (1 read of an empty vector).</span>
 		<span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident"><span class="self">Self</span>::finalize_signed_phase</span>();
 		<span class="op">&lt;</span><span class="ident">QueuedSolution</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::take</span>()
-			.<span class="ident">map_or_else</span>(
-				<span class="op">|</span><span class="op">|</span> {
-					<span class="ident">T::Fallback::elect</span>()
-						.<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">fe</span><span class="op">|</span> <span class="ident">ElectionError::Fallback</span>(<span class="ident">fe</span>))
-						.<span class="ident">map</span>(<span class="op">|</span><span class="ident">supports</span><span class="op">|</span> (<span class="ident">supports</span>, <span class="ident">ElectionCompute::Fallback</span>))
-				},
-				<span class="op">|</span><span class="ident">ReadySolution</span> { <span class="ident">supports</span>, <span class="ident">compute</span>, .. }<span class="op">|</span> <span class="prelude-val">Ok</span>((<span class="ident">supports</span>, <span class="ident">compute</span>)),
-			)
-			.<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">supports</span>, <span class="ident">compute</span>)<span class="op">|</span> {
-				<span class="ident"><span class="self">Self</span>::deposit_event</span>(<span class="ident">Event::ElectionFinalized</span> { <span class="ident">election_compute</span>: <span class="prelude-val">Some</span>(<span class="ident">compute</span>) });
+			.<span class="ident">ok_or</span>(<span class="ident">ElectionError</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::NothingQueued</span>)
+			.<span class="ident">or_else</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> {
+				<span class="ident">T::Fallback::elect</span>()
+					.<span class="ident">map</span>(<span class="op">|</span><span class="ident">supports</span><span class="op">|</span> <span class="ident">ReadySolution</span> {
+						<span class="ident">supports</span>,
+						<span class="ident">score</span>: <span class="ident">Default::default</span>(),
+						<span class="ident">compute</span>: <span class="ident">ElectionCompute::Fallback</span>,
+					})
+					.<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">fe</span><span class="op">|</span> <span class="ident">ElectionError::Fallback</span>(<span class="ident">fe</span>))
+			})
+			.<span class="ident">map</span>(<span class="op">|</span><span class="ident">ReadySolution</span> { <span class="ident">compute</span>, <span class="ident">score</span>, <span class="ident">supports</span> }<span class="op">|</span> {
+				<span class="ident"><span class="self">Self</span>::deposit_event</span>(<span class="ident">Event::ElectionFinalized</span> { <span class="ident">compute</span>, <span class="ident">score</span> });
 				<span class="kw">if</span> <span class="ident"><span class="self">Self</span>::round</span>() <span class="op">!</span><span class="op">=</span> <span class="number">1</span> {
 					<span class="macro">log!</span>(<span class="ident">info</span>, <span class="string">&quot;Finalized election round with compute {:?}.&quot;</span>, <span class="ident">compute</span>);
 				}
 				<span class="ident">supports</span>
 			})
 			.<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">err</span><span class="op">|</span> {
-				<span class="ident"><span class="self">Self</span>::deposit_event</span>(<span class="ident">Event::ElectionFinalized</span> { <span class="ident">election_compute</span>: <span class="prelude-val">None</span> });
+				<span class="ident"><span class="self">Self</span>::deposit_event</span>(<span class="ident">Event::ElectionFailed</span>);
 				<span class="kw">if</span> <span class="ident"><span class="self">Self</span>::round</span>() <span class="op">!</span><span class="op">=</span> <span class="number">1</span> {
 					<span class="macro">log!</span>(<span class="ident">warn</span>, <span class="string">&quot;Failed to finalize election round. reason {:?}&quot;</span>, <span class="ident">err</span>);
 				}
@@ -4021,8 +4124,9 @@
 	<span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
 	<span class="kw">use</span> <span class="kw">crate</span>::{
 		<span class="ident">mock</span>::{
-			<span class="ident">multi_phase_events</span>, <span class="ident">roll_to</span>, <span class="ident">AccountId</span>, <span class="ident">ExtBuilder</span>, <span class="ident">MockWeightInfo</span>, <span class="ident">MockedWeightInfo</span>,
-			<span class="ident">MultiPhase</span>, <span class="ident">Origin</span>, <span class="ident">Runtime</span>, <span class="ident">SignedMaxSubmissions</span>, <span class="ident">System</span>, <span class="ident">TargetIndex</span>, <span class="ident">Targets</span>,
+			<span class="ident">multi_phase_events</span>, <span class="ident">raw_solution</span>, <span class="ident">roll_to</span>, <span class="ident">AccountId</span>, <span class="ident">ExtBuilder</span>, <span class="ident">MockWeightInfo</span>,
+			<span class="ident">MockedWeightInfo</span>, <span class="ident">MultiPhase</span>, <span class="ident">Origin</span>, <span class="ident">Runtime</span>, <span class="ident">SignedMaxSubmissions</span>, <span class="ident">System</span>,
+			<span class="ident">TargetIndex</span>, <span class="ident">Targets</span>,
 		},
 		<span class="ident">Phase</span>,
 	};
@@ -4188,7 +4292,10 @@
 				<span class="ident">multi_phase_events</span>(),
 				<span class="macro">vec!</span>[
 					<span class="ident">Event::SignedPhaseStarted</span> { <span class="ident">round</span>: <span class="number">1</span> },
-					<span class="ident">Event::ElectionFinalized</span> { <span class="ident">election_compute</span>: <span class="prelude-val">Some</span>(<span class="ident">ElectionCompute::Fallback</span>) }
+					<span class="ident">Event::ElectionFinalized</span> {
+						<span class="ident">compute</span>: <span class="ident">ElectionCompute::Fallback</span>,
+						<span class="ident">score</span>: <span class="ident">Default::default</span>()
+					}
 				],
 			);
 			<span class="comment">// All storage items must be cleared.</span>
@@ -4234,6 +4341,88 @@
 			<span class="macro">assert!</span>(<span class="ident">MultiPhase::desired_targets</span>().<span class="ident">is_none</span>());
 			<span class="macro">assert!</span>(<span class="ident">MultiPhase::queued_solution</span>().<span class="ident">is_none</span>());
 			<span class="macro">assert!</span>(<span class="ident">MultiPhase::signed_submissions</span>().<span class="ident">is_empty</span>());
+		})
+	}
+
+	<span class="attribute">#[<span class="ident">test</span>]</span>
+	<span class="kw">fn</span> <span class="ident">check_events_with_compute_signed</span>() {
+		<span class="ident">ExtBuilder::default</span>().<span class="ident">build_and_execute</span>(<span class="op">|</span><span class="op">|</span> {
+			<span class="ident">roll_to</span>(<span class="number">14</span>);
+			<span class="macro">assert_eq!</span>(<span class="ident">MultiPhase::current_phase</span>(), <span class="ident">Phase::Off</span>);
+
+			<span class="ident">roll_to</span>(<span class="number">15</span>);
+			<span class="macro">assert!</span>(<span class="ident">MultiPhase::current_phase</span>().<span class="ident">is_signed</span>());
+
+			<span class="kw">let</span> <span class="ident">solution</span> <span class="op">=</span> <span class="ident">raw_solution</span>();
+			<span class="macro">assert_ok!</span>(<span class="ident">MultiPhase::submit</span>(<span class="ident"><span class="kw">crate</span>::mock::Origin::signed</span>(<span class="number">99</span>), <span class="ident">Box::new</span>(<span class="ident">solution</span>)));
+
+			<span class="ident">roll_to</span>(<span class="number">30</span>);
+			<span class="macro">assert_ok!</span>(<span class="ident">MultiPhase::elect</span>());
+
+			<span class="macro">assert_eq!</span>(
+				<span class="ident">multi_phase_events</span>(),
+				<span class="macro">vec!</span>[
+					<span class="ident">Event::SignedPhaseStarted</span> { <span class="ident">round</span>: <span class="number">1</span> },
+					<span class="ident">Event::SolutionStored</span> { <span class="ident">compute</span>: <span class="ident">ElectionCompute::Signed</span>, <span class="ident">prev_ejected</span>: <span class="bool-val">false</span> },
+					<span class="ident">Event::Rewarded</span> { <span class="ident">account</span>: <span class="number">99</span>, <span class="ident">value</span>: <span class="number">7</span> },
+					<span class="ident">Event::UnsignedPhaseStarted</span> { <span class="ident">round</span>: <span class="number">1</span> },
+					<span class="ident">Event::ElectionFinalized</span> {
+						<span class="ident">compute</span>: <span class="ident">ElectionCompute::Signed</span>,
+						<span class="ident">score</span>: <span class="ident">ElectionScore</span> {
+							<span class="ident">minimal_stake</span>: <span class="number">40</span>,
+							<span class="ident">sum_stake</span>: <span class="number">100</span>,
+							<span class="ident">sum_stake_squared</span>: <span class="number">5200</span>
+						}
+					}
+				],
+			);
+		})
+	}
+
+	<span class="attribute">#[<span class="ident">test</span>]</span>
+	<span class="kw">fn</span> <span class="ident">check_events_with_compute_unsigned</span>() {
+		<span class="ident">ExtBuilder::default</span>().<span class="ident">build_and_execute</span>(<span class="op">|</span><span class="op">|</span> {
+			<span class="ident">roll_to</span>(<span class="number">25</span>);
+			<span class="macro">assert!</span>(<span class="ident">MultiPhase::current_phase</span>().<span class="ident">is_unsigned</span>());
+
+			<span class="comment">// ensure we have snapshots in place.</span>
+			<span class="macro">assert!</span>(<span class="ident">MultiPhase::snapshot</span>().<span class="ident">is_some</span>());
+			<span class="macro">assert_eq!</span>(<span class="ident">MultiPhase::desired_targets</span>().<span class="ident">unwrap</span>(), <span class="number">2</span>);
+
+			<span class="comment">// mine seq_phragmen solution with 2 iters.</span>
+			<span class="kw">let</span> (<span class="ident">solution</span>, <span class="ident">witness</span>) <span class="op">=</span> <span class="ident">MultiPhase::mine_solution</span>().<span class="ident">unwrap</span>();
+
+			<span class="comment">// ensure this solution is valid.</span>
+			<span class="macro">assert!</span>(<span class="ident">MultiPhase::queued_solution</span>().<span class="ident">is_none</span>());
+			<span class="macro">assert_ok!</span>(<span class="ident">MultiPhase::submit_unsigned</span>(
+				<span class="ident"><span class="kw">crate</span>::mock::Origin::none</span>(),
+				<span class="ident">Box::new</span>(<span class="ident">solution</span>),
+				<span class="ident">witness</span>
+			));
+			<span class="macro">assert!</span>(<span class="ident">MultiPhase::queued_solution</span>().<span class="ident">is_some</span>());
+
+			<span class="ident">roll_to</span>(<span class="number">30</span>);
+			<span class="macro">assert_ok!</span>(<span class="ident">MultiPhase::elect</span>());
+
+			<span class="macro">assert_eq!</span>(
+				<span class="ident">multi_phase_events</span>(),
+				<span class="macro">vec!</span>[
+					<span class="ident">Event::SignedPhaseStarted</span> { <span class="ident">round</span>: <span class="number">1</span> },
+					<span class="ident">Event::UnsignedPhaseStarted</span> { <span class="ident">round</span>: <span class="number">1</span> },
+					<span class="ident">Event::SolutionStored</span> {
+						<span class="ident">compute</span>: <span class="ident">ElectionCompute::Unsigned</span>,
+						<span class="ident">prev_ejected</span>: <span class="bool-val">false</span>
+					},
+					<span class="ident">Event::ElectionFinalized</span> {
+						<span class="ident">compute</span>: <span class="ident">ElectionCompute::Unsigned</span>,
+						<span class="ident">score</span>: <span class="ident">ElectionScore</span> {
+							<span class="ident">minimal_stake</span>: <span class="number">40</span>,
+							<span class="ident">sum_stake</span>: <span class="number">100</span>,
+							<span class="ident">sum_stake_squared</span>: <span class="number">5200</span>
+						}
+					}
+				],
+			);
 		})
 	}
 
@@ -4301,12 +4490,15 @@
 				<span class="macro">vec!</span>[
 					<span class="ident">Event::SignedPhaseStarted</span> { <span class="ident">round</span>: <span class="number">1</span> },
 					<span class="ident">Event::UnsignedPhaseStarted</span> { <span class="ident">round</span>: <span class="number">1</span> },
-					<span class="ident">Event::ElectionFinalized</span> { <span class="ident">election_compute</span>: <span class="prelude-val">None</span> },
+					<span class="ident">Event::ElectionFailed</span>,
 					<span class="ident">Event::SolutionStored</span> {
-						<span class="ident">election_compute</span>: <span class="ident">ElectionCompute::Fallback</span>,
+						<span class="ident">compute</span>: <span class="ident">ElectionCompute::Fallback</span>,
 						<span class="ident">prev_ejected</span>: <span class="bool-val">false</span>
 					},
-					<span class="ident">Event::ElectionFinalized</span> { <span class="ident">election_compute</span>: <span class="prelude-val">Some</span>(<span class="ident">ElectionCompute::Fallback</span>) }
+					<span class="ident">Event::ElectionFinalized</span> {
+						<span class="ident">compute</span>: <span class="ident">ElectionCompute::Fallback</span>,
+						<span class="ident">score</span>: <span class="ident">Default::default</span>()
+					}
 				]
 			);
 		})

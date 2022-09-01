@@ -456,6 +456,16 @@
 <span id="450">450</span>
 <span id="451">451</span>
 <span id="452">452</span>
+<span id="453">453</span>
+<span id="454">454</span>
+<span id="455">455</span>
+<span id="456">456</span>
+<span id="457">457</span>
+<span id="458">458</span>
+<span id="459">459</span>
+<span id="460">460</span>
+<span id="461">461</span>
+<span id="462">462</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2019-2022 Parity Technologies (UK) Ltd.</span>
@@ -476,7 +486,8 @@
 <span class="doccomment">//! Some configurable implementations as associated type for the substrate runtime.</span>
 
 <span class="kw">use</span> <span class="kw">crate</span>::{
-	<span class="ident">AccountId</span>, <span class="ident">AllianceMotion</span>, <span class="ident">Assets</span>, <span class="ident">Authorship</span>, <span class="ident">Balances</span>, <span class="ident">Call</span>, <span class="ident">Hash</span>, <span class="ident">NegativeImbalance</span>, <span class="ident">Runtime</span>,
+	<span class="ident">AccountId</span>, <span class="ident">AllianceCollective</span>, <span class="ident">AllianceMotion</span>, <span class="ident">Assets</span>, <span class="ident">Authorship</span>, <span class="ident">Balances</span>, <span class="ident">Call</span>, <span class="ident">Hash</span>,
+	<span class="ident">NegativeImbalance</span>, <span class="ident">Runtime</span>,
 };
 <span class="kw">use</span> <span class="ident">frame_support</span>::{
 	<span class="ident">pallet_prelude</span>::<span class="kw-2">*</span>,
@@ -569,6 +580,15 @@
 
 	<span class="kw">fn</span> <span class="ident">proposal_of</span>(<span class="ident">proposal_hash</span>: <span class="ident">Hash</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Call</span><span class="op">&gt;</span> {
 		<span class="ident">AllianceMotion::proposal_of</span>(<span class="ident">proposal_hash</span>)
+	}
+
+	<span class="kw">fn</span> <span class="ident">proposals</span>() -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Hash</span><span class="op">&gt;</span> {
+		<span class="ident">AllianceMotion::proposals</span>().<span class="ident">into_inner</span>()
+	}
+
+	<span class="kw">fn</span> <span class="ident">proposals_count</span>() -&gt; <span class="ident">u32</span> {
+		<span class="ident">pallet_collective::Proposals</span>::<span class="op">&lt;</span><span class="ident">Runtime</span>, <span class="ident">AllianceCollective</span><span class="op">&gt;</span><span class="ident">::decode_len</span>().<span class="ident">unwrap_or</span>(<span class="number">0</span>)
+			<span class="kw">as</span> <span class="ident">u32</span>
 	}
 }
 

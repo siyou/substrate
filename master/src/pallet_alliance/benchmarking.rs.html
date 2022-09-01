@@ -816,6 +816,156 @@
 <span id="810">810</span>
 <span id="811">811</span>
 <span id="812">812</span>
+<span id="813">813</span>
+<span id="814">814</span>
+<span id="815">815</span>
+<span id="816">816</span>
+<span id="817">817</span>
+<span id="818">818</span>
+<span id="819">819</span>
+<span id="820">820</span>
+<span id="821">821</span>
+<span id="822">822</span>
+<span id="823">823</span>
+<span id="824">824</span>
+<span id="825">825</span>
+<span id="826">826</span>
+<span id="827">827</span>
+<span id="828">828</span>
+<span id="829">829</span>
+<span id="830">830</span>
+<span id="831">831</span>
+<span id="832">832</span>
+<span id="833">833</span>
+<span id="834">834</span>
+<span id="835">835</span>
+<span id="836">836</span>
+<span id="837">837</span>
+<span id="838">838</span>
+<span id="839">839</span>
+<span id="840">840</span>
+<span id="841">841</span>
+<span id="842">842</span>
+<span id="843">843</span>
+<span id="844">844</span>
+<span id="845">845</span>
+<span id="846">846</span>
+<span id="847">847</span>
+<span id="848">848</span>
+<span id="849">849</span>
+<span id="850">850</span>
+<span id="851">851</span>
+<span id="852">852</span>
+<span id="853">853</span>
+<span id="854">854</span>
+<span id="855">855</span>
+<span id="856">856</span>
+<span id="857">857</span>
+<span id="858">858</span>
+<span id="859">859</span>
+<span id="860">860</span>
+<span id="861">861</span>
+<span id="862">862</span>
+<span id="863">863</span>
+<span id="864">864</span>
+<span id="865">865</span>
+<span id="866">866</span>
+<span id="867">867</span>
+<span id="868">868</span>
+<span id="869">869</span>
+<span id="870">870</span>
+<span id="871">871</span>
+<span id="872">872</span>
+<span id="873">873</span>
+<span id="874">874</span>
+<span id="875">875</span>
+<span id="876">876</span>
+<span id="877">877</span>
+<span id="878">878</span>
+<span id="879">879</span>
+<span id="880">880</span>
+<span id="881">881</span>
+<span id="882">882</span>
+<span id="883">883</span>
+<span id="884">884</span>
+<span id="885">885</span>
+<span id="886">886</span>
+<span id="887">887</span>
+<span id="888">888</span>
+<span id="889">889</span>
+<span id="890">890</span>
+<span id="891">891</span>
+<span id="892">892</span>
+<span id="893">893</span>
+<span id="894">894</span>
+<span id="895">895</span>
+<span id="896">896</span>
+<span id="897">897</span>
+<span id="898">898</span>
+<span id="899">899</span>
+<span id="900">900</span>
+<span id="901">901</span>
+<span id="902">902</span>
+<span id="903">903</span>
+<span id="904">904</span>
+<span id="905">905</span>
+<span id="906">906</span>
+<span id="907">907</span>
+<span id="908">908</span>
+<span id="909">909</span>
+<span id="910">910</span>
+<span id="911">911</span>
+<span id="912">912</span>
+<span id="913">913</span>
+<span id="914">914</span>
+<span id="915">915</span>
+<span id="916">916</span>
+<span id="917">917</span>
+<span id="918">918</span>
+<span id="919">919</span>
+<span id="920">920</span>
+<span id="921">921</span>
+<span id="922">922</span>
+<span id="923">923</span>
+<span id="924">924</span>
+<span id="925">925</span>
+<span id="926">926</span>
+<span id="927">927</span>
+<span id="928">928</span>
+<span id="929">929</span>
+<span id="930">930</span>
+<span id="931">931</span>
+<span id="932">932</span>
+<span id="933">933</span>
+<span id="934">934</span>
+<span id="935">935</span>
+<span id="936">936</span>
+<span id="937">937</span>
+<span id="938">938</span>
+<span id="939">939</span>
+<span id="940">940</span>
+<span id="941">941</span>
+<span id="942">942</span>
+<span id="943">943</span>
+<span id="944">944</span>
+<span id="945">945</span>
+<span id="946">946</span>
+<span id="947">947</span>
+<span id="948">948</span>
+<span id="949">949</span>
+<span id="950">950</span>
+<span id="951">951</span>
+<span id="952">952</span>
+<span id="953">953</span>
+<span id="954">954</span>
+<span id="955">955</span>
+<span id="956">956</span>
+<span id="957">957</span>
+<span id="958">958</span>
+<span id="959">959</span>
+<span id="960">960</span>
+<span id="961">961</span>
+<span id="962">962</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2022 Parity Technologies (UK) Ltd.</span>
@@ -854,6 +1004,11 @@
 
 <span class="kw">fn</span> <span class="ident">assert_last_event</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Config</span><span class="op">&lt;</span><span class="ident">I</span><span class="op">&gt;</span>, <span class="ident">I</span>: <span class="lifetime">&#39;static</span><span class="op">&gt;</span>(<span class="ident">generic_event</span>: <span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">Config</span><span class="op">&lt;</span><span class="ident">I</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::Event</span>) {
 	<span class="ident">frame_system::Pallet</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::assert_last_event</span>(<span class="ident">generic_event</span>.<span class="ident">into</span>());
+}
+
+<span class="kw">fn</span> <span class="ident">assert_prev_event</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Config</span><span class="op">&lt;</span><span class="ident">I</span><span class="op">&gt;</span>, <span class="ident">I</span>: <span class="lifetime">&#39;static</span><span class="op">&gt;</span>(<span class="ident">generic_event</span>: <span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">Config</span><span class="op">&lt;</span><span class="ident">I</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::Event</span>) {
+	<span class="kw">let</span> <span class="ident">events</span> <span class="op">=</span> <span class="ident">frame_system::Pallet</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::events</span>();
+	<span class="macro">assert_eq!</span>(<span class="ident">events</span>.<span class="ident">get</span>(<span class="ident">events</span>.<span class="ident">len</span>() <span class="op">-</span> <span class="number">2</span>).<span class="ident">expect</span>(<span class="string">&quot;events expected&quot;</span>).<span class="ident">event</span>, <span class="ident">generic_event</span>.<span class="ident">into</span>());
 }
 
 <span class="kw">fn</span> <span class="ident">cid</span>(<span class="ident">input</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span>[<span class="ident">u8</span>]<span class="op">&gt;</span>) -&gt; <span class="ident">Cid</span> {
@@ -939,7 +1094,13 @@
 		<span class="kw">let</span> <span class="ident">proposer</span> <span class="op">=</span> <span class="ident">founders</span>[<span class="number">0</span>].<span class="ident">clone</span>();
 		<span class="kw">let</span> <span class="ident">fellows</span> <span class="op">=</span> (<span class="number">0</span> .. <span class="ident">y</span>).<span class="ident">map</span>(<span class="ident">fellow</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span>).<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>();
 
-		<span class="ident">Alliance</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::init_members</span>(<span class="ident">SystemOrigin::Root</span>.<span class="ident">into</span>(), <span class="ident">founders</span>, <span class="ident">fellows</span>, <span class="macro">vec!</span>[])<span class="question-mark">?</span>;
+		<span class="ident">Alliance</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::force_set_members</span>(
+			<span class="ident">SystemOrigin::Root</span>.<span class="ident">into</span>(),
+			<span class="ident">founders</span>,
+			<span class="ident">fellows</span>,
+			<span class="macro">vec!</span>[],
+			<span class="ident">Default::default</span>(),
+		)<span class="question-mark">?</span>;
 
 		<span class="kw">let</span> <span class="ident">threshold</span> <span class="op">=</span> <span class="ident">m</span>;
 		<span class="comment">// Add previous proposals.</span>
@@ -985,7 +1146,13 @@
 		<span class="ident">members</span>.<span class="ident">extend</span>(<span class="ident">founders</span>.<span class="ident">clone</span>());
 		<span class="ident">members</span>.<span class="ident">extend</span>(<span class="ident">fellows</span>.<span class="ident">clone</span>());
 
-		<span class="ident">Alliance</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::init_members</span>(<span class="ident">SystemOrigin::Root</span>.<span class="ident">into</span>(), <span class="ident">founders</span>, <span class="ident">fellows</span>, <span class="macro">vec!</span>[])<span class="question-mark">?</span>;
+		<span class="ident">Alliance</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::force_set_members</span>(
+			<span class="ident">SystemOrigin::Root</span>.<span class="ident">into</span>(),
+			<span class="ident">founders</span>,
+			<span class="ident">fellows</span>,
+			<span class="macro">vec!</span>[],
+			<span class="ident">Default::default</span>(),
+		)<span class="question-mark">?</span>;
 
 		<span class="comment">// Threshold is 1 less than the number of members so that one person can vote nay</span>
 		<span class="kw">let</span> <span class="ident">threshold</span> <span class="op">=</span> <span class="ident">m</span> <span class="op">-</span> <span class="number">1</span>;
@@ -1048,7 +1215,13 @@
 		<span class="kw">let</span> <span class="ident">founders</span> <span class="op">=</span> (<span class="number">0</span> .. <span class="ident">m</span>).<span class="ident">map</span>(<span class="ident">founder</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span>).<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>();
 		<span class="kw">let</span> <span class="ident">vetor</span> <span class="op">=</span> <span class="ident">founders</span>[<span class="number">0</span>].<span class="ident">clone</span>();
 
-		<span class="ident">Alliance</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::init_members</span>(<span class="ident">SystemOrigin::Root</span>.<span class="ident">into</span>(), <span class="ident">founders</span>, <span class="macro">vec!</span>[], <span class="macro">vec!</span>[])<span class="question-mark">?</span>;
+		<span class="ident">Alliance</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::force_set_members</span>(
+			<span class="ident">SystemOrigin::Root</span>.<span class="ident">into</span>(),
+			<span class="ident">founders</span>,
+			<span class="macro">vec!</span>[],
+			<span class="macro">vec!</span>[],
+			<span class="ident">Default::default</span>(),
+		)<span class="question-mark">?</span>;
 
 		<span class="comment">// Threshold is one less than total members so that two nays will disapprove the vote</span>
 		<span class="kw">let</span> <span class="ident">threshold</span> <span class="op">=</span> <span class="ident">m</span> <span class="op">-</span> <span class="number">1</span>;
@@ -1094,7 +1267,13 @@
 		<span class="ident">members</span>.<span class="ident">extend</span>(<span class="ident">founders</span>.<span class="ident">clone</span>());
 		<span class="ident">members</span>.<span class="ident">extend</span>(<span class="ident">fellows</span>.<span class="ident">clone</span>());
 
-		<span class="ident">Alliance</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::init_members</span>(<span class="ident">SystemOrigin::Root</span>.<span class="ident">into</span>(), <span class="ident">founders</span>, <span class="ident">fellows</span>, <span class="macro">vec!</span>[])<span class="question-mark">?</span>;
+		<span class="ident">Alliance</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::force_set_members</span>(
+			<span class="ident">SystemOrigin::Root</span>.<span class="ident">into</span>(),
+			<span class="ident">founders</span>,
+			<span class="ident">fellows</span>,
+			<span class="macro">vec!</span>[],
+			<span class="ident">Default::default</span>(),
+		)<span class="question-mark">?</span>;
 
 		<span class="kw">let</span> <span class="ident">proposer</span> <span class="op">=</span> <span class="ident">members</span>[<span class="number">0</span>].<span class="ident">clone</span>();
 		<span class="kw">let</span> <span class="ident">voter</span> <span class="op">=</span> <span class="ident">members</span>[<span class="number">1</span>].<span class="ident">clone</span>();
@@ -1174,7 +1353,13 @@
 		<span class="ident">members</span>.<span class="ident">extend</span>(<span class="ident">founders</span>.<span class="ident">clone</span>());
 		<span class="ident">members</span>.<span class="ident">extend</span>(<span class="ident">fellows</span>.<span class="ident">clone</span>());
 
-		<span class="ident">Alliance</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::init_members</span>(<span class="ident">SystemOrigin::Root</span>.<span class="ident">into</span>(), <span class="ident">founders</span>, <span class="ident">fellows</span>, <span class="macro">vec!</span>[])<span class="question-mark">?</span>;
+		<span class="ident">Alliance</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::force_set_members</span>(
+			<span class="ident">SystemOrigin::Root</span>.<span class="ident">into</span>(),
+			<span class="ident">founders</span>,
+			<span class="ident">fellows</span>,
+			<span class="macro">vec!</span>[],
+			<span class="ident">Default::default</span>(),
+		)<span class="question-mark">?</span>;
 
 		<span class="kw">let</span> <span class="ident">proposer</span> <span class="op">=</span> <span class="ident">members</span>[<span class="number">0</span>].<span class="ident">clone</span>();
 		<span class="kw">let</span> <span class="ident">voter</span> <span class="op">=</span> <span class="ident">members</span>[<span class="number">1</span>].<span class="ident">clone</span>();
@@ -1260,7 +1445,13 @@
 		<span class="ident">members</span>.<span class="ident">extend</span>(<span class="ident">founders</span>.<span class="ident">clone</span>());
 		<span class="ident">members</span>.<span class="ident">extend</span>(<span class="ident">fellows</span>.<span class="ident">clone</span>());
 
-		<span class="ident">Alliance</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::init_members</span>(<span class="ident">SystemOrigin::Root</span>.<span class="ident">into</span>(), <span class="ident">founders</span>, <span class="ident">fellows</span>, <span class="macro">vec!</span>[])<span class="question-mark">?</span>;
+		<span class="ident">Alliance</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::force_set_members</span>(
+			<span class="ident">SystemOrigin::Root</span>.<span class="ident">into</span>(),
+			<span class="ident">founders</span>,
+			<span class="ident">fellows</span>,
+			<span class="macro">vec!</span>[],
+			<span class="ident">Default::default</span>(),
+		)<span class="question-mark">?</span>;
 
 		<span class="kw">let</span> <span class="ident">proposer</span> <span class="op">=</span> <span class="ident">members</span>[<span class="number">0</span>].<span class="ident">clone</span>();
 		<span class="kw">let</span> <span class="ident">voter</span> <span class="op">=</span> <span class="ident">members</span>[<span class="number">1</span>].<span class="ident">clone</span>();
@@ -1331,7 +1522,13 @@
 		<span class="ident">members</span>.<span class="ident">extend</span>(<span class="ident">founders</span>.<span class="ident">clone</span>());
 		<span class="ident">members</span>.<span class="ident">extend</span>(<span class="ident">fellows</span>.<span class="ident">clone</span>());
 
-		<span class="ident">Alliance</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::init_members</span>(<span class="ident">SystemOrigin::Root</span>.<span class="ident">into</span>(), <span class="ident">founders</span>, <span class="ident">fellows</span>, <span class="macro">vec!</span>[])<span class="question-mark">?</span>;
+		<span class="ident">Alliance</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::force_set_members</span>(
+			<span class="ident">SystemOrigin::Root</span>.<span class="ident">into</span>(),
+			<span class="ident">founders</span>,
+			<span class="ident">fellows</span>,
+			<span class="macro">vec!</span>[],
+			<span class="ident">Default::default</span>(),
+		)<span class="question-mark">?</span>;
 
 		<span class="kw">let</span> <span class="ident">proposer</span> <span class="op">=</span> <span class="ident">members</span>[<span class="number">0</span>].<span class="ident">clone</span>();
 		<span class="kw">let</span> <span class="ident">voter</span> <span class="op">=</span> <span class="ident">members</span>[<span class="number">1</span>].<span class="ident">clone</span>();
@@ -1386,21 +1583,124 @@
 		<span class="macro">assert_eq!</span>(<span class="ident">T::ProposalProvider::proposal_of</span>(<span class="ident">last_hash</span>), <span class="prelude-val">None</span>);
 	}
 
-	<span class="ident">init_members</span> {
-		<span class="comment">// at least 2 founders</span>
-		<span class="kw">let</span> <span class="ident">x</span> <span class="kw">in</span> <span class="number">2</span> .. <span class="ident">T::MaxFounders::get</span>();
+	<span class="ident">force_set_members</span> {
+		<span class="comment">// at least 1 founders</span>
+		<span class="kw">let</span> <span class="ident">x</span> <span class="kw">in</span> <span class="number">1</span> .. <span class="ident">T::MaxFounders::get</span>();
 		<span class="kw">let</span> <span class="ident">y</span> <span class="kw">in</span> <span class="number">0</span> .. <span class="ident">T::MaxFellows::get</span>();
 		<span class="kw">let</span> <span class="ident">z</span> <span class="kw">in</span> <span class="number">0</span> .. <span class="ident">T::MaxAllies::get</span>();
+		<span class="kw">let</span> <span class="ident">p</span> <span class="kw">in</span> <span class="number">0</span> .. <span class="ident">T::MaxProposals::get</span>();
+		<span class="kw">let</span> <span class="ident">c</span> <span class="kw">in</span> <span class="number">0</span> .. <span class="ident">T::MaxFounders::get</span>() <span class="op">+</span> <span class="ident">T::MaxFellows::get</span>();
+		<span class="kw">let</span> <span class="ident">m</span> <span class="kw">in</span> <span class="number">0</span> .. <span class="ident">T::MaxAllies::get</span>();
 
-		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">founders</span> <span class="op">=</span> (<span class="number">2</span> .. <span class="ident">x</span>).<span class="ident">map</span>(<span class="ident">founder</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span>).<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>();
+		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">founders</span> <span class="op">=</span> (<span class="number">0</span> .. <span class="ident">x</span>).<span class="ident">map</span>(<span class="ident">founder</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span>).<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>();
+		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">proposer</span> <span class="op">=</span> <span class="ident">founders</span>[<span class="number">0</span>].<span class="ident">clone</span>();
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">fellows</span> <span class="op">=</span> (<span class="number">0</span> .. <span class="ident">y</span>).<span class="ident">map</span>(<span class="ident">fellow</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span>).<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>();
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">allies</span> <span class="op">=</span> (<span class="number">0</span> .. <span class="ident">z</span>).<span class="ident">map</span>(<span class="ident">ally</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span>).<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>();
+		<span class="kw">let</span> <span class="ident">witness</span> <span class="op">=</span> <span class="ident">ForceSetWitness</span>{
+			<span class="ident">proposals</span>: <span class="ident">p</span>,
+			<span class="ident">voting_members</span>: <span class="ident">c</span>,
+			<span class="ident">ally_members</span>: <span class="ident">m</span>,
+		};
+		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">old_fellows</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T::AccountId</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
+		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">old_allies</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T::AccountId</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
 
-	}: <span class="kw">_</span>(<span class="ident">SystemOrigin::Root</span>, <span class="ident">founders</span>.<span class="ident">clone</span>(), <span class="ident">fellows</span>.<span class="ident">clone</span>(), <span class="ident">allies</span>.<span class="ident">clone</span>())
+		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">cc</span> <span class="op">=</span> <span class="ident">c</span>;
+		<span class="kw">if</span> (<span class="ident">m</span> <span class="op">&gt;</span> <span class="number">0</span> <span class="op">&amp;&amp;</span> <span class="ident">c</span> <span class="op">==</span> <span class="number">0</span>) <span class="op">|</span><span class="op">|</span> (<span class="ident">p</span> <span class="op">&gt;</span> <span class="number">0</span> <span class="op">&amp;&amp;</span> <span class="ident">c</span> <span class="op">==</span> <span class="number">0</span>) {
+			<span class="comment">// if total member count `m` greater than zero,</span>
+			<span class="comment">// one voting member required to set non voting members.</span>
+			<span class="comment">// OR</span>
+			<span class="comment">// if some proposals,</span>
+			<span class="comment">// one voting member required to create proposal.</span>
+			<span class="ident">cc</span> <span class="op">=</span> <span class="number">1</span>;
+		}
+
+		<span class="comment">// setting the Alliance to disband on the benchmark call</span>
+		<span class="kw">if</span> <span class="ident">cc</span> <span class="op">&gt;</span> <span class="number">0</span> {
+			<span class="ident">old_fellows</span> <span class="op">=</span> (<span class="number">0</span>..<span class="ident">cc</span>).<span class="ident">map</span>(<span class="ident">fellow</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span>).<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>();
+			<span class="ident">old_allies</span> <span class="op">=</span> (<span class="number">0</span>..<span class="ident">m</span>).<span class="ident">map</span>(<span class="ident">ally</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span>).<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>();
+
+			<span class="comment">// used later for proposal creation.</span>
+			<span class="ident">proposer</span> <span class="op">=</span> <span class="ident">old_fellows</span>[<span class="number">0</span>].<span class="ident">clone</span>();
+
+			<span class="comment">// set alliance before benchmarked call to include alliance disband.</span>
+			<span class="ident">Alliance</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::force_set_members</span>(
+				<span class="ident">SystemOrigin::Root</span>.<span class="ident">into</span>(),
+				<span class="macro">vec!</span>[<span class="ident">old_fellows</span>[<span class="number">0</span>].<span class="ident">clone</span>()],
+				<span class="macro">vec!</span>[],
+				<span class="macro">vec!</span>[],
+				<span class="ident">Default::default</span>(),
+			)<span class="question-mark">?</span>;
+
+			<span class="comment">// using `join_alliance` instead `force_set_members` to join alliance</span>
+			<span class="comment">// to have deposit reserved and bench the worst case scenario.</span>
+			<span class="kw">for</span> <span class="ident">fellow</span> <span class="kw">in</span> <span class="ident">old_fellows</span>.<span class="ident">iter</span>().<span class="ident">skip</span>(<span class="number">1</span>) {
+				<span class="ident">Alliance</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::join_alliance</span>(
+					<span class="ident">SystemOrigin::Signed</span>(<span class="ident">fellow</span>.<span class="ident">clone</span>()).<span class="ident">into</span>()
+				).<span class="ident">unwrap</span>();
+			}
+
+			<span class="comment">// elevating allies to have desired voting members count.</span>
+			<span class="kw">for</span> <span class="ident">fellow</span> <span class="kw">in</span> <span class="ident">old_fellows</span>.<span class="ident">iter</span>().<span class="ident">skip</span>(<span class="number">1</span>) {
+				<span class="ident">Alliance</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::elevate_ally</span>(
+					<span class="ident">T::MembershipManager::successful_origin</span>(),
+					<span class="ident">T::Lookup::unlookup</span>(<span class="ident">fellow</span>.<span class="ident">clone</span>())
+				).<span class="ident">unwrap</span>();
+			}
+
+			<span class="kw">for</span> <span class="ident">ally</span> <span class="kw">in</span> <span class="ident">old_allies</span>.<span class="ident">iter</span>() {
+				<span class="ident">Alliance</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::join_alliance</span>(
+					<span class="ident">SystemOrigin::Signed</span>(<span class="ident">ally</span>.<span class="ident">clone</span>()).<span class="ident">into</span>()
+				).<span class="ident">unwrap</span>();
+			}
+
+			<span class="macro">assert_eq!</span>(<span class="ident">Alliance</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::votable_members_count</span>(), <span class="ident">cc</span>);
+			<span class="macro">assert_eq!</span>(<span class="ident">Alliance</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::ally_members_count</span>(), <span class="ident">m</span>);
+		}
+
+		<span class="comment">// adding proposals to veto on the Alliance reset</span>
+		<span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">p</span> {
+			<span class="kw">let</span> <span class="ident">threshold</span> <span class="op">=</span> <span class="ident">cc</span>;
+			<span class="kw">let</span> <span class="ident">bytes_in_storage</span> <span class="op">=</span> <span class="ident">i</span> <span class="op">+</span> <span class="ident">size_of</span>::<span class="op">&lt;</span><span class="ident">Cid</span><span class="op">&gt;</span>() <span class="kw">as</span> <span class="ident">u32</span> <span class="op">+</span> <span class="number">32</span>;
+			<span class="comment">// proposals should be different so that different proposal hashes are generated</span>
+			<span class="kw">let</span> <span class="ident">proposal</span>: <span class="ident">T::Proposal</span> <span class="op">=</span>
+				<span class="ident">AllianceCall</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::set_rule</span> { <span class="ident">rule</span>: <span class="ident">rule</span>(<span class="macro">vec!</span>[<span class="ident">i</span> <span class="kw">as</span> <span class="ident">u8</span>; <span class="ident">i</span> <span class="kw">as</span> <span class="ident">usize</span>]) }.<span class="ident">into</span>();
+			<span class="ident">Alliance</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::propose</span>(
+				<span class="ident">SystemOrigin::Signed</span>(<span class="ident">proposer</span>.<span class="ident">clone</span>()).<span class="ident">into</span>(),
+				<span class="ident">threshold</span>,
+				<span class="ident">Box::new</span>(<span class="ident">proposal</span>),
+				<span class="ident">bytes_in_storage</span>,
+			)<span class="question-mark">?</span>;
+		}
+		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">proposals</span> <span class="op">=</span> <span class="ident">T::ProposalProvider::proposals</span>();
+		<span class="kw">if</span> <span class="ident">c</span> <span class="op">!</span><span class="op">=</span> <span class="ident">cc</span> {
+			<span class="comment">// removing a helper founder from the alliance which should not be</span>
+			<span class="comment">// included in the actual benchmark call.</span>
+			<span class="ident">Alliance</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::give_retirement_notice</span>(
+				<span class="ident">SystemOrigin::Signed</span>(<span class="ident">proposer</span>.<span class="ident">clone</span>()).<span class="ident">into</span>()
+			)<span class="question-mark">?</span>;
+			<span class="ident">System</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::set_block_number</span>(
+				<span class="ident">System</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::block_number</span>() <span class="op">+</span> <span class="ident">T::RetirementPeriod::get</span>()
+			);
+			<span class="ident">Alliance</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::retire</span>(
+				<span class="ident">SystemOrigin::Signed</span>(<span class="ident">proposer</span>.<span class="ident">clone</span>()).<span class="ident">into</span>()
+			)<span class="question-mark">?</span>;
+			<span class="comment">// remove a helper founder from fellows list.</span>
+			<span class="ident">old_fellows</span>.<span class="ident">remove</span>(<span class="number">0</span>);
+		}
+	}: <span class="kw">_</span>(<span class="ident">SystemOrigin::Root</span>, <span class="ident">founders</span>.<span class="ident">clone</span>(), <span class="ident">fellows</span>.<span class="ident">clone</span>(), <span class="ident">allies</span>.<span class="ident">clone</span>(), <span class="ident">witness</span>)
 	<span class="ident">verify</span> {
 		<span class="ident">founders</span>.<span class="ident">sort</span>();
 		<span class="ident">fellows</span>.<span class="ident">sort</span>();
 		<span class="ident">allies</span>.<span class="ident">sort</span>();
+		<span class="kw">if</span> <span class="op">!</span><span class="ident">witness</span>.<span class="ident">is_zero</span>() {
+			<span class="ident">old_fellows</span>.<span class="ident">append</span>(<span class="kw-2">&amp;mut</span> <span class="ident">old_allies</span>);
+			<span class="ident">old_fellows</span>.<span class="ident">sort</span>();
+			<span class="ident">proposals</span>.<span class="ident">sort</span>();
+			<span class="ident">assert_prev_event</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span>(<span class="ident">Event::AllianceDisbanded</span> {
+				<span class="ident">members</span>: <span class="ident">old_fellows</span>,
+				<span class="ident">proposals</span>: <span class="ident">proposals</span>,
+			}.<span class="ident">into</span>());
+		}
 		<span class="ident">assert_last_event</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span>(<span class="ident">Event::MembersInitialized</span> {
 			<span class="ident">founders</span>: <span class="ident">founders</span>.<span class="ident">clone</span>(),
 			<span class="ident">fellows</span>: <span class="ident">fellows</span>.<span class="ident">clone</span>(),

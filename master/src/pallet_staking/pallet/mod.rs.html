@@ -1720,6 +1720,10 @@
 <span id="1714">1714</span>
 <span id="1715">1715</span>
 <span id="1716">1716</span>
+<span id="1717">1717</span>
+<span id="1718">1718</span>
+<span id="1719">1719</span>
+<span id="1720">1720</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2017-2022 Parity Technologies (UK) Ltd.</span>
@@ -2466,6 +2470,11 @@
 				);
 			}
 		}
+
+		<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;try-runtime&quot;</span>)]</span>
+		<span class="kw">fn</span> <span class="ident">try_state</span>(<span class="ident">n</span>: <span class="ident">BlockNumberFor</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span><span class="op">&gt;</span> {
+			<span class="ident"><span class="self">Self</span>::do_try_state</span>(<span class="ident">n</span>)
+		}
 	}
 
 	<span class="attribute">#[<span class="ident">pallet::call</span>]</span>
@@ -2578,7 +2587,6 @@
 				<span class="kw">if</span> <span class="ident">T::VoterList::contains</span>(<span class="kw-2">&amp;</span><span class="ident">stash</span>) {
 					<span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span>
 						<span class="ident">T::VoterList::on_update</span>(<span class="kw-2">&amp;</span><span class="ident">stash</span>, <span class="ident"><span class="self">Self</span>::weight_of</span>(<span class="kw-2">&amp;</span><span class="ident">ledger</span>.<span class="ident">stash</span>)).<span class="ident">defensive</span>();
-					<span class="macro">debug_assert_eq!</span>(<span class="ident">T::VoterList::sanity_check</span>(), <span class="prelude-val">Ok</span>(()));
 				}
 
 				<span class="ident"><span class="self">Self</span>::deposit_event</span>(<span class="ident">Event</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::Bonded</span>(<span class="ident">stash</span>, <span class="ident">extra</span>));

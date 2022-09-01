@@ -1139,8 +1139,8 @@
 	<span class="doccomment">/// unbounded amount of storage accesses.</span>
 	<span class="kw">fn</span> <span class="ident">unsafe_clear</span>();
 
-	<span class="doccomment">/// Sanity check internal state of list. Only meant for debug compilation.</span>
-	<span class="kw">fn</span> <span class="ident">sanity_check</span>() -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span><span class="op">&gt;</span>;
+	<span class="doccomment">/// Check internal state of list. Only meant for debugging.</span>
+	<span class="kw">fn</span> <span class="ident">try_state</span>() -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span><span class="op">&gt;</span>;
 
 	<span class="doccomment">/// If `who` changes by the returned amount they are guaranteed to have a worst case change</span>
 	<span class="doccomment">/// in their list position.</span>

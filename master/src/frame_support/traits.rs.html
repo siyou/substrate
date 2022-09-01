@@ -112,6 +112,9 @@
 <span id="106">106</span>
 <span id="107">107</span>
 <span id="108">108</span>
+<span id="109">109</span>
+<span id="110">110</span>
+<span id="111">111</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2019-2022 Parity Technologies (UK) Ltd.</span>
@@ -198,8 +201,6 @@
 	<span class="ident">Hooks</span>, <span class="ident">IntegrityTest</span>, <span class="ident">OnFinalize</span>, <span class="ident">OnGenesis</span>, <span class="ident">OnIdle</span>, <span class="ident">OnInitialize</span>, <span class="ident">OnRuntimeUpgrade</span>,
 	<span class="ident">OnTimestampSet</span>,
 };
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;try-runtime&quot;</span>)]</span>
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">hooks</span>::{<span class="ident">OnRuntimeUpgradeHelpersExt</span>, <span class="ident">ON_RUNTIME_UPGRADE_PREFIX</span>};
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">schedule</span>;
 <span class="kw">mod</span> <span class="ident">storage</span>;
@@ -220,6 +221,11 @@
 	<span class="ident">ClassCountOf</span>, <span class="ident">CurrencyToVote</span>, <span class="ident">PollStatus</span>, <span class="ident">Polling</span>, <span class="ident">SaturatingCurrencyToVote</span>,
 	<span class="ident">U128CurrencyToVote</span>, <span class="ident">VoteTally</span>,
 };
+
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;try-runtime&quot;</span>)]</span>
+<span class="kw">mod</span> <span class="ident">try_runtime</span>;
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;try-runtime&quot;</span>)]</span>
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">try_runtime</span>::{<span class="ident">OnRuntimeUpgradeHelpersExt</span>, <span class="ident">Select</span> <span class="kw">as</span> <span class="ident">TryStateSelect</span>, <span class="ident">TryState</span>};
 </code></pre></div>
 </section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="frame_support" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (7fe022f5a 2022-07-24)" ></div>
 </body></html>

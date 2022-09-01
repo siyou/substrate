@@ -46,6 +46,7 @@
 <span id="40">40</span>
 <span id="41">41</span>
 <span id="42">42</span>
+<span id="43">43</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2021-2022 Parity Technologies (UK) Ltd.</span>
@@ -67,6 +68,7 @@
 
 <span class="attribute">#![<span class="ident">cfg_attr</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>), <span class="ident">no_std</span>)]</span>
 
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">frame_support::traits::TryStateSelect</span>;
 <span class="kw">use</span> <span class="ident">frame_support::weights::Weight</span>;
 
 <span class="macro">sp_api::decl_runtime_apis!</span> {
@@ -85,7 +87,7 @@
 		<span class="doccomment">///</span>
 		<span class="doccomment">/// This is only sensible where the incoming block is from a different network, yet it has</span>
 		<span class="doccomment">/// the same block format as the runtime implementing this API.</span>
-		<span class="kw">fn</span> <span class="ident">execute_block_no_check</span>(<span class="ident">block</span>: <span class="ident">Block</span>) -&gt; <span class="ident">Weight</span>;
+		<span class="kw">fn</span> <span class="ident">execute_block</span>(<span class="ident">block</span>: <span class="ident">Block</span>, <span class="ident">state_root_check</span>: <span class="ident">bool</span>, <span class="ident">try_state</span>: <span class="ident">TryStateSelect</span>) -&gt; <span class="ident">Weight</span>;
 	}
 }
 </code></pre></div>

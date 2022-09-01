@@ -327,7 +327,7 @@
 	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">build_and_execute</span>(<span class="self">self</span>, <span class="ident">test</span>: <span class="kw">impl</span> <span class="ident">FnOnce</span>() -&gt; ()) {
 		<span class="self">self</span>.<span class="ident">build</span>().<span class="ident">execute_with</span>(<span class="op">|</span><span class="op">|</span> {
 			<span class="ident">test</span>();
-			<span class="ident">List</span>::<span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span><span class="ident">::sanity_check</span>().<span class="ident">expect</span>(<span class="string">&quot;Sanity check post condition failed&quot;</span>)
+			<span class="ident">List</span>::<span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span><span class="ident">::try_state</span>().<span class="ident">expect</span>(<span class="string">&quot;Try-state post condition failed&quot;</span>)
 		})
 	}
 

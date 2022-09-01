@@ -397,37 +397,6 @@
 <span id="391">391</span>
 <span id="392">392</span>
 <span id="393">393</span>
-<span id="394">394</span>
-<span id="395">395</span>
-<span id="396">396</span>
-<span id="397">397</span>
-<span id="398">398</span>
-<span id="399">399</span>
-<span id="400">400</span>
-<span id="401">401</span>
-<span id="402">402</span>
-<span id="403">403</span>
-<span id="404">404</span>
-<span id="405">405</span>
-<span id="406">406</span>
-<span id="407">407</span>
-<span id="408">408</span>
-<span id="409">409</span>
-<span id="410">410</span>
-<span id="411">411</span>
-<span id="412">412</span>
-<span id="413">413</span>
-<span id="414">414</span>
-<span id="415">415</span>
-<span id="416">416</span>
-<span id="417">417</span>
-<span id="418">418</span>
-<span id="419">419</span>
-<span id="420">420</span>
-<span id="421">421</span>
-<span id="422">422</span>
-<span id="423">423</span>
-<span id="424">424</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2019-2022 Parity Technologies (UK) Ltd.</span>
@@ -450,6 +419,7 @@
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::weights::Weight</span>;
 <span class="kw">use</span> <span class="ident">impl_trait_for_tuples::impl_for_tuples</span>;
 <span class="kw">use</span> <span class="ident">sp_runtime::traits::AtLeast32BitUnsigned</span>;
+<span class="kw">use</span> <span class="ident">sp_std::prelude</span>::<span class="kw-2">*</span>;
 
 <span class="doccomment">/// The block initialization trait.</span>
 <span class="doccomment">///</span>
@@ -523,9 +493,9 @@
 		<span class="kw">let</span> <span class="ident">start_index</span> <span class="op">=</span> <span class="ident">start_index</span>.<span class="ident">try_into</span>().<span class="ident">ok</span>().<span class="ident">expect</span>(
 			<span class="string">&quot;`start_index % len` always fits into `usize`, because `len` can be in maximum `usize::MAX`; qed&quot;</span>
 		);
-		<span class="kw">for</span> <span class="ident">on_idle</span> <span class="kw">in</span> <span class="ident">on_idle_functions</span>.<span class="ident">iter</span>().<span class="ident">cycle</span>().<span class="ident">skip</span>(<span class="ident">start_index</span>).<span class="ident">take</span>(<span class="ident">len</span>) {
+		<span class="kw">for</span> <span class="ident">on_idle_fn</span> <span class="kw">in</span> <span class="ident">on_idle_functions</span>.<span class="ident">iter</span>().<span class="ident">cycle</span>().<span class="ident">skip</span>(<span class="ident">start_index</span>).<span class="ident">take</span>(<span class="ident">len</span>) {
 			<span class="kw">let</span> <span class="ident">adjusted_remaining_weight</span> <span class="op">=</span> <span class="ident">remaining_weight</span>.<span class="ident">saturating_sub</span>(<span class="ident">weight</span>);
-			<span class="ident">weight</span> <span class="op">=</span> <span class="ident">weight</span>.<span class="ident">saturating_add</span>(<span class="ident">on_idle</span>(<span class="ident">n</span>, <span class="ident">adjusted_remaining_weight</span>));
+			<span class="ident">weight</span> <span class="op">=</span> <span class="ident">weight</span>.<span class="ident">saturating_add</span>(<span class="ident">on_idle_fn</span>(<span class="ident">n</span>, <span class="ident">adjusted_remaining_weight</span>));
 		}
 		<span class="ident">weight</span>
 	}
@@ -543,47 +513,6 @@
 	<span class="doccomment">/// Something that should happen at genesis.</span>
 	<span class="kw">fn</span> <span class="ident">on_genesis</span>() {}
 }
-
-<span class="doccomment">/// Prefix to be used (optionally) for implementing [`OnRuntimeUpgradeHelpersExt::storage_key`].</span>
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;try-runtime&quot;</span>)]</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">ON_RUNTIME_UPGRADE_PREFIX</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>] <span class="op">=</span> <span class="string">b&quot;__ON_RUNTIME_UPGRADE__&quot;</span>;
-
-<span class="doccomment">/// Some helper functions for [`OnRuntimeUpgrade`] during `try-runtime` testing.</span>
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;try-runtime&quot;</span>)]</span>
-<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">OnRuntimeUpgradeHelpersExt</span> {
-	<span class="doccomment">/// Generate a storage key unique to this runtime upgrade.</span>
-	<span class="doccomment">///</span>
-	<span class="doccomment">/// This can be used to communicate data from pre-upgrade to post-upgrade state and check</span>
-	<span class="doccomment">/// them. See [`Self::set_temp_storage`] and [`Self::get_temp_storage`].</span>
-	<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;try-runtime&quot;</span>)]</span>
-	<span class="kw">fn</span> <span class="ident">storage_key</span>(<span class="ident">ident</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; [<span class="ident">u8</span>; <span class="number">32</span>] {
-		<span class="ident"><span class="kw">crate</span>::storage::storage_prefix</span>(<span class="ident">ON_RUNTIME_UPGRADE_PREFIX</span>, <span class="ident">ident</span>.<span class="ident">as_bytes</span>())
-	}
-
-	<span class="doccomment">/// Get temporary storage data written by [`Self::set_temp_storage`].</span>
-	<span class="doccomment">///</span>
-	<span class="doccomment">/// Returns `None` if either the data is unavailable or un-decodable.</span>
-	<span class="doccomment">///</span>
-	<span class="doccomment">/// A `at` storage identifier must be provided to indicate where the storage is being read from.</span>
-	<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;try-runtime&quot;</span>)]</span>
-	<span class="kw">fn</span> <span class="ident">get_temp_storage</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">codec::Decode</span><span class="op">&gt;</span>(<span class="ident">at</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-		<span class="ident">sp_io::storage::get</span>(<span class="kw-2">&amp;</span><span class="ident"><span class="self">Self</span>::storage_key</span>(<span class="ident">at</span>))
-			.<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">bytes</span><span class="op">|</span> <span class="ident">codec::Decode::decode</span>(<span class="kw-2">&amp;mut</span> <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">bytes</span>).<span class="ident">ok</span>())
-	}
-
-	<span class="doccomment">/// Write some temporary data to a specific storage that can be read (potentially in</span>
-	<span class="doccomment">/// post-upgrade hook) via [`Self::get_temp_storage`].</span>
-	<span class="doccomment">///</span>
-	<span class="doccomment">/// A `at` storage identifier must be provided to indicate where the storage is being written</span>
-	<span class="doccomment">/// to.</span>
-	<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;try-runtime&quot;</span>)]</span>
-	<span class="kw">fn</span> <span class="ident">set_temp_storage</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">codec::Encode</span><span class="op">&gt;</span>(<span class="ident">data</span>: <span class="ident">T</span>, <span class="ident">at</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) {
-		<span class="ident">sp_io::storage::set</span>(<span class="kw-2">&amp;</span><span class="ident"><span class="self">Self</span>::storage_key</span>(<span class="ident">at</span>), <span class="kw-2">&amp;</span><span class="ident">data</span>.<span class="ident">encode</span>());
-	}
-}
-
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;try-runtime&quot;</span>)]</span>
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">U</span>: <span class="ident">OnRuntimeUpgrade</span><span class="op">&gt;</span> <span class="ident">OnRuntimeUpgradeHelpersExt</span> <span class="kw">for</span> <span class="ident">U</span> {}
 
 <span class="doccomment">/// The runtime upgrade trait.</span>
 <span class="doccomment">///</span>
@@ -700,6 +629,15 @@
 	<span class="doccomment">/// top-level runtime.</span>
 	<span class="kw">fn</span> <span class="ident">on_runtime_upgrade</span>() -&gt; <span class="ident">Weight</span> {
 		<span class="ident">Weight::new</span>()
+	}
+
+	<span class="doccomment">/// Execute the sanity checks of this pallet, per block.</span>
+	<span class="doccomment">///</span>
+	<span class="doccomment">/// It should focus on certain checks to ensure that the state is sensible. This is never</span>
+	<span class="doccomment">/// executed in a consensus code-path, therefore it can consume as much weight as it needs.</span>
+	<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;try-runtime&quot;</span>)]</span>
+	<span class="kw">fn</span> <span class="ident">try_state</span>(<span class="ident">_n</span>: <span class="ident">BlockNumber</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span><span class="op">&gt;</span> {
+		<span class="prelude-val">Ok</span>(())
 	}
 
 	<span class="doccomment">/// Execute some pre-checks prior to a runtime upgrade.</span>

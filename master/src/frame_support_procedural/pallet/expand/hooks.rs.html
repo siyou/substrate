@@ -199,6 +199,36 @@
 <span id="193">193</span>
 <span id="194">194</span>
 <span id="195">195</span>
+<span id="196">196</span>
+<span id="197">197</span>
+<span id="198">198</span>
+<span id="199">199</span>
+<span id="200">200</span>
+<span id="201">201</span>
+<span id="202">202</span>
+<span id="203">203</span>
+<span id="204">204</span>
+<span id="205">205</span>
+<span id="206">206</span>
+<span id="207">207</span>
+<span id="208">208</span>
+<span id="209">209</span>
+<span id="210">210</span>
+<span id="211">211</span>
+<span id="212">212</span>
+<span id="213">213</span>
+<span id="214">214</span>
+<span id="215">215</span>
+<span id="216">216</span>
+<span id="217">217</span>
+<span id="218">218</span>
+<span id="219">219</span>
+<span id="220">220</span>
+<span id="221">221</span>
+<span id="222">222</span>
+<span id="223">223</span>
+<span id="224">224</span>
+<span id="225">225</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2020-2022 Parity Technologies (UK) Ltd.</span>
@@ -218,7 +248,6 @@
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::pallet::Def</span>;
 
-<span class="doccomment">///</span>
 <span class="doccomment">/// * implement the individual traits using the Hooks trait</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">expand_hooks</span>(<span class="ident">def</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Def</span>) -&gt; <span class="ident">proc_macro2::TokenStream</span> {
 	<span class="kw">let</span> (<span class="ident">where_clause</span>, <span class="ident">span</span>, <span class="ident">has_runtime_upgrade</span>) <span class="op">=</span> <span class="kw">match</span> <span class="ident">def</span>.<span class="ident">hooks</span>.<span class="ident">as_ref</span>() {
@@ -258,6 +287,19 @@
 				<span class="ident">pallet_name</span>,
 			);
 		}
+	};
+
+	<span class="kw">let</span> <span class="ident">log_try_state</span> <span class="op">=</span> <span class="macro">quote::quote!</span> {
+		<span class="kw">let</span> <span class="ident">pallet_name</span> <span class="op">=</span> <span class="op">&lt;</span>
+			<span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> #<span class="ident">frame_system::Config</span><span class="op">&gt;</span><span class="ident">::PalletInfo</span>
+			<span class="kw">as</span>
+			#<span class="ident">frame_support::traits::PalletInfo</span>
+		<span class="op">&gt;</span><span class="ident">::name</span>::<span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>().<span class="ident">expect</span>(<span class="string">&quot;Every active pallet has a name in the runtime; qed&quot;</span>);
+		#<span class="macro">frame_support::log::debug!</span>(
+			<span class="ident">target</span>: #<span class="ident">frame_support::LOG_TARGET</span>,
+			<span class="string">&quot;🩺 try-state pallet {:?}&quot;</span>,
+			<span class="ident">pallet_name</span>,
+		);
 	};
 
 	<span class="kw">let</span> <span class="ident">hooks_impl</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">def</span>.<span class="ident">hooks</span>.<span class="ident">is_none</span>() {
@@ -390,6 +432,24 @@
 						<span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> #<span class="ident">frame_system::Config</span><span class="op">&gt;</span><span class="ident">::BlockNumber</span>
 					<span class="op">&gt;</span>
 				<span class="op">&gt;</span><span class="ident">::integrity_test</span>()
+			}
+		}
+
+		<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;try-runtime&quot;</span>)]</span>
+		<span class="kw">impl</span><span class="op">&lt;</span>#<span class="ident">type_impl_gen</span><span class="op">&gt;</span>
+			#<span class="ident">frame_support::traits::TryState</span><span class="op">&lt;</span><span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> #<span class="ident">frame_system::Config</span><span class="op">&gt;</span><span class="ident">::BlockNumber</span><span class="op">&gt;</span>
+			<span class="kw">for</span> #<span class="ident">pallet_ident</span><span class="op">&lt;</span>#<span class="ident">type_use_gen</span><span class="op">&gt;</span> #<span class="ident">where_clause</span>
+		{
+			<span class="kw">fn</span> <span class="ident">try_state</span>(
+				<span class="ident">n</span>: <span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> #<span class="ident">frame_system::Config</span><span class="op">&gt;</span><span class="ident">::BlockNumber</span>,
+				<span class="ident">_s</span>: #<span class="ident">frame_support::traits::TryStateSelect</span>
+			) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span><span class="op">&gt;</span> {
+				#<span class="ident">log_try_state</span>
+				<span class="op">&lt;</span>
+					<span class="self">Self</span> <span class="kw">as</span> #<span class="ident">frame_support::traits::Hooks</span><span class="op">&lt;</span>
+						<span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> #<span class="ident">frame_system::Config</span><span class="op">&gt;</span><span class="ident">::BlockNumber</span>
+					<span class="op">&gt;</span>
+				<span class="op">&gt;</span><span class="ident">::try_state</span>(<span class="ident">n</span>)
 			}
 		}
 	)

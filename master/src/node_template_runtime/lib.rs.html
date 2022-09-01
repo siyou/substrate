@@ -556,6 +556,12 @@
 <span id="550">550</span>
 <span id="551">551</span>
 <span id="552">552</span>
+<span id="553">553</span>
+<span id="554">554</span>
+<span id="555">555</span>
+<span id="556">556</span>
+<span id="557">557</span>
+<span id="558">558</span>
 </pre><pre class="rust"><code><span class="attribute">#![<span class="ident">cfg_attr</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>), <span class="ident">no_std</span>)]</span>
 <span class="comment">// `construct_runtime!` does a lot of recursion and requires us to increase the limit to 256.</span>
 <span class="attribute">#![<span class="ident">recursion_limit</span> <span class="op">=</span> <span class="string">&quot;256&quot;</span>]</span>
@@ -1103,8 +1109,14 @@
 			(<span class="ident">weight</span>, <span class="ident">BlockWeights::get</span>().<span class="ident">max_block</span>)
 		}
 
-		<span class="kw">fn</span> <span class="ident">execute_block_no_check</span>(<span class="ident">block</span>: <span class="ident">Block</span>) -&gt; <span class="ident">Weight</span> {
-			<span class="ident">Executive::execute_block_no_check</span>(<span class="ident">block</span>)
+		<span class="kw">fn</span> <span class="ident">execute_block</span>(
+			<span class="ident">block</span>: <span class="ident">Block</span>,
+			<span class="ident">state_root_check</span>: <span class="ident">bool</span>,
+			<span class="ident">select</span>: <span class="ident">frame_try_runtime::TryStateSelect</span>
+		) -&gt; <span class="ident">Weight</span> {
+			<span class="comment">// NOTE: intentional unwrap: we don&#39;t want to propagate the error backwards, and want to</span>
+			<span class="comment">// have a backtrace here.</span>
+			<span class="ident">Executive::try_execute_block</span>(<span class="ident">block</span>, <span class="ident">state_root_check</span>, <span class="ident">select</span>).<span class="ident">expect</span>(<span class="string">&quot;execute-block failed&quot;</span>)
 		}
 	}
 }
