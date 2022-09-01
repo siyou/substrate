@@ -2551,6 +2551,8 @@
 <span id="2545">2545</span>
 <span id="2546">2546</span>
 <span id="2547">2547</span>
+<span id="2548">2548</span>
+<span id="2549">2549</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2017-2022 Parity Technologies (UK) Ltd.</span>
@@ -2646,6 +2648,8 @@
 	};
 }
 
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;runtime-benchmarks&quot;</span>, <span class="ident">test</span>))]</span>
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::storage::storage_noop_guard::StorageNoopGuard</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::{
 	<span class="ident">dispatch</span>::{<span class="ident">Callable</span>, <span class="ident">Parameter</span>},
 	<span class="ident">hash</span>::{
