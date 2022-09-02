@@ -249,12 +249,13 @@ pub mod pallet {
 
 impl<T: Config> Pallet<T> {
 	pub fn do_enable(who: Option<T::AccountId>) -> DispatchResult {
+		ensure!(!Enabled::<T>::exists(), Error::<T>::IsEnabled);
+
 		if let Some(who) = who {
 			let stake = T::EnableStakeAmount::get().ok_or(Error::<T>::CannotStake)?;
 			Self::reserve(who, stake)?;
 		}
 
-		ensure!(!Enabled::<T>::exists(), Error::<T>::IsEnabled);
 		let limit =
 			<frame_system::Pallet<T>>::block_number().saturating_add(T::EnableDuration::get());
 		Enabled::<T>::put(limit);
@@ -263,14 +264,15 @@ impl<T: Config> Pallet<T> {
 	}
 
 	pub fn do_extend(who: Option<T::AccountId>) -> DispatchResult {
+		let limit = Enabled::<T>::get()
+			.ok_or(Error::<T>::IsDisabled)?
+			.saturating_add(T::ExtendDuration::get());
+
 		if let Some(who) = who {
 			let stake = T::ExtendStakeAmount::get().ok_or(Error::<T>::CannotStake)?;
 			Self::reserve(who, stake)?;
 		}
 
-		let limit = Enabled::<T>::take()
-			.ok_or(Error::<T>::IsDisabled)?
-			.saturating_add(T::ExtendDuration::get());
 		Enabled::<T>::put(limit);
 		Self::deposit_event(Event::<T>::Extended(limit));
 		Ok(())
