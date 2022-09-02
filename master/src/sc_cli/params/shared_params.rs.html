@@ -140,6 +140,11 @@
 <span id="134">134</span>
 <span id="135">135</span>
 <span id="136">136</span>
+<span id="137">137</span>
+<span id="138">138</span>
+<span id="139">139</span>
+<span id="140">140</span>
+<span id="141">141</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2018-2022 Parity Technologies (UK) Ltd.</span>
@@ -224,8 +229,13 @@
 
 <span class="kw">impl</span> <span class="ident">SharedParams</span> {
 	<span class="doccomment">/// Specify custom base path.</span>
-	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">base_path</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">BasePath</span><span class="op">&gt;</span> {
-		<span class="self">self</span>.<span class="ident">base_path</span>.<span class="ident">clone</span>().<span class="ident">map</span>(<span class="ident">Into::into</span>)
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">base_path</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">BasePath</span><span class="op">&gt;</span>, <span class="ident"><span class="kw">crate</span>::Error</span><span class="op">&gt;</span> {
+		<span class="kw">match</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">base_path</span> {
+			<span class="prelude-val">Some</span>(<span class="ident">r</span>) =&gt; <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(<span class="ident">r</span>.<span class="ident">clone</span>().<span class="ident">into</span>())),
+			<span class="comment">// If `dev` is enabled, we use the temp base path.</span>
+			<span class="prelude-val">None</span> <span class="kw">if</span> <span class="self">self</span>.<span class="ident">is_dev</span>() =&gt; <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(<span class="ident">BasePath::new_temp_dir</span>()<span class="question-mark">?</span>)),
+			<span class="prelude-val">None</span> =&gt; <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>),
+		}
 	}
 
 	<span class="doccomment">/// Specify the development chain.</span>

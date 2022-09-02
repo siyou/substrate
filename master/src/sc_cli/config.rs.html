@@ -820,7 +820,7 @@
 	<span class="doccomment">///</span>
 	<span class="doccomment">/// By default this is retrieved from `SharedParams`.</span>
 	<span class="kw">fn</span> <span class="ident">base_path</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">BasePath</span><span class="op">&gt;</span><span class="op">&gt;</span> {
-		<span class="prelude-val">Ok</span>(<span class="self">self</span>.<span class="ident">shared_params</span>().<span class="ident">base_path</span>())
+		<span class="self">self</span>.<span class="ident">shared_params</span>().<span class="ident">base_path</span>()
 	}
 
 	<span class="doccomment">/// Returns `true` if the node is for development or not</span>
