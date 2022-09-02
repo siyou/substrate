@@ -156,6 +156,7 @@
 <span id="150">150</span>
 <span id="151">151</span>
 <span id="152">152</span>
+<span id="153">153</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2022 Parity Technologies (UK) Ltd.</span>
@@ -181,7 +182,7 @@
 <span class="kw">use</span> <span class="ident">sc_client_api::Backend</span> <span class="kw">as</span> <span class="ident">ClientBackend</span>;
 <span class="kw">use</span> <span class="ident">sc_service::Configuration</span>;
 <span class="kw">use</span> <span class="ident">sp_api</span>::{<span class="ident">ApiExt</span>, <span class="ident">ProvideRuntimeApi</span>};
-<span class="kw">use</span> <span class="ident">sp_runtime</span>::{<span class="ident">traits::Block</span> <span class="kw">as</span> <span class="ident">BlockT</span>, <span class="ident">OpaqueExtrinsic</span>};
+<span class="kw">use</span> <span class="ident">sp_runtime</span>::{<span class="ident">traits::Block</span> <span class="kw">as</span> <span class="ident">BlockT</span>, <span class="ident">DigestItem</span>, <span class="ident">OpaqueExtrinsic</span>};
 
 <span class="kw">use</span> <span class="ident">clap</span>::{<span class="ident">Args</span>, <span class="ident">Parser</span>};
 <span class="kw">use</span> <span class="ident">log::info</span>;
@@ -248,6 +249,7 @@
 		<span class="ident">cfg</span>: <span class="ident">Configuration</span>,
 		<span class="ident">client</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">C</span><span class="op">&gt;</span>,
 		<span class="ident">inherent_data</span>: <span class="ident">sp_inherents::InherentData</span>,
+		<span class="ident">digest_items</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">DigestItem</span><span class="op">&gt;</span>,
 		<span class="ident">ext_builder</span>: <span class="kw-2">&amp;</span><span class="kw">dyn</span> <span class="ident">ExtrinsicBuilder</span>,
 	) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>
 	<span class="kw">where</span>
@@ -259,7 +261,7 @@
 		<span class="kw">if</span> <span class="ident">ext_builder</span>.<span class="ident">pallet</span>() <span class="op">!</span><span class="op">=</span> <span class="string">&quot;system&quot;</span> <span class="op">|</span><span class="op">|</span> <span class="ident">ext_builder</span>.<span class="ident">extrinsic</span>() <span class="op">!</span><span class="op">=</span> <span class="string">&quot;remark&quot;</span> {
 			<span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="macro">format!</span>(<span class="string">&quot;The extrinsic builder is required to build `System::Remark` extrinsics but builds `{}` extrinsics instead&quot;</span>, <span class="ident">ext_builder</span>.<span class="ident">name</span>()).<span class="ident">into</span>());
 		}
-		<span class="kw">let</span> <span class="ident">bench</span> <span class="op">=</span> <span class="ident">Benchmark::new</span>(<span class="ident">client</span>, <span class="self">self</span>.<span class="ident">params</span>.<span class="ident">bench</span>.<span class="ident">clone</span>(), <span class="ident">inherent_data</span>);
+		<span class="kw">let</span> <span class="ident">bench</span> <span class="op">=</span> <span class="ident">Benchmark::new</span>(<span class="ident">client</span>, <span class="self">self</span>.<span class="ident">params</span>.<span class="ident">bench</span>.<span class="ident">clone</span>(), <span class="ident">inherent_data</span>, <span class="ident">digest_items</span>);
 
 		<span class="comment">// per-block execution overhead</span>
 		{

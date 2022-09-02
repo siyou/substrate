@@ -204,6 +204,8 @@
 <span id="198">198</span>
 <span id="199">199</span>
 <span id="200">200</span>
+<span id="201">201</span>
+<span id="202">202</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2022 Parity Technologies (UK) Ltd.</span>
@@ -234,7 +236,7 @@
 <span class="kw">use</span> <span class="ident">sp_runtime</span>::{
 	<span class="ident">traits</span>::{<span class="ident">Block</span> <span class="kw">as</span> <span class="ident">BlockT</span>, <span class="ident">Zero</span>},
 	<span class="ident">transaction_validity</span>::{<span class="ident">InvalidTransaction</span>, <span class="ident">TransactionValidityError</span>},
-	<span class="ident">OpaqueExtrinsic</span>,
+	<span class="ident">Digest</span>, <span class="ident">DigestItem</span>, <span class="ident">OpaqueExtrinsic</span>,
 };
 
 <span class="kw">use</span> <span class="ident">clap::Args</span>;
@@ -271,6 +273,7 @@
 	<span class="ident">client</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">C</span><span class="op">&gt;</span>,
 	<span class="ident">params</span>: <span class="ident">BenchmarkParams</span>,
 	<span class="ident">inherent_data</span>: <span class="ident">sp_inherents::InherentData</span>,
+	<span class="ident">digest_items</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">DigestItem</span><span class="op">&gt;</span>,
 	<span class="ident">_p</span>: <span class="ident">PhantomData</span><span class="op">&lt;</span>(<span class="ident">Block</span>, <span class="ident">BA</span>)<span class="op">&gt;</span>,
 }
 
@@ -286,8 +289,9 @@
 		<span class="ident">client</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">C</span><span class="op">&gt;</span>,
 		<span class="ident">params</span>: <span class="ident">BenchmarkParams</span>,
 		<span class="ident">inherent_data</span>: <span class="ident">sp_inherents::InherentData</span>,
+		<span class="ident">digest_items</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">DigestItem</span><span class="op">&gt;</span>,
 	) -&gt; <span class="self">Self</span> {
-		<span class="self">Self</span> { <span class="ident">client</span>, <span class="ident">params</span>, <span class="ident">inherent_data</span>, <span class="ident">_p</span>: <span class="ident">PhantomData</span> }
+		<span class="self">Self</span> { <span class="ident">client</span>, <span class="ident">params</span>, <span class="ident">inherent_data</span>, <span class="ident">digest_items</span>, <span class="ident">_p</span>: <span class="ident">PhantomData</span> }
 	}
 
 	<span class="doccomment">/// Benchmark a block with only inherents.</span>
@@ -331,7 +335,7 @@
 		<span class="kw-2">&amp;</span><span class="self">self</span>,
 		<span class="ident">ext_builder</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="kw">dyn</span> <span class="ident">ExtrinsicBuilder</span><span class="op">&gt;</span>,
 	) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(<span class="ident">Block</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>)<span class="op">&gt;</span> {
-		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">builder</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">client</span>.<span class="ident">new_block</span>(<span class="ident">Default::default</span>())<span class="question-mark">?</span>;
+		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">builder</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">client</span>.<span class="ident">new_block</span>(<span class="ident">Digest</span> { <span class="ident">logs</span>: <span class="self">self</span>.<span class="ident">digest_items</span>.<span class="ident">clone</span>() })<span class="question-mark">?</span>;
 		<span class="comment">// Create and insert the inherents.</span>
 		<span class="kw">let</span> <span class="ident">inherents</span> <span class="op">=</span> <span class="ident">builder</span>.<span class="ident">create_inherents</span>(<span class="self">self</span>.<span class="ident">inherent_data</span>.<span class="ident">clone</span>())<span class="question-mark">?</span>;
 		<span class="kw">for</span> <span class="ident">inherent</span> <span class="kw">in</span> <span class="ident">inherents</span> {
