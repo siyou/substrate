@@ -809,7 +809,7 @@
 <span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">weights::WeightInfo</span>, <span class="ident">Config</span>};
 
 <span class="kw">use</span> <span class="ident">codec</span>::{<span class="ident">Decode</span>, <span class="ident">Encode</span>};
-<span class="kw">use</span> <span class="ident">frame_support</span>::{<span class="ident">weights::RefTimeWeight</span>, <span class="ident">DefaultNoBound</span>};
+<span class="kw">use</span> <span class="ident">frame_support::DefaultNoBound</span>;
 <span class="kw">use</span> <span class="ident">pallet_contracts_proc_macro</span>::{<span class="ident">ScheduleDebug</span>, <span class="ident">WeightDebug</span>};
 <span class="kw">use</span> <span class="ident">scale_info::TypeInfo</span>;
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>)]</span>
@@ -1043,166 +1043,166 @@
 <span class="attribute">#[<span class="ident">scale_info</span>(<span class="ident">skip_type_params</span>(<span class="ident">T</span>))]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">HostFnWeights</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Config</span><span class="op">&gt;</span> {
 	<span class="doccomment">/// Weight of calling `seal_caller`.</span>
-	<span class="kw">pub</span> <span class="ident">caller</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">caller</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight of calling `seal_is_contract`.</span>
-	<span class="kw">pub</span> <span class="ident">is_contract</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">is_contract</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight of calling `seal_code_hash`.</span>
-	<span class="kw">pub</span> <span class="ident">code_hash</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">code_hash</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight of calling `seal_own_code_hash`.</span>
-	<span class="kw">pub</span> <span class="ident">own_code_hash</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">own_code_hash</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight of calling `seal_caller_is_origin`.</span>
-	<span class="kw">pub</span> <span class="ident">caller_is_origin</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">caller_is_origin</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight of calling `seal_address`.</span>
-	<span class="kw">pub</span> <span class="ident">address</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">address</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight of calling `seal_gas_left`.</span>
-	<span class="kw">pub</span> <span class="ident">gas_left</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">gas_left</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight of calling `seal_balance`.</span>
-	<span class="kw">pub</span> <span class="ident">balance</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">balance</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight of calling `seal_value_transferred`.</span>
-	<span class="kw">pub</span> <span class="ident">value_transferred</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">value_transferred</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight of calling `seal_minimum_balance`.</span>
-	<span class="kw">pub</span> <span class="ident">minimum_balance</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">minimum_balance</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight of calling `seal_block_number`.</span>
-	<span class="kw">pub</span> <span class="ident">block_number</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">block_number</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight of calling `seal_now`.</span>
-	<span class="kw">pub</span> <span class="ident">now</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">now</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight of calling `seal_weight_to_fee`.</span>
-	<span class="kw">pub</span> <span class="ident">weight_to_fee</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">weight_to_fee</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight of calling `gas`.</span>
-	<span class="kw">pub</span> <span class="ident">gas</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">gas</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight of calling `seal_input`.</span>
-	<span class="kw">pub</span> <span class="ident">input</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">input</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight per input byte copied to contract memory by `seal_input`.</span>
-	<span class="kw">pub</span> <span class="ident">input_per_byte</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">input_per_byte</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight of calling `seal_return`.</span>
-	<span class="kw">pub</span> <span class="ident">r#return</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">r#return</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight per byte returned through `seal_return`.</span>
-	<span class="kw">pub</span> <span class="ident">return_per_byte</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">return_per_byte</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight of calling `seal_terminate`.</span>
-	<span class="kw">pub</span> <span class="ident">terminate</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">terminate</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight of calling `seal_random`.</span>
-	<span class="kw">pub</span> <span class="ident">random</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">random</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight of calling `seal_reposit_event`.</span>
-	<span class="kw">pub</span> <span class="ident">deposit_event</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">deposit_event</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight per topic supplied to `seal_deposit_event`.</span>
-	<span class="kw">pub</span> <span class="ident">deposit_event_per_topic</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">deposit_event_per_topic</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight per byte of an event deposited through `seal_deposit_event`.</span>
-	<span class="kw">pub</span> <span class="ident">deposit_event_per_byte</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">deposit_event_per_byte</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight of calling `seal_debug_message`.</span>
-	<span class="kw">pub</span> <span class="ident">debug_message</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">debug_message</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight of calling `seal_set_storage`.</span>
-	<span class="kw">pub</span> <span class="ident">set_storage</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">set_storage</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight per written byten of an item stored with `seal_set_storage`.</span>
-	<span class="kw">pub</span> <span class="ident">set_storage_per_new_byte</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">set_storage_per_new_byte</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight per overwritten byte of an item stored with `seal_set_storage`.</span>
-	<span class="kw">pub</span> <span class="ident">set_storage_per_old_byte</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">set_storage_per_old_byte</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight of calling `seal_set_code_hash`.</span>
-	<span class="kw">pub</span> <span class="ident">set_code_hash</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">set_code_hash</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight of calling `seal_clear_storage`.</span>
-	<span class="kw">pub</span> <span class="ident">clear_storage</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">clear_storage</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight of calling `seal_clear_storage` per byte of the stored item.</span>
-	<span class="kw">pub</span> <span class="ident">clear_storage_per_byte</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">clear_storage_per_byte</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight of calling `seal_contains_storage`.</span>
-	<span class="kw">pub</span> <span class="ident">contains_storage</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">contains_storage</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight of calling `seal_contains_storage` per byte of the stored item.</span>
-	<span class="kw">pub</span> <span class="ident">contains_storage_per_byte</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">contains_storage_per_byte</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight of calling `seal_get_storage`.</span>
-	<span class="kw">pub</span> <span class="ident">get_storage</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">get_storage</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight per byte of an item received via `seal_get_storage`.</span>
-	<span class="kw">pub</span> <span class="ident">get_storage_per_byte</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">get_storage_per_byte</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight of calling `seal_take_storage`.</span>
-	<span class="kw">pub</span> <span class="ident">take_storage</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">take_storage</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight per byte of an item received via `seal_take_storage`.</span>
-	<span class="kw">pub</span> <span class="ident">take_storage_per_byte</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">take_storage_per_byte</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight of calling `seal_transfer`.</span>
-	<span class="kw">pub</span> <span class="ident">transfer</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">transfer</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight of calling `seal_call`.</span>
-	<span class="kw">pub</span> <span class="ident">call</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">call</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight of calling `seal_delegate_call`.</span>
-	<span class="kw">pub</span> <span class="ident">delegate_call</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">delegate_call</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight surcharge that is claimed if `seal_call` does a balance transfer.</span>
-	<span class="kw">pub</span> <span class="ident">call_transfer_surcharge</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">call_transfer_surcharge</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight per byte that is cloned by supplying the `CLONE_INPUT` flag.</span>
-	<span class="kw">pub</span> <span class="ident">call_per_cloned_byte</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">call_per_cloned_byte</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight of calling `seal_instantiate`.</span>
-	<span class="kw">pub</span> <span class="ident">instantiate</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">instantiate</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight surcharge that is claimed if `seal_instantiate` does a balance transfer.</span>
-	<span class="kw">pub</span> <span class="ident">instantiate_transfer_surcharge</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">instantiate_transfer_surcharge</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight per salt byte supplied to `seal_instantiate`.</span>
-	<span class="kw">pub</span> <span class="ident">instantiate_per_salt_byte</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">instantiate_per_salt_byte</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight of calling `seal_hash_sha_256`.</span>
-	<span class="kw">pub</span> <span class="ident">hash_sha2_256</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">hash_sha2_256</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight per byte hashed by `seal_hash_sha_256`.</span>
-	<span class="kw">pub</span> <span class="ident">hash_sha2_256_per_byte</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">hash_sha2_256_per_byte</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight of calling `seal_hash_keccak_256`.</span>
-	<span class="kw">pub</span> <span class="ident">hash_keccak_256</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">hash_keccak_256</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight per byte hashed by `seal_hash_keccak_256`.</span>
-	<span class="kw">pub</span> <span class="ident">hash_keccak_256_per_byte</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">hash_keccak_256_per_byte</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight of calling `seal_hash_blake2_256`.</span>
-	<span class="kw">pub</span> <span class="ident">hash_blake2_256</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">hash_blake2_256</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight per byte hashed by `seal_hash_blake2_256`.</span>
-	<span class="kw">pub</span> <span class="ident">hash_blake2_256_per_byte</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">hash_blake2_256_per_byte</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight of calling `seal_hash_blake2_128`.</span>
-	<span class="kw">pub</span> <span class="ident">hash_blake2_128</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">hash_blake2_128</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight per byte hashed by `seal_hash_blake2_128`.</span>
-	<span class="kw">pub</span> <span class="ident">hash_blake2_128_per_byte</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">hash_blake2_128_per_byte</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight of calling `seal_ecdsa_recover`.</span>
-	<span class="kw">pub</span> <span class="ident">ecdsa_recover</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">ecdsa_recover</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// Weight of calling `seal_ecdsa_to_eth_address`.</span>
-	<span class="kw">pub</span> <span class="ident">ecdsa_to_eth_address</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">ecdsa_to_eth_address</span>: <span class="ident">u64</span>,
 
 	<span class="doccomment">/// The type parameter is used in the default implementation.</span>
 	<span class="attribute">#[<span class="ident">codec</span>(<span class="ident">skip</span>)]</span>
@@ -1229,13 +1229,13 @@
 
 <span class="macro">macro_rules!</span> <span class="ident">cost_batched_args</span> {
 	(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span>:<span class="ident">ident</span>, $( <span class="macro-nonterminal">$</span><span class="macro-nonterminal">arg</span>: <span class="ident">expr</span> ),<span class="op">+</span>) =&gt; {
-		<span class="macro">cost_args!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span>, $( <span class="macro-nonterminal">$</span><span class="macro-nonterminal">arg</span> ),<span class="op">+</span>) <span class="op">/</span> <span class="ident">RefTimeWeight::from</span>(<span class="ident">API_BENCHMARK_BATCH_SIZE</span>)
+		<span class="macro">cost_args!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span>, $( <span class="macro-nonterminal">$</span><span class="macro-nonterminal">arg</span> ),<span class="op">+</span>) <span class="op">/</span> <span class="ident">u64::from</span>(<span class="ident">API_BENCHMARK_BATCH_SIZE</span>)
 	}
 }
 
 <span class="macro">macro_rules!</span> <span class="ident">cost_instr_no_params_with_batch_size</span> {
 	(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span>:<span class="ident">ident</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">batch_size</span>:<span class="ident">expr</span>) =&gt; {
-		(<span class="macro">cost_args!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span>, <span class="number">1</span>) <span class="op">/</span> <span class="ident">RefTimeWeight::from</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">batch_size</span>)) <span class="kw">as</span> <span class="ident">u32</span>
+		(<span class="macro">cost_args!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">name</span>, <span class="number">1</span>) <span class="op">/</span> <span class="ident">u64::from</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">batch_size</span>)) <span class="kw">as</span> <span class="ident">u32</span>
 	};
 }
 

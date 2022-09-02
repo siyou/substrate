@@ -1415,8 +1415,8 @@
 <span class="doccomment">/// be updated all together once proof size is accounted for.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>, <span class="ident">Default</span>, <span class="ident">RuntimeDebug</span>, <span class="ident">Encode</span>, <span class="ident">Decode</span>, <span class="ident">TypeInfo</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">RuntimeDbWeight</span> {
-	<span class="kw">pub</span> <span class="ident">read</span>: <span class="ident">RefTimeWeight</span>,
-	<span class="kw">pub</span> <span class="ident">write</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="kw">pub</span> <span class="ident">read</span>: <span class="ident">u64</span>,
+	<span class="kw">pub</span> <span class="ident">write</span>: <span class="ident">u64</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">RuntimeDbWeight</span> {
@@ -1686,7 +1686,7 @@
 			<span class="kw">fn</span> <span class="ident">f03</span>(<span class="ident">_origin</span>) { <span class="macro">unimplemented!</span>(); }
 
 			<span class="comment">// weight = a x 10 + b</span>
-			<span class="attribute">#[<span class="ident">weight</span> <span class="op">=</span> ((<span class="ident">_a</span> <span class="op">*</span> <span class="number">10</span> <span class="op">+</span> <span class="ident">_eb</span> <span class="op">*</span> <span class="number">1</span>) <span class="kw">as</span> <span class="ident">RefTimeWeight</span>, <span class="ident">DispatchClass::Normal</span>, <span class="ident">Pays::Yes</span>)]</span>
+			<span class="attribute">#[<span class="ident">weight</span> <span class="op">=</span> ((<span class="ident">_a</span> <span class="op">*</span> <span class="number">10</span> <span class="op">+</span> <span class="ident">_eb</span> <span class="op">*</span> <span class="number">1</span>) <span class="kw">as</span> <span class="ident">u64</span>, <span class="ident">DispatchClass::Normal</span>, <span class="ident">Pays::Yes</span>)]</span>
 			<span class="kw">fn</span> <span class="ident">f11</span>(<span class="ident">_origin</span>, <span class="ident">_a</span>: <span class="ident">u32</span>, <span class="ident">_eb</span>: <span class="ident">u32</span>) { <span class="macro">unimplemented!</span>(); }
 
 			<span class="attribute">#[<span class="ident">weight</span> <span class="op">=</span> (<span class="number">0</span>, <span class="ident">DispatchClass::Operational</span>, <span class="ident">Pays::Yes</span>)]</span>

@@ -476,10 +476,6 @@
 <span id="470">470</span>
 <span id="471">471</span>
 <span id="472">472</span>
-<span id="473">473</span>
-<span id="474">474</span>
-<span id="475">475</span>
-<span id="476">476</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2022 Parity Technologies (UK) Ltd.</span>
@@ -506,10 +502,6 @@
 
 <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
 
-<span class="doccomment">/// The unit of measurement for computational time spent when executing runtime logic on reference</span>
-<span class="doccomment">/// hardware.</span>
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">RefTimeWeight</span> <span class="op">=</span> <span class="ident">u64</span>;
-
 <span class="attribute">#[<span class="ident">derive</span>(
 	<span class="ident">Encode</span>,
 	<span class="ident">Decode</span>,
@@ -528,27 +520,27 @@
 <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>, <span class="ident">derive</span>(<span class="ident">Serialize</span>, <span class="ident">Deserialize</span>))]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Weight</span> {
 	<span class="doccomment">/// The weight of computational time used based on some reference hardware.</span>
-	<span class="ident">ref_time</span>: <span class="ident">RefTimeWeight</span>,
+	<span class="ident">ref_time</span>: <span class="ident">u64</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">Weight</span> {
 	<span class="doccomment">/// Set the reference time part of the weight.</span>
-	<span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">set_ref_time</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">c</span>: <span class="ident">RefTimeWeight</span>) -&gt; <span class="self">Self</span> {
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">set_ref_time</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">c</span>: <span class="ident">u64</span>) -&gt; <span class="self">Self</span> {
 		<span class="self">self</span>.<span class="ident">ref_time</span> <span class="op">=</span> <span class="ident">c</span>;
 		<span class="self">self</span>
 	}
 
 	<span class="doccomment">/// Return the reference time part of the weight.</span>
-	<span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">ref_time</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">RefTimeWeight</span> {
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">ref_time</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">u64</span> {
 		<span class="self">self</span>.<span class="ident">ref_time</span>
 	}
 
 	<span class="doccomment">/// Return a mutable reference time part of the weight.</span>
-	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">ref_time_mut</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut</span> <span class="ident">RefTimeWeight</span> {
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">ref_time_mut</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut</span> <span class="ident">u64</span> {
 		<span class="kw-2">&amp;mut</span> <span class="self">self</span>.<span class="ident">ref_time</span>
 	}
 
-	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">MAX</span>: <span class="self">Self</span> <span class="op">=</span> <span class="self">Self</span> { <span class="ident">ref_time</span>: <span class="ident">RefTimeWeight::MAX</span> };
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">MAX</span>: <span class="self">Self</span> <span class="op">=</span> <span class="self">Self</span> { <span class="ident">ref_time</span>: <span class="ident">u64::MAX</span> };
 
 	<span class="doccomment">/// Get the conservative min of `self` and `other` weight.</span>
 	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">min</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="self">Self</span>) -&gt; <span class="self">Self</span> {
@@ -571,7 +563,7 @@
 	}
 
 	<span class="doccomment">/// Construct [`Weight`] with reference time weight.</span>
-	<span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">from_ref_time</span>(<span class="ident">ref_time</span>: <span class="ident">RefTimeWeight</span>) -&gt; <span class="self">Self</span> {
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">from_ref_time</span>(<span class="ident">ref_time</span>: <span class="ident">u64</span>) -&gt; <span class="self">Self</span> {
 		<span class="self">Self</span> { <span class="ident">ref_time</span> }
 	}
 
@@ -862,8 +854,8 @@
 
 <span class="comment">// TODO: Eventually remove these</span>
 
-<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">RefTimeWeight</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">PostDispatchInfo</span> {
-	<span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">maybe_actual_computation</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">RefTimeWeight</span><span class="op">&gt;</span>) -&gt; <span class="self">Self</span> {
+<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">PostDispatchInfo</span> {
+	<span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">maybe_actual_computation</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>) -&gt; <span class="self">Self</span> {
 		<span class="kw">let</span> <span class="ident">actual_weight</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">maybe_actual_computation</span> {
 			<span class="prelude-val">Some</span>(<span class="ident">actual_computation</span>) =&gt; <span class="prelude-val">Some</span>(<span class="ident">Weight::zero</span>().<span class="ident">set_ref_time</span>(<span class="ident">actual_computation</span>)),
 			<span class="prelude-val">None</span> =&gt; <span class="prelude-val">None</span>,
@@ -872,8 +864,8 @@
 	}
 }
 
-<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span>(<span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">RefTimeWeight</span><span class="op">&gt;</span>, <span class="ident">Pays</span>)<span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">PostDispatchInfo</span> {
-	<span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">post_weight_info</span>: (<span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">RefTimeWeight</span><span class="op">&gt;</span>, <span class="ident">Pays</span>)) -&gt; <span class="self">Self</span> {
+<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span>(<span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>, <span class="ident">Pays</span>)<span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">PostDispatchInfo</span> {
+	<span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">post_weight_info</span>: (<span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>, <span class="ident">Pays</span>)) -&gt; <span class="self">Self</span> {
 		<span class="kw">let</span> (<span class="ident">maybe_actual_time</span>, <span class="ident">pays_fee</span>) <span class="op">=</span> <span class="ident">post_weight_info</span>;
 		<span class="kw">let</span> <span class="ident">actual_weight</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">maybe_actual_time</span> {
 			<span class="prelude-val">Some</span>(<span class="ident">actual_time</span>) =&gt; <span class="prelude-val">Some</span>(<span class="ident">Weight::zero</span>().<span class="ident">set_ref_time</span>(<span class="ident">actual_time</span>)),
@@ -883,73 +875,73 @@
 	}
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">WeighData</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">RefTimeWeight</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">WeighData</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">u64</span> {
 	<span class="kw">fn</span> <span class="ident">weigh_data</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: <span class="ident">T</span>) -&gt; <span class="ident">Weight</span> {
 		<span class="kw">return</span> <span class="ident">Weight::zero</span>().<span class="ident">set_ref_time</span>(<span class="kw-2">*</span><span class="self">self</span>)
 	}
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">ClassifyDispatch</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">RefTimeWeight</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">ClassifyDispatch</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">u64</span> {
 	<span class="kw">fn</span> <span class="ident">classify_dispatch</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: <span class="ident">T</span>) -&gt; <span class="ident">DispatchClass</span> {
 		<span class="ident">DispatchClass::Normal</span>
 	}
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">PaysFee</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">RefTimeWeight</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">PaysFee</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">u64</span> {
 	<span class="kw">fn</span> <span class="ident">pays_fee</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: <span class="ident">T</span>) -&gt; <span class="ident">Pays</span> {
 		<span class="ident">Pays::Yes</span>
 	}
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">WeighData</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> (<span class="ident">RefTimeWeight</span>, <span class="ident">DispatchClass</span>, <span class="ident">Pays</span>) {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">WeighData</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> (<span class="ident">u64</span>, <span class="ident">DispatchClass</span>, <span class="ident">Pays</span>) {
 	<span class="kw">fn</span> <span class="ident">weigh_data</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">args</span>: <span class="ident">T</span>) -&gt; <span class="ident">Weight</span> {
 		<span class="kw">return</span> <span class="self">self</span>.<span class="number">0</span>.<span class="ident">weigh_data</span>(<span class="ident">args</span>)
 	}
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">ClassifyDispatch</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> (<span class="ident">RefTimeWeight</span>, <span class="ident">DispatchClass</span>, <span class="ident">Pays</span>) {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">ClassifyDispatch</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> (<span class="ident">u64</span>, <span class="ident">DispatchClass</span>, <span class="ident">Pays</span>) {
 	<span class="kw">fn</span> <span class="ident">classify_dispatch</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: <span class="ident">T</span>) -&gt; <span class="ident">DispatchClass</span> {
 		<span class="self">self</span>.<span class="number">1</span>
 	}
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">PaysFee</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> (<span class="ident">RefTimeWeight</span>, <span class="ident">DispatchClass</span>, <span class="ident">Pays</span>) {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">PaysFee</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> (<span class="ident">u64</span>, <span class="ident">DispatchClass</span>, <span class="ident">Pays</span>) {
 	<span class="kw">fn</span> <span class="ident">pays_fee</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: <span class="ident">T</span>) -&gt; <span class="ident">Pays</span> {
 		<span class="self">self</span>.<span class="number">2</span>
 	}
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">WeighData</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> (<span class="ident">RefTimeWeight</span>, <span class="ident">DispatchClass</span>) {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">WeighData</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> (<span class="ident">u64</span>, <span class="ident">DispatchClass</span>) {
 	<span class="kw">fn</span> <span class="ident">weigh_data</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">args</span>: <span class="ident">T</span>) -&gt; <span class="ident">Weight</span> {
 		<span class="kw">return</span> <span class="self">self</span>.<span class="number">0</span>.<span class="ident">weigh_data</span>(<span class="ident">args</span>)
 	}
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">ClassifyDispatch</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> (<span class="ident">RefTimeWeight</span>, <span class="ident">DispatchClass</span>) {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">ClassifyDispatch</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> (<span class="ident">u64</span>, <span class="ident">DispatchClass</span>) {
 	<span class="kw">fn</span> <span class="ident">classify_dispatch</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: <span class="ident">T</span>) -&gt; <span class="ident">DispatchClass</span> {
 		<span class="self">self</span>.<span class="number">1</span>
 	}
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">PaysFee</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> (<span class="ident">RefTimeWeight</span>, <span class="ident">DispatchClass</span>) {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">PaysFee</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> (<span class="ident">u64</span>, <span class="ident">DispatchClass</span>) {
 	<span class="kw">fn</span> <span class="ident">pays_fee</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: <span class="ident">T</span>) -&gt; <span class="ident">Pays</span> {
 		<span class="ident">Pays::Yes</span>
 	}
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">WeighData</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> (<span class="ident">RefTimeWeight</span>, <span class="ident">Pays</span>) {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">WeighData</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> (<span class="ident">u64</span>, <span class="ident">Pays</span>) {
 	<span class="kw">fn</span> <span class="ident">weigh_data</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">args</span>: <span class="ident">T</span>) -&gt; <span class="ident">Weight</span> {
 		<span class="kw">return</span> <span class="self">self</span>.<span class="number">0</span>.<span class="ident">weigh_data</span>(<span class="ident">args</span>)
 	}
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">ClassifyDispatch</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> (<span class="ident">RefTimeWeight</span>, <span class="ident">Pays</span>) {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">ClassifyDispatch</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> (<span class="ident">u64</span>, <span class="ident">Pays</span>) {
 	<span class="kw">fn</span> <span class="ident">classify_dispatch</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: <span class="ident">T</span>) -&gt; <span class="ident">DispatchClass</span> {
 		<span class="ident">DispatchClass::Normal</span>
 	}
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">PaysFee</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> (<span class="ident">RefTimeWeight</span>, <span class="ident">Pays</span>) {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">PaysFee</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> (<span class="ident">u64</span>, <span class="ident">Pays</span>) {
 	<span class="kw">fn</span> <span class="ident">pays_fee</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: <span class="ident">T</span>) -&gt; <span class="ident">Pays</span> {
 		<span class="self">self</span>.<span class="number">1</span>
 	}
