@@ -856,7 +856,6 @@
 <span id="850">850</span>
 <span id="851">851</span>
 <span id="852">852</span>
-<span id="853">853</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2019-2022 Parity Technologies (UK) Ltd.</span>
@@ -939,12 +938,11 @@
 };
 <span class="kw">use</span> <span class="ident">log::error</span>;
 <span class="kw">use</span> <span class="ident">parking_lot</span>::{<span class="ident">Mutex</span>, <span class="ident">RwLock</span>};
+<span class="kw">use</span> <span class="ident">sc_network_common::protocol::ProtocolName</span>;
 <span class="kw">use</span> <span class="ident">std</span>::{
-	<span class="ident">borrow::Cow</span>,
 	<span class="ident">collections::VecDeque</span>,
 	<span class="ident">mem</span>,
 	<span class="ident">pin::Pin</span>,
-	<span class="ident">str</span>,
 	<span class="ident">sync::Arc</span>,
 	<span class="ident">task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>},
 	<span class="ident">time</span>::{<span class="ident">Duration</span>, <span class="ident">Instant</span>},
@@ -1005,9 +1003,9 @@
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ProtocolConfig</span> {
 	<span class="doccomment">/// Name of the protocol.</span>
-	<span class="kw">pub</span> <span class="ident">name</span>: <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>,
+	<span class="kw">pub</span> <span class="ident">name</span>: <span class="ident">ProtocolName</span>,
 	<span class="doccomment">/// Names of the protocol to use if the main one isn&#39;t available.</span>
-	<span class="kw">pub</span> <span class="ident">fallback_names</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+	<span class="kw">pub</span> <span class="ident">fallback_names</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ProtocolName</span><span class="op">&gt;</span>,
 	<span class="doccomment">/// Handshake of the protocol. The `RwLock` is locked every time a new substream is opened.</span>
 	<span class="kw">pub</span> <span class="ident">handshake</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">RwLock</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 	<span class="doccomment">/// Maximum allowed size for a notification.</span>
@@ -1156,7 +1154,7 @@
 		<span class="doccomment">/// Index of the protocol in the list of protocols passed at initialization.</span>
 		<span class="ident">protocol_index</span>: <span class="ident">usize</span>,
 		<span class="doccomment">/// Name of the protocol that was actually negotiated, if the default one wasn&#39;t available.</span>
-		<span class="ident">negotiated_fallback</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+		<span class="ident">negotiated_fallback</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ProtocolName</span><span class="op">&gt;</span>,
 		<span class="doccomment">/// The endpoint of the connection that is open for custom protocols.</span>
 		<span class="ident">endpoint</span>: <span class="ident">ConnectedPoint</span>,
 		<span class="doccomment">/// Handshake that was sent to us.</span>

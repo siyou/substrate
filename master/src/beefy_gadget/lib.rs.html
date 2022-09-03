@@ -277,6 +277,8 @@
 <span id="271">271</span>
 <span id="272">272</span>
 <span id="273">273</span>
+<span id="274">274</span>
+<span id="275">275</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2021-2022 Parity Technologies (UK) Ltd.</span>
@@ -299,6 +301,7 @@
 <span class="kw">use</span> <span class="ident">prometheus::Registry</span>;
 <span class="kw">use</span> <span class="ident">sc_client_api</span>::{<span class="ident">Backend</span>, <span class="ident">BlockchainEvents</span>, <span class="ident">Finalizer</span>};
 <span class="kw">use</span> <span class="ident">sc_consensus::BlockImport</span>;
+<span class="kw">use</span> <span class="ident">sc_network::ProtocolName</span>;
 <span class="kw">use</span> <span class="ident">sc_network_gossip::Network</span> <span class="kw">as</span> <span class="ident">GossipNetwork</span>;
 <span class="kw">use</span> <span class="ident">sp_api::ProvideRuntimeApi</span>;
 <span class="kw">use</span> <span class="ident">sp_blockchain::HeaderBackend</span>;
@@ -334,6 +337,7 @@
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod</span> <span class="ident">beefy_protocol_name</span> {
 	<span class="kw">use</span> <span class="ident">sc_chain_spec::ChainSpec</span>;
+	<span class="kw">use</span> <span class="ident">sc_network::ProtocolName</span>;
 
 	<span class="kw">const</span> <span class="ident">NAME</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;/beefy/1&quot;</span>;
 	<span class="doccomment">/// Old names for the notifications protocol, used for backward compatibility.</span>
@@ -345,7 +349,7 @@
 	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">standard_name</span><span class="op">&lt;</span><span class="ident">Hash</span>: <span class="ident">AsRef</span><span class="op">&lt;</span>[<span class="ident">u8</span>]<span class="op">&gt;</span><span class="op">&gt;</span>(
 		<span class="ident">genesis_hash</span>: <span class="kw-2">&amp;</span><span class="ident">Hash</span>,
 		<span class="ident">chain_spec</span>: <span class="kw-2">&amp;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">ChainSpec</span><span class="op">&gt;</span>,
-	) -&gt; <span class="ident">std::borrow::Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span> {
+	) -&gt; <span class="ident">ProtocolName</span> {
 		<span class="kw">let</span> <span class="ident">chain_prefix</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">chain_spec</span>.<span class="ident">fork_id</span>() {
 			<span class="prelude-val">Some</span>(<span class="ident">fork_id</span>) =&gt; <span class="macro">format!</span>(<span class="string">&quot;/{}/{}&quot;</span>, <span class="ident">hex::encode</span>(<span class="ident">genesis_hash</span>), <span class="ident">fork_id</span>),
 			<span class="prelude-val">None</span> =&gt; <span class="macro">format!</span>(<span class="string">&quot;/{}&quot;</span>, <span class="ident">hex::encode</span>(<span class="ident">genesis_hash</span>)),
@@ -358,7 +362,7 @@
 <span class="doccomment">/// [`sc_network::config::NetworkConfiguration::extra_sets`].</span>
 <span class="doccomment">/// For standard protocol name see [`beefy_protocol_name::standard_name`].</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">beefy_peers_set_config</span>(
-	<span class="ident">protocol_name</span>: <span class="ident">std::borrow::Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>,
+	<span class="ident">protocol_name</span>: <span class="ident">ProtocolName</span>,
 ) -&gt; <span class="ident">sc_network::config::NonDefaultSetConfig</span> {
 	<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">cfg</span> <span class="op">=</span> <span class="ident">sc_network::config::NonDefaultSetConfig::new</span>(<span class="ident">protocol_name</span>, <span class="number">1024</span> <span class="op">*</span> <span class="number">1024</span>);
 
@@ -481,7 +485,7 @@
 	<span class="doccomment">/// Prometheus metric registry</span>
 	<span class="kw">pub</span> <span class="ident">prometheus_registry</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Registry</span><span class="op">&gt;</span>,
 	<span class="doccomment">/// Chain specific GRANDPA protocol name. See [`beefy_protocol_name::standard_name`].</span>
-	<span class="kw">pub</span> <span class="ident">protocol_name</span>: <span class="ident">std::borrow::Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>,
+	<span class="kw">pub</span> <span class="ident">protocol_name</span>: <span class="ident">ProtocolName</span>,
 	<span class="doccomment">/// Links between the block importer, the background voter and the RPC layer.</span>
 	<span class="kw">pub</span> <span class="ident">links</span>: <span class="ident">BeefyVoterLinks</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>,
 }

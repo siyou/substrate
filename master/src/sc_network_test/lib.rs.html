@@ -1165,7 +1165,6 @@
 <span class="kw">mod</span> <span class="ident">sync</span>;
 
 <span class="kw">use</span> <span class="ident">std</span>::{
-	<span class="ident">borrow::Cow</span>,
 	<span class="ident">collections::HashMap</span>,
 	<span class="ident">marker::PhantomData</span>,
 	<span class="ident">pin::Pin</span>,
@@ -1200,6 +1199,7 @@
 };
 <span class="kw">use</span> <span class="ident">sc_network_common</span>::{
 	<span class="ident">config</span>::{<span class="ident">MultiaddrWithPeerId</span>, <span class="ident">ProtocolId</span>},
+	<span class="ident">protocol::ProtocolName</span>,
 	<span class="ident">service</span>::{<span class="ident">NetworkBlock</span>, <span class="ident">NetworkStateInfo</span>, <span class="ident">NetworkSyncForkRequest</span>},
 	<span class="ident">sync::warp</span>::{<span class="ident">AuthorityList</span>, <span class="ident">EncodedProof</span>, <span class="ident">SetId</span>, <span class="ident">VerificationResult</span>, <span class="ident">WarpSyncProvider</span>},
 };
@@ -1824,7 +1824,7 @@
 	<span class="doccomment">/// Block announce validator.</span>
 	<span class="kw">pub</span> <span class="ident">block_announce_validator</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">BlockAnnounceValidator</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 	<span class="doccomment">/// List of notification protocols that the network must support.</span>
-	<span class="kw">pub</span> <span class="ident">notifications_protocols</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+	<span class="kw">pub</span> <span class="ident">notifications_protocols</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ProtocolName</span><span class="op">&gt;</span>,
 	<span class="doccomment">/// The indices of the peers the peer should be connected to.</span>
 	<span class="doccomment">///</span>
 	<span class="doccomment">/// If `None`, it will be connected to all other peers.</span>

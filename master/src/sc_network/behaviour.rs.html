@@ -570,6 +570,8 @@
 <span id="564">564</span>
 <span id="565">565</span>
 <span id="566">566</span>
+<span id="567">567</span>
+<span id="568">568</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2019-2022 Parity Technologies (UK) Ltd.</span>
@@ -614,7 +616,10 @@
 <span class="kw">use</span> <span class="ident">sc_consensus::import_queue</span>::{<span class="ident">IncomingBlock</span>, <span class="ident">Origin</span>};
 <span class="kw">use</span> <span class="ident">sc_network_common</span>::{
 	<span class="ident">config::ProtocolId</span>,
-	<span class="ident">protocol::event</span>::{<span class="ident">DhtEvent</span>, <span class="ident">ObservedRole</span>},
+	<span class="ident">protocol</span>::{
+		<span class="ident">event</span>::{<span class="ident">DhtEvent</span>, <span class="ident">ObservedRole</span>},
+		<span class="ident">ProtocolName</span>,
+	},
 	<span class="ident">request_responses</span>::{<span class="ident">IfDisconnected</span>, <span class="ident">ProtocolConfig</span>, <span class="ident">RequestFailure</span>},
 };
 <span class="kw">use</span> <span class="ident">sc_peerset::PeersetHandle</span>;
@@ -625,7 +630,6 @@
 	<span class="ident">Justifications</span>,
 };
 <span class="kw">use</span> <span class="ident">std</span>::{
-	<span class="ident">borrow::Cow</span>,
 	<span class="ident">collections</span>::{<span class="ident">HashSet</span>, <span class="ident">VecDeque</span>},
 	<span class="ident">iter</span>,
 	<span class="ident">task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>},
@@ -689,7 +693,7 @@
 		<span class="doccomment">/// Peer which sent us a request.</span>
 		<span class="ident">peer</span>: <span class="ident">PeerId</span>,
 		<span class="doccomment">/// Protocol name of the request.</span>
-		<span class="ident">protocol</span>: <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>,
+		<span class="ident">protocol</span>: <span class="ident">ProtocolName</span>,
 		<span class="doccomment">/// If `Ok`, contains the time elapsed between when we received the request and when we</span>
 		<span class="doccomment">/// sent back the response. If `Err`, the error that happened.</span>
 		<span class="ident">result</span>: <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Duration</span>, <span class="ident">ResponseFailure</span><span class="op">&gt;</span>,
@@ -702,7 +706,7 @@
 		<span class="doccomment">/// Peer that we send a request to.</span>
 		<span class="ident">peer</span>: <span class="ident">PeerId</span>,
 		<span class="doccomment">/// Name of the protocol in question.</span>
-		<span class="ident">protocol</span>: <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>,
+		<span class="ident">protocol</span>: <span class="ident">ProtocolName</span>,
 		<span class="doccomment">/// Duration the request took.</span>
 		<span class="ident">duration</span>: <span class="ident">Duration</span>,
 		<span class="doccomment">/// Result of the request.</span>
@@ -716,12 +720,12 @@
 		<span class="doccomment">/// Node we opened the substream with.</span>
 		<span class="ident">remote</span>: <span class="ident">PeerId</span>,
 		<span class="doccomment">/// The concerned protocol. Each protocol uses a different substream.</span>
-		<span class="ident">protocol</span>: <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>,
+		<span class="ident">protocol</span>: <span class="ident">ProtocolName</span>,
 		<span class="doccomment">/// If the negotiation didn&#39;t use the main name of the protocol (the one in</span>
 		<span class="doccomment">/// `notifications_protocol`), then this field contains which name has actually been</span>
 		<span class="doccomment">/// used.</span>
 		<span class="doccomment">/// See also [`crate::Event::NotificationStreamOpened`].</span>
-		<span class="ident">negotiated_fallback</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+		<span class="ident">negotiated_fallback</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ProtocolName</span><span class="op">&gt;</span>,
 		<span class="doccomment">/// Object that permits sending notifications to the peer.</span>
 		<span class="ident">notifications_sink</span>: <span class="ident">NotificationsSink</span>,
 		<span class="doccomment">/// Role of the remote.</span>
@@ -737,7 +741,7 @@
 		<span class="doccomment">/// Id of the peer we are connected to.</span>
 		<span class="ident">remote</span>: <span class="ident">PeerId</span>,
 		<span class="doccomment">/// The concerned protocol. Each protocol uses a different substream.</span>
-		<span class="ident">protocol</span>: <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>,
+		<span class="ident">protocol</span>: <span class="ident">ProtocolName</span>,
 		<span class="doccomment">/// Replacement for the previous [`NotificationsSink`].</span>
 		<span class="ident">notifications_sink</span>: <span class="ident">NotificationsSink</span>,
 	},
@@ -748,7 +752,7 @@
 		<span class="doccomment">/// Node we closed the substream with.</span>
 		<span class="ident">remote</span>: <span class="ident">PeerId</span>,
 		<span class="doccomment">/// The concerned protocol. Each protocol uses a different substream.</span>
-		<span class="ident">protocol</span>: <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>,
+		<span class="ident">protocol</span>: <span class="ident">ProtocolName</span>,
 	},
 
 	<span class="doccomment">/// Received one or more messages from the given node using the given protocol.</span>
@@ -756,7 +760,7 @@
 		<span class="doccomment">/// Node we received the message from.</span>
 		<span class="ident">remote</span>: <span class="ident">PeerId</span>,
 		<span class="doccomment">/// Concerned protocol and associated message.</span>
-		<span class="ident">messages</span>: <span class="ident">Vec</span><span class="op">&lt;</span>(<span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>, <span class="ident">Bytes</span>)<span class="op">&gt;</span>,
+		<span class="ident">messages</span>: <span class="ident">Vec</span><span class="op">&lt;</span>(<span class="ident">ProtocolName</span>, <span class="ident">Bytes</span>)<span class="op">&gt;</span>,
 	},
 
 	<span class="doccomment">/// Now connected to a new peer for syncing purposes.</span>

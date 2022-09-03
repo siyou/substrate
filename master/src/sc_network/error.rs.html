@@ -81,6 +81,7 @@
 <span id="75">75</span>
 <span id="76">76</span>
 <span id="77">77</span>
+<span id="78">78</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2017-2022 Parity Technologies (UK) Ltd.</span>
@@ -103,8 +104,9 @@
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::config::TransportConfig</span>;
 <span class="kw">use</span> <span class="ident">libp2p</span>::{<span class="ident">Multiaddr</span>, <span class="ident">PeerId</span>};
+<span class="kw">use</span> <span class="ident">sc_network_common::protocol::ProtocolName</span>;
 
-<span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">borrow::Cow</span>, <span class="ident">fmt</span>};
+<span class="kw">use</span> <span class="ident">std::fmt</span>;
 
 <span class="doccomment">/// Result type alias for the network.</span>
 <span class="kw">pub</span> <span class="kw">type</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">std::result::Result</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Error</span><span class="op">&gt;</span>;
@@ -148,7 +150,7 @@
 	<span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;Request-response protocol registered multiple times: {protocol}&quot;</span>)]</span>
 	<span class="ident">DuplicateRequestResponseProtocol</span> {
 		<span class="doccomment">/// Name of the protocol registered multiple times.</span>
-		<span class="ident">protocol</span>: <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>,
+		<span class="ident">protocol</span>: <span class="ident">ProtocolName</span>,
 	},
 }
 

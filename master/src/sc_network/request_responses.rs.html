@@ -1346,6 +1346,7 @@
 <span id="1340">1340</span>
 <span id="1341">1341</span>
 <span id="1342">1342</span>
+<span id="1343">1343</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2019-2022 Parity Technologies (UK) Ltd.</span>
@@ -1398,11 +1399,13 @@
 		<span class="ident">NetworkBehaviourAction</span>, <span class="ident">PollParameters</span>,
 	},
 };
-<span class="kw">use</span> <span class="ident">sc_network_common::request_responses</span>::{
-	<span class="ident">IfDisconnected</span>, <span class="ident">IncomingRequest</span>, <span class="ident">OutgoingResponse</span>, <span class="ident">ProtocolConfig</span>, <span class="ident">RequestFailure</span>,
+<span class="kw">use</span> <span class="ident">sc_network_common</span>::{
+	<span class="ident">protocol::ProtocolName</span>,
+	<span class="ident">request_responses</span>::{
+		<span class="ident">IfDisconnected</span>, <span class="ident">IncomingRequest</span>, <span class="ident">OutgoingResponse</span>, <span class="ident">ProtocolConfig</span>, <span class="ident">RequestFailure</span>,
+	},
 };
 <span class="kw">use</span> <span class="ident">std</span>::{
-	<span class="ident">borrow::Cow</span>,
 	<span class="ident">collections</span>::{<span class="ident">hash_map::Entry</span>, <span class="ident">HashMap</span>},
 	<span class="ident">io</span>, <span class="ident">iter</span>,
 	<span class="ident">pin::Pin</span>,
@@ -1423,7 +1426,7 @@
 		<span class="doccomment">/// Peer which has emitted the request.</span>
 		<span class="ident">peer</span>: <span class="ident">PeerId</span>,
 		<span class="doccomment">/// Name of the protocol in question.</span>
-		<span class="ident">protocol</span>: <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>,
+		<span class="ident">protocol</span>: <span class="ident">ProtocolName</span>,
 		<span class="doccomment">/// Whether handling the request was successful or unsuccessful.</span>
 		<span class="doccomment">///</span>
 		<span class="doccomment">/// When successful contains the time elapsed between when we received the request and when</span>
@@ -1439,7 +1442,7 @@
 		<span class="doccomment">/// Peer that we send a request to.</span>
 		<span class="ident">peer</span>: <span class="ident">PeerId</span>,
 		<span class="doccomment">/// Name of the protocol in question.</span>
-		<span class="ident">protocol</span>: <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>,
+		<span class="ident">protocol</span>: <span class="ident">ProtocolName</span>,
 		<span class="doccomment">/// Duration the request took.</span>
 		<span class="ident">duration</span>: <span class="ident">Duration</span>,
 		<span class="doccomment">/// Result of the request.</span>
@@ -1458,12 +1461,12 @@
 <span class="doccomment">/// [`ProtocolRequestId`]s.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Hash</span>)]</span>
 <span class="kw">struct</span> <span class="ident">ProtocolRequestId</span> {
-	<span class="ident">protocol</span>: <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>,
+	<span class="ident">protocol</span>: <span class="ident">ProtocolName</span>,
 	<span class="ident">request_id</span>: <span class="ident">RequestId</span>,
 }
 
-<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span>(<span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>, <span class="ident">RequestId</span>)<span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">ProtocolRequestId</span> {
-	<span class="kw">fn</span> <span class="ident">from</span>((<span class="ident">protocol</span>, <span class="ident">request_id</span>): (<span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>, <span class="ident">RequestId</span>)) -&gt; <span class="self">Self</span> {
+<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span>(<span class="ident">ProtocolName</span>, <span class="ident">RequestId</span>)<span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">ProtocolRequestId</span> {
+	<span class="kw">fn</span> <span class="ident">from</span>((<span class="ident">protocol</span>, <span class="ident">request_id</span>): (<span class="ident">ProtocolName</span>, <span class="ident">RequestId</span>)) -&gt; <span class="self">Self</span> {
 		<span class="self">Self</span> { <span class="ident">protocol</span>, <span class="ident">request_id</span> }
 	}
 }
@@ -1474,7 +1477,7 @@
 	<span class="doccomment">/// Contains the underlying libp2p `RequestResponse` behaviour, plus an optional</span>
 	<span class="doccomment">/// &quot;response builder&quot; used to build responses for incoming requests.</span>
 	<span class="ident">protocols</span>: <span class="ident">HashMap</span><span class="op">&lt;</span>
-		<span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>,
+		<span class="ident">ProtocolName</span>,
 		(<span class="ident">RequestResponse</span><span class="op">&lt;</span><span class="ident">GenericCodec</span><span class="op">&gt;</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">mpsc::Sender</span><span class="op">&lt;</span><span class="ident">IncomingRequest</span><span class="op">&gt;</span><span class="op">&gt;</span>),
 	<span class="op">&gt;</span>,
 
@@ -1510,7 +1513,7 @@
 	<span class="ident">request_id</span>: <span class="ident">RequestId</span>,
 	<span class="ident">request</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>,
 	<span class="ident">channel</span>: <span class="ident">ResponseChannel</span><span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, ()<span class="op">&gt;</span><span class="op">&gt;</span>,
-	<span class="ident">protocol</span>: <span class="ident">String</span>,
+	<span class="ident">protocol</span>: <span class="ident">ProtocolName</span>,
 	<span class="ident">resp_builder</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">futures::channel::mpsc::Sender</span><span class="op">&lt;</span><span class="ident">IncomingRequest</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 	<span class="comment">// Once we get incoming request we save all params, create an async call to Peerset</span>
 	<span class="comment">// to get the reputation of the peer.</span>
@@ -1521,7 +1524,7 @@
 <span class="kw">struct</span> <span class="ident">RequestProcessingOutcome</span> {
 	<span class="ident">peer</span>: <span class="ident">PeerId</span>,
 	<span class="ident">request_id</span>: <span class="ident">RequestId</span>,
-	<span class="ident">protocol</span>: <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>,
+	<span class="ident">protocol</span>: <span class="ident">ProtocolName</span>,
 	<span class="ident">inner_channel</span>: <span class="ident">ResponseChannel</span><span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, ()<span class="op">&gt;</span><span class="op">&gt;</span>,
 	<span class="ident">response</span>: <span class="ident">OutgoingResponse</span>,
 }
@@ -1843,7 +1846,6 @@
 							<span class="macro">debug_assert!</span>(<span class="bool-val">false</span>, <span class="string">&quot;Received message on outbound-only protocol.&quot;</span>);
 						}
 
-						<span class="kw">let</span> <span class="ident">protocol</span> <span class="op">=</span> <span class="ident">Cow::from</span>(<span class="ident">protocol</span>);
 						<span class="self">self</span>.<span class="ident">pending_responses</span>.<span class="ident">push</span>(<span class="ident">Box::pin</span>(<span class="kw">async</span> <span class="kw">move</span> {
 							<span class="comment">// The `tx` created above can be dropped if we are not capable of</span>
 							<span class="comment">// processing this request, which is reflected as a</span>
@@ -1966,7 +1968,7 @@
 								<span class="ident">request_id</span>,
 								<span class="ident">request</span>,
 								<span class="ident">channel</span>,
-								<span class="ident">protocol</span>: <span class="ident">protocol</span>.<span class="ident">to_string</span>(),
+								<span class="ident">protocol</span>: <span class="ident">protocol</span>.<span class="ident">clone</span>(),
 								<span class="ident">resp_builder</span>: <span class="ident">resp_builder</span>.<span class="ident">clone</span>(),
 								<span class="ident">get_peer_reputation</span>,
 							});
@@ -2114,7 +2116,7 @@
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">RegisterError</span> {
 	<span class="doccomment">/// A protocol has been specified multiple times.</span>
 	<span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;{0}&quot;</span>)]</span>
-	<span class="ident">DuplicateProtocol</span>(<span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>),
+	<span class="ident">DuplicateProtocol</span>(<span class="ident">ProtocolName</span>),
 }
 
 <span class="doccomment">/// Error when processing a request sent by a remote.</span>

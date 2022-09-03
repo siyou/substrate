@@ -686,7 +686,7 @@
 
 <span class="kw">use</span> <span class="kw">crate</span>::{
 	<span class="ident">config::MultiaddrWithPeerId</span>,
-	<span class="ident">protocol::event::Event</span>,
+	<span class="ident">protocol</span>::{<span class="ident">event::Event</span>, <span class="ident">ProtocolName</span>},
 	<span class="ident">request_responses</span>::{<span class="ident">IfDisconnected</span>, <span class="ident">RequestFailure</span>},
 	<span class="ident">sync</span>::{<span class="ident">warp::WarpSyncProgress</span>, <span class="ident">StateDownloadProgress</span>, <span class="ident">SyncState</span>},
 };
@@ -696,7 +696,7 @@
 <span class="kw">use</span> <span class="ident">sc_peerset::ReputationChange</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">signature::Signature</span>;
 <span class="kw">use</span> <span class="ident">sp_runtime::traits</span>::{<span class="ident">Block</span> <span class="kw">as</span> <span class="ident">BlockT</span>, <span class="ident">NumberFor</span>};
-<span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">borrow::Cow</span>, <span class="ident">collections::HashSet</span>, <span class="ident">future::Future</span>, <span class="ident">pin::Pin</span>, <span class="ident">sync::Arc</span>};
+<span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">collections::HashSet</span>, <span class="ident">future::Future</span>, <span class="ident">pin::Pin</span>, <span class="ident">sync::Arc</span>};
 
 <span class="kw">mod</span> <span class="ident">signature</span>;
 
@@ -837,7 +837,7 @@
 	<span class="doccomment">/// See also [`NetworkPeers::remove_from_peers_set`], which has the same effect but also</span>
 	<span class="doccomment">/// prevents the local node from re-establishing an outgoing substream to this peer until it</span>
 	<span class="doccomment">/// is added again.</span>
-	<span class="kw">fn</span> <span class="ident">disconnect_peer</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">who</span>: <span class="ident">PeerId</span>, <span class="ident">protocol</span>: <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>);
+	<span class="kw">fn</span> <span class="ident">disconnect_peer</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">who</span>: <span class="ident">PeerId</span>, <span class="ident">protocol</span>: <span class="ident">ProtocolName</span>);
 
 	<span class="doccomment">/// Connect to unreserved peers and allow unreserved peers to connect for syncing purposes.</span>
 	<span class="kw">fn</span> <span class="ident">accept_unreserved_peers</span>(<span class="kw-2">&amp;</span><span class="self">self</span>);
@@ -873,7 +873,7 @@
 	<span class="doccomment">/// invalid peer ID (which includes the local peer ID).</span>
 	<span class="kw">fn</span> <span class="ident">set_reserved_peers</span>(
 		<span class="kw-2">&amp;</span><span class="self">self</span>,
-		<span class="ident">protocol</span>: <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>,
+		<span class="ident">protocol</span>: <span class="ident">ProtocolName</span>,
 		<span class="ident">peers</span>: <span class="ident">HashSet</span><span class="op">&lt;</span><span class="ident">Multiaddr</span><span class="op">&gt;</span>,
 	) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">String</span><span class="op">&gt;</span>;
 
@@ -886,12 +886,12 @@
 	<span class="doccomment">/// invalid peer ID (which includes the local peer ID).</span>
 	<span class="kw">fn</span> <span class="ident">add_peers_to_reserved_set</span>(
 		<span class="kw-2">&amp;</span><span class="self">self</span>,
-		<span class="ident">protocol</span>: <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>,
+		<span class="ident">protocol</span>: <span class="ident">ProtocolName</span>,
 		<span class="ident">peers</span>: <span class="ident">HashSet</span><span class="op">&lt;</span><span class="ident">Multiaddr</span><span class="op">&gt;</span>,
 	) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">String</span><span class="op">&gt;</span>;
 
 	<span class="doccomment">/// Remove peers from a peer set.</span>
-	<span class="kw">fn</span> <span class="ident">remove_peers_from_reserved_set</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">protocol</span>: <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>, <span class="ident">peers</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">PeerId</span><span class="op">&gt;</span>);
+	<span class="kw">fn</span> <span class="ident">remove_peers_from_reserved_set</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">protocol</span>: <span class="ident">ProtocolName</span>, <span class="ident">peers</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">PeerId</span><span class="op">&gt;</span>);
 
 	<span class="doccomment">/// Add a peer to a set of peers.</span>
 	<span class="doccomment">///</span>
@@ -904,14 +904,14 @@
 	<span class="doccomment">/// invalid peer ID (which includes the local peer ID).</span>
 	<span class="kw">fn</span> <span class="ident">add_to_peers_set</span>(
 		<span class="kw-2">&amp;</span><span class="self">self</span>,
-		<span class="ident">protocol</span>: <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>,
+		<span class="ident">protocol</span>: <span class="ident">ProtocolName</span>,
 		<span class="ident">peers</span>: <span class="ident">HashSet</span><span class="op">&lt;</span><span class="ident">Multiaddr</span><span class="op">&gt;</span>,
 	) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">String</span><span class="op">&gt;</span>;
 
 	<span class="doccomment">/// Remove peers from a peer set.</span>
 	<span class="doccomment">///</span>
 	<span class="doccomment">/// If we currently have an open substream with this peer, it will soon be closed.</span>
-	<span class="kw">fn</span> <span class="ident">remove_from_peers_set</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">protocol</span>: <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>, <span class="ident">peers</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">PeerId</span><span class="op">&gt;</span>);
+	<span class="kw">fn</span> <span class="ident">remove_from_peers_set</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">protocol</span>: <span class="ident">ProtocolName</span>, <span class="ident">peers</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">PeerId</span><span class="op">&gt;</span>);
 
 	<span class="doccomment">/// Returns the number of peers in the sync peer set we&#39;re connected to.</span>
 	<span class="kw">fn</span> <span class="ident">sync_num_connected</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">usize</span>;
@@ -939,7 +939,7 @@
 		<span class="ident">T::report_peer</span>(<span class="self">self</span>, <span class="ident">who</span>, <span class="ident">cost_benefit</span>)
 	}
 
-	<span class="kw">fn</span> <span class="ident">disconnect_peer</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">who</span>: <span class="ident">PeerId</span>, <span class="ident">protocol</span>: <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>) {
+	<span class="kw">fn</span> <span class="ident">disconnect_peer</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">who</span>: <span class="ident">PeerId</span>, <span class="ident">protocol</span>: <span class="ident">ProtocolName</span>) {
 		<span class="ident">T::disconnect_peer</span>(<span class="self">self</span>, <span class="ident">who</span>, <span class="ident">protocol</span>)
 	}
 
@@ -961,7 +961,7 @@
 
 	<span class="kw">fn</span> <span class="ident">set_reserved_peers</span>(
 		<span class="kw-2">&amp;</span><span class="self">self</span>,
-		<span class="ident">protocol</span>: <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>,
+		<span class="ident">protocol</span>: <span class="ident">ProtocolName</span>,
 		<span class="ident">peers</span>: <span class="ident">HashSet</span><span class="op">&lt;</span><span class="ident">Multiaddr</span><span class="op">&gt;</span>,
 	) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">String</span><span class="op">&gt;</span> {
 		<span class="ident">T::set_reserved_peers</span>(<span class="self">self</span>, <span class="ident">protocol</span>, <span class="ident">peers</span>)
@@ -969,25 +969,25 @@
 
 	<span class="kw">fn</span> <span class="ident">add_peers_to_reserved_set</span>(
 		<span class="kw-2">&amp;</span><span class="self">self</span>,
-		<span class="ident">protocol</span>: <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>,
+		<span class="ident">protocol</span>: <span class="ident">ProtocolName</span>,
 		<span class="ident">peers</span>: <span class="ident">HashSet</span><span class="op">&lt;</span><span class="ident">Multiaddr</span><span class="op">&gt;</span>,
 	) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">String</span><span class="op">&gt;</span> {
 		<span class="ident">T::add_peers_to_reserved_set</span>(<span class="self">self</span>, <span class="ident">protocol</span>, <span class="ident">peers</span>)
 	}
 
-	<span class="kw">fn</span> <span class="ident">remove_peers_from_reserved_set</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">protocol</span>: <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>, <span class="ident">peers</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">PeerId</span><span class="op">&gt;</span>) {
+	<span class="kw">fn</span> <span class="ident">remove_peers_from_reserved_set</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">protocol</span>: <span class="ident">ProtocolName</span>, <span class="ident">peers</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">PeerId</span><span class="op">&gt;</span>) {
 		<span class="ident">T::remove_peers_from_reserved_set</span>(<span class="self">self</span>, <span class="ident">protocol</span>, <span class="ident">peers</span>)
 	}
 
 	<span class="kw">fn</span> <span class="ident">add_to_peers_set</span>(
 		<span class="kw-2">&amp;</span><span class="self">self</span>,
-		<span class="ident">protocol</span>: <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>,
+		<span class="ident">protocol</span>: <span class="ident">ProtocolName</span>,
 		<span class="ident">peers</span>: <span class="ident">HashSet</span><span class="op">&lt;</span><span class="ident">Multiaddr</span><span class="op">&gt;</span>,
 	) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">String</span><span class="op">&gt;</span> {
 		<span class="ident">T::add_to_peers_set</span>(<span class="self">self</span>, <span class="ident">protocol</span>, <span class="ident">peers</span>)
 	}
 
-	<span class="kw">fn</span> <span class="ident">remove_from_peers_set</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">protocol</span>: <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>, <span class="ident">peers</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">PeerId</span><span class="op">&gt;</span>) {
+	<span class="kw">fn</span> <span class="ident">remove_from_peers_set</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">protocol</span>: <span class="ident">ProtocolName</span>, <span class="ident">peers</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">PeerId</span><span class="op">&gt;</span>) {
 		<span class="ident">T::remove_from_peers_set</span>(<span class="self">self</span>, <span class="ident">protocol</span>, <span class="ident">peers</span>)
 	}
 
@@ -1097,7 +1097,7 @@
 	<span class="doccomment">///</span>
 	<span class="doccomment">/// The protocol must have been registered with</span>
 	<span class="doccomment">/// `crate::config::NetworkConfiguration::notifications_protocols`.</span>
-	<span class="kw">fn</span> <span class="ident">write_notification</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">target</span>: <span class="ident">PeerId</span>, <span class="ident">protocol</span>: <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>, <span class="ident">message</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>);
+	<span class="kw">fn</span> <span class="ident">write_notification</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">target</span>: <span class="ident">PeerId</span>, <span class="ident">protocol</span>: <span class="ident">ProtocolName</span>, <span class="ident">message</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>);
 
 	<span class="doccomment">/// Obtains a [`NotificationSender`] for a connected peer, if it exists.</span>
 	<span class="doccomment">///</span>
@@ -1168,7 +1168,7 @@
 	<span class="kw">fn</span> <span class="ident">notification_sender</span>(
 		<span class="kw-2">&amp;</span><span class="self">self</span>,
 		<span class="ident">target</span>: <span class="ident">PeerId</span>,
-		<span class="ident">protocol</span>: <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>,
+		<span class="ident">protocol</span>: <span class="ident">ProtocolName</span>,
 	) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">NotificationSender</span><span class="op">&gt;</span>, <span class="ident">NotificationSenderError</span><span class="op">&gt;</span>;
 }
 
@@ -1177,14 +1177,14 @@
 	<span class="ident">T</span>: <span class="question-mark">?</span><span class="ident">Sized</span>,
 	<span class="ident">T</span>: <span class="ident">NetworkNotification</span>,
 {
-	<span class="kw">fn</span> <span class="ident">write_notification</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">target</span>: <span class="ident">PeerId</span>, <span class="ident">protocol</span>: <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>, <span class="ident">message</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>) {
+	<span class="kw">fn</span> <span class="ident">write_notification</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">target</span>: <span class="ident">PeerId</span>, <span class="ident">protocol</span>: <span class="ident">ProtocolName</span>, <span class="ident">message</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>) {
 		<span class="ident">T::write_notification</span>(<span class="self">self</span>, <span class="ident">target</span>, <span class="ident">protocol</span>, <span class="ident">message</span>)
 	}
 
 	<span class="kw">fn</span> <span class="ident">notification_sender</span>(
 		<span class="kw-2">&amp;</span><span class="self">self</span>,
 		<span class="ident">target</span>: <span class="ident">PeerId</span>,
-		<span class="ident">protocol</span>: <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>,
+		<span class="ident">protocol</span>: <span class="ident">ProtocolName</span>,
 	) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">NotificationSender</span><span class="op">&gt;</span>, <span class="ident">NotificationSenderError</span><span class="op">&gt;</span> {
 		<span class="ident">T::notification_sender</span>(<span class="self">self</span>, <span class="ident">target</span>, <span class="ident">protocol</span>)
 	}
@@ -1213,7 +1213,7 @@
 	<span class="kw">async</span> <span class="kw">fn</span> <span class="ident">request</span>(
 		<span class="kw-2">&amp;</span><span class="self">self</span>,
 		<span class="ident">target</span>: <span class="ident">PeerId</span>,
-		<span class="ident">protocol</span>: <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>,
+		<span class="ident">protocol</span>: <span class="ident">ProtocolName</span>,
 		<span class="ident">request</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>,
 		<span class="ident">connect</span>: <span class="ident">IfDisconnected</span>,
 	) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">RequestFailure</span><span class="op">&gt;</span>;
@@ -1231,7 +1231,7 @@
 	<span class="kw">fn</span> <span class="ident">start_request</span>(
 		<span class="kw-2">&amp;</span><span class="self">self</span>,
 		<span class="ident">target</span>: <span class="ident">PeerId</span>,
-		<span class="ident">protocol</span>: <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>,
+		<span class="ident">protocol</span>: <span class="ident">ProtocolName</span>,
 		<span class="ident">request</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>,
 		<span class="ident">tx</span>: <span class="ident">oneshot::Sender</span><span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">RequestFailure</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 		<span class="ident">connect</span>: <span class="ident">IfDisconnected</span>,
@@ -1247,7 +1247,7 @@
 	<span class="kw">fn</span> <span class="ident">request</span><span class="op">&lt;</span><span class="lifetime">&#39;life0</span>, <span class="lifetime">&#39;async_trait</span><span class="op">&gt;</span>(
 		<span class="kw-2">&amp;</span><span class="lifetime">&#39;life0</span> <span class="self">self</span>,
 		<span class="ident">target</span>: <span class="ident">PeerId</span>,
-		<span class="ident">protocol</span>: <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>,
+		<span class="ident">protocol</span>: <span class="ident">ProtocolName</span>,
 		<span class="ident">request</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>,
 		<span class="ident">connect</span>: <span class="ident">IfDisconnected</span>,
 	) -&gt; <span class="ident">Pin</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Future</span><span class="op">&lt;</span><span class="ident">Output</span> <span class="op">=</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">RequestFailure</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="lifetime">&#39;async_trait</span><span class="op">&gt;</span><span class="op">&gt;</span>
@@ -1261,7 +1261,7 @@
 	<span class="kw">fn</span> <span class="ident">start_request</span>(
 		<span class="kw-2">&amp;</span><span class="self">self</span>,
 		<span class="ident">target</span>: <span class="ident">PeerId</span>,
-		<span class="ident">protocol</span>: <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>,
+		<span class="ident">protocol</span>: <span class="ident">ProtocolName</span>,
 		<span class="ident">request</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>,
 		<span class="ident">tx</span>: <span class="ident">oneshot::Sender</span><span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">RequestFailure</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 		<span class="ident">connect</span>: <span class="ident">IfDisconnected</span>,

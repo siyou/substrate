@@ -1220,6 +1220,7 @@
 <span id="1214">1214</span>
 <span id="1215">1215</span>
 <span id="1216">1216</span>
+<span id="1217">1217</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2018-2022 Parity Technologies (UK) Ltd.</span>
@@ -1290,6 +1291,7 @@
 	<span class="ident">StorageProvider</span>, <span class="ident">TransactionFor</span>,
 };
 <span class="kw">use</span> <span class="ident">sc_consensus::BlockImport</span>;
+<span class="kw">use</span> <span class="ident">sc_network_common::protocol::ProtocolName</span>;
 <span class="kw">use</span> <span class="ident">sc_telemetry</span>::{<span class="ident">telemetry</span>, <span class="ident">TelemetryHandle</span>, <span class="ident">CONSENSUS_DEBUG</span>, <span class="ident">CONSENSUS_INFO</span>};
 <span class="kw">use</span> <span class="ident">sc_utils::mpsc</span>::{<span class="ident">tracing_unbounded</span>, <span class="ident">TracingUnboundedReceiver</span>};
 <span class="kw">use</span> <span class="ident">sp_api::ProvideRuntimeApi</span>;
@@ -1488,7 +1490,7 @@
 	<span class="doccomment">/// TelemetryHandle instance.</span>
 	<span class="kw">pub</span> <span class="ident">telemetry</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">TelemetryHandle</span><span class="op">&gt;</span>,
 	<span class="doccomment">/// Chain specific GRANDPA protocol name. See [`crate::protocol_standard_name`].</span>
-	<span class="kw">pub</span> <span class="ident">protocol_name</span>: <span class="ident">std::borrow::Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>,
+	<span class="kw">pub</span> <span class="ident">protocol_name</span>: <span class="ident">ProtocolName</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">Config</span> {
@@ -1945,7 +1947,7 @@
 <span class="doccomment">/// [`sc_network::config::NetworkConfiguration::extra_sets`].</span>
 <span class="doccomment">/// For standard protocol name see [`crate::protocol_standard_name`].</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">grandpa_peers_set_config</span>(
-	<span class="ident">protocol_name</span>: <span class="ident">std::borrow::Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>,
+	<span class="ident">protocol_name</span>: <span class="ident">ProtocolName</span>,
 ) -&gt; <span class="ident">sc_network::config::NonDefaultSetConfig</span> {
 	<span class="kw">use</span> <span class="ident">communication::grandpa_protocol_name</span>;
 	<span class="ident">sc_network::config::NonDefaultSetConfig</span> {

@@ -492,6 +492,8 @@
 <span id="486">486</span>
 <span id="487">487</span>
 <span id="488">488</span>
+<span id="489">489</span>
+<span id="490">490</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2017-2022 Parity Technologies (UK) Ltd.</span>
@@ -536,12 +538,14 @@
 <span class="kw">use</span> <span class="ident">prometheus_endpoint</span>::{<span class="ident">register</span>, <span class="ident">Counter</span>, <span class="ident">PrometheusError</span>, <span class="ident">Registry</span>, <span class="ident">U64</span>};
 <span class="kw">use</span> <span class="ident">sc_network_common</span>::{
 	<span class="ident">config::ProtocolId</span>,
-	<span class="ident">protocol::event</span>::{<span class="ident">Event</span>, <span class="ident">ObservedRole</span>},
+	<span class="ident">protocol</span>::{
+		<span class="ident">event</span>::{<span class="ident">Event</span>, <span class="ident">ObservedRole</span>},
+		<span class="ident">ProtocolName</span>,
+	},
 	<span class="ident">service</span>::{<span class="ident">NetworkEventStream</span>, <span class="ident">NetworkNotification</span>, <span class="ident">NetworkPeers</span>},
 };
 <span class="kw">use</span> <span class="ident">sp_runtime::traits::Block</span> <span class="kw">as</span> <span class="ident">BlockT</span>;
 <span class="kw">use</span> <span class="ident">std</span>::{
-	<span class="ident">borrow::Cow</span>,
 	<span class="ident">collections</span>::{<span class="ident">hash_map::Entry</span>, <span class="ident">HashMap</span>},
 	<span class="ident">iter</span>,
 	<span class="ident">num::NonZeroUsize</span>,
@@ -624,8 +628,8 @@
 
 <span class="doccomment">/// Prototype for a [`TransactionsHandler`].</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">TransactionsHandlerPrototype</span> {
-	<span class="ident">protocol_name</span>: <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>,
-	<span class="ident">fallback_protocol_names</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+	<span class="ident">protocol_name</span>: <span class="ident">ProtocolName</span>,
+	<span class="ident">fallback_protocol_names</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ProtocolName</span><span class="op">&gt;</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">TransactionsHandlerPrototype</span> {
@@ -738,7 +742,7 @@
 
 <span class="doccomment">/// Handler for transactions. Call [`TransactionsHandler::run`] to start the processing.</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">TransactionsHandler</span><span class="op">&lt;</span><span class="ident">B</span>: <span class="ident">BlockT</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>, <span class="ident">H</span>: <span class="ident">ExHashT</span><span class="op">&gt;</span> {
-	<span class="ident">protocol_name</span>: <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>,
+	<span class="ident">protocol_name</span>: <span class="ident">ProtocolName</span>,
 	<span class="doccomment">/// Interval at which we call `propagate_transactions`.</span>
 	<span class="ident">propagate_timeout</span>: <span class="ident">Pin</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Stream</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> ()<span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Send</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 	<span class="doccomment">/// Pending transactions verification tasks.</span>

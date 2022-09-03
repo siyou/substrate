@@ -158,6 +158,7 @@
 <span id="152">152</span>
 <span id="153">153</span>
 <span id="154">154</span>
+<span id="155">155</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2019-2022 Parity Technologies (UK) Ltd.</span>
@@ -178,19 +179,20 @@
 
 <span class="doccomment">//! Collection of generic data structures for request-response protocols.</span>
 
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::protocol::ProtocolName</span>;
 <span class="kw">use</span> <span class="ident">futures::channel</span>::{<span class="ident">mpsc</span>, <span class="ident">oneshot</span>};
 <span class="kw">use</span> <span class="ident">libp2p</span>::{<span class="ident">request_response::OutboundFailure</span>, <span class="ident">PeerId</span>};
 <span class="kw">use</span> <span class="ident">sc_peerset::ReputationChange</span>;
-<span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">borrow::Cow</span>, <span class="ident">time::Duration</span>};
+<span class="kw">use</span> <span class="ident">std::time::Duration</span>;
 
 <span class="doccomment">/// Configuration for a single request-response protocol.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ProtocolConfig</span> {
 	<span class="doccomment">/// Name of the protocol on the wire. Should be something like `/foo/bar`.</span>
-	<span class="kw">pub</span> <span class="ident">name</span>: <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>,
+	<span class="kw">pub</span> <span class="ident">name</span>: <span class="ident">ProtocolName</span>,
 
 	<span class="doccomment">/// Fallback on the wire protocol names to support.</span>
-	<span class="kw">pub</span> <span class="ident">fallback_names</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+	<span class="kw">pub</span> <span class="ident">fallback_names</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ProtocolName</span><span class="op">&gt;</span>,
 
 	<span class="doccomment">/// Maximum allowed size, in bytes, of a request.</span>
 	<span class="doccomment">///</span>

@@ -707,7 +707,6 @@
 <span id="701">701</span>
 <span id="702">702</span>
 <span id="703">703</span>
-<span id="704">704</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2017-2022 Parity Technologies (UK) Ltd.</span>
@@ -751,10 +750,9 @@
 };
 <span class="kw">use</span> <span class="ident">prometheus_endpoint::Registry</span>;
 <span class="kw">use</span> <span class="ident">sc_consensus::ImportQueue</span>;
-<span class="kw">use</span> <span class="ident">sc_network_common</span>::{<span class="ident">config::MultiaddrWithPeerId</span>, <span class="ident">sync::ChainSync</span>};
+<span class="kw">use</span> <span class="ident">sc_network_common</span>::{<span class="ident">config::MultiaddrWithPeerId</span>, <span class="ident">protocol::ProtocolName</span>, <span class="ident">sync::ChainSync</span>};
 <span class="kw">use</span> <span class="ident">sp_runtime::traits::Block</span> <span class="kw">as</span> <span class="ident">BlockT</span>;
 <span class="kw">use</span> <span class="ident">std</span>::{
-	<span class="ident">borrow::Cow</span>,
 	<span class="ident">collections::HashMap</span>,
 	<span class="ident">error::Error</span>,
 	<span class="ident">fs</span>,
@@ -1141,14 +1139,14 @@
 	<span class="doccomment">///</span>
 	<span class="doccomment">/// &gt; **Note**: This field isn&#39;t present for the default set, as this is handled internally</span>
 	<span class="doccomment">/// &gt; by the networking code.</span>
-	<span class="kw">pub</span> <span class="ident">notifications_protocol</span>: <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>,
+	<span class="kw">pub</span> <span class="ident">notifications_protocol</span>: <span class="ident">ProtocolName</span>,
 	<span class="doccomment">/// If the remote reports that it doesn&#39;t support the protocol indicated in the</span>
 	<span class="doccomment">/// `notifications_protocol` field, then each of these fallback names will be tried one by</span>
 	<span class="doccomment">/// one.</span>
 	<span class="doccomment">///</span>
 	<span class="doccomment">/// If a fallback is used, it will be reported in</span>
 	<span class="doccomment">/// [`crate::Event::NotificationStreamOpened::negotiated_fallback`].</span>
-	<span class="kw">pub</span> <span class="ident">fallback_names</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+	<span class="kw">pub</span> <span class="ident">fallback_names</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ProtocolName</span><span class="op">&gt;</span>,
 	<span class="doccomment">/// Maximum allowed size of single notifications.</span>
 	<span class="kw">pub</span> <span class="ident">max_notification_size</span>: <span class="ident">u64</span>,
 	<span class="doccomment">/// Base configuration.</span>
@@ -1157,7 +1155,7 @@
 
 <span class="kw">impl</span> <span class="ident">NonDefaultSetConfig</span> {
 	<span class="doccomment">/// Creates a new [`NonDefaultSetConfig`]. Zero slots and accepts only reserved nodes.</span>
-	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">notifications_protocol</span>: <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>, <span class="ident">max_notification_size</span>: <span class="ident">u64</span>) -&gt; <span class="self">Self</span> {
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">notifications_protocol</span>: <span class="ident">ProtocolName</span>, <span class="ident">max_notification_size</span>: <span class="ident">u64</span>) -&gt; <span class="self">Self</span> {
 		<span class="self">Self</span> {
 			<span class="ident">notifications_protocol</span>,
 			<span class="ident">max_notification_size</span>,
@@ -1186,7 +1184,7 @@
 	<span class="doccomment">/// Add a list of protocol names used for backward compatibility.</span>
 	<span class="doccomment">///</span>
 	<span class="doccomment">/// See the explanations in [`NonDefaultSetConfig::fallback_names`].</span>
-	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">add_fallback_names</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">fallback_names</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span><span class="op">&gt;</span>) {
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">add_fallback_names</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">fallback_names</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ProtocolName</span><span class="op">&gt;</span>) {
 		<span class="self">self</span>.<span class="ident">fallback_names</span>.<span class="ident">extend</span>(<span class="ident">fallback_names</span>);
 	}
 }

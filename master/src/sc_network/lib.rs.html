@@ -306,6 +306,9 @@
 <span id="300">300</span>
 <span id="301">301</span>
 <span id="302">302</span>
+<span id="303">303</span>
+<span id="304">304</span>
+<span id="305">305</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2017-2022 Parity Technologies (UK) Ltd.</span>
@@ -572,7 +575,10 @@
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">libp2p</span>::{<span class="ident">multiaddr</span>, <span class="ident">Multiaddr</span>, <span class="ident">PeerId</span>};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">protocol::PeerInfo</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">sc_network_common</span>::{
-	<span class="ident">protocol::event</span>::{<span class="ident">DhtEvent</span>, <span class="ident">Event</span>, <span class="ident">ObservedRole</span>},
+	<span class="ident">protocol</span>::{
+		<span class="ident">event</span>::{<span class="ident">DhtEvent</span>, <span class="ident">Event</span>, <span class="ident">ObservedRole</span>},
+		<span class="ident">ProtocolName</span>,
+	},
 	<span class="ident">request_responses</span>::{<span class="ident">IfDisconnected</span>, <span class="ident">RequestFailure</span>},
 	<span class="ident">service</span>::{
 		<span class="ident">KademliaKey</span>, <span class="ident">NetworkBlock</span>, <span class="ident">NetworkDHTProvider</span>, <span class="ident">NetworkRequest</span>, <span class="ident">NetworkSigner</span>,

@@ -2076,7 +2076,6 @@
 <span id="2070">2070</span>
 <span id="2071">2071</span>
 <span id="2072">2072</span>
-<span id="2073">2073</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2019-2022 Parity Technologies (UK) Ltd.</span>
@@ -2112,15 +2111,14 @@
 <span class="kw">use</span> <span class="ident">log</span>::{<span class="ident">error</span>, <span class="ident">trace</span>, <span class="ident">warn</span>};
 <span class="kw">use</span> <span class="ident">parking_lot::RwLock</span>;
 <span class="kw">use</span> <span class="ident">rand::distributions</span>::{<span class="ident">Distribution</span> <span class="kw">as</span> <span class="kw">_</span>, <span class="ident">Uniform</span>};
+<span class="kw">use</span> <span class="ident">sc_network_common::protocol::ProtocolName</span>;
 <span class="kw">use</span> <span class="ident">sc_peerset::DropReason</span>;
 <span class="kw">use</span> <span class="ident">smallvec::SmallVec</span>;
 <span class="kw">use</span> <span class="ident">std</span>::{
-	<span class="ident">borrow::Cow</span>,
 	<span class="ident">cmp</span>,
 	<span class="ident">collections</span>::{<span class="ident">hash_map::Entry</span>, <span class="ident">VecDeque</span>},
 	<span class="ident">mem</span>,
 	<span class="ident">pin::Pin</span>,
-	<span class="ident">str</span>,
 	<span class="ident">sync::Arc</span>,
 	<span class="ident">task</span>::{<span class="ident">Context</span>, <span class="ident">Poll</span>},
 	<span class="ident">time</span>::{<span class="ident">Duration</span>, <span class="ident">Instant</span>},
@@ -2219,9 +2217,9 @@
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ProtocolConfig</span> {
 	<span class="doccomment">/// Name of the protocol.</span>
-	<span class="kw">pub</span> <span class="ident">name</span>: <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>,
+	<span class="kw">pub</span> <span class="ident">name</span>: <span class="ident">ProtocolName</span>,
 	<span class="doccomment">/// Names of the protocol to use if the main one isn&#39;t available.</span>
-	<span class="kw">pub</span> <span class="ident">fallback_names</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+	<span class="kw">pub</span> <span class="ident">fallback_names</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ProtocolName</span><span class="op">&gt;</span>,
 	<span class="doccomment">/// Handshake of the protocol.</span>
 	<span class="kw">pub</span> <span class="ident">handshake</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>,
 	<span class="doccomment">/// Maximum allowed size for a notification.</span>
@@ -2388,7 +2386,7 @@
 		<span class="ident">set_id</span>: <span class="ident">sc_peerset::SetId</span>,
 		<span class="doccomment">/// If `Some`, a fallback protocol name has been used rather the main protocol name.</span>
 		<span class="doccomment">/// Always matches one of the fallback names passed at initialization.</span>
-		<span class="ident">negotiated_fallback</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+		<span class="ident">negotiated_fallback</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ProtocolName</span><span class="op">&gt;</span>,
 		<span class="doccomment">/// Handshake that was sent to us.</span>
 		<span class="doccomment">/// This is normally a &quot;Status&quot; message, but this is out of the concern of this code.</span>
 		<span class="ident">received_handshake</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>,
