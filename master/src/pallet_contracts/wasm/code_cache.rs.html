@@ -237,6 +237,10 @@
 <span id="231">231</span>
 <span id="232">232</span>
 <span id="233">233</span>
+<span id="234">234</span>
+<span id="235">235</span>
+<span id="236">236</span>
+<span id="237">237</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2018-2022 Parity Technologies (UK) Ltd.</span>
@@ -281,6 +285,7 @@
 };
 <span class="kw">use</span> <span class="ident">sp_core::crypto::UncheckedFrom</span>;
 <span class="kw">use</span> <span class="ident">sp_runtime::traits::BadOrigin</span>;
+<span class="kw">use</span> <span class="ident">sp_std::vec</span>;
 
 <span class="doccomment">/// Put the instrumented module in storage.</span>
 <span class="doccomment">///</span>
@@ -335,7 +340,7 @@
 			<span class="op">&lt;</span><span class="ident">PristineCode</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::insert</span>(<span class="kw-2">&amp;</span><span class="ident">code_hash</span>, <span class="ident">orig_code</span>);
 			<span class="op">&lt;</span><span class="ident">OwnerInfoOf</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::insert</span>(<span class="kw-2">&amp;</span><span class="ident">code_hash</span>, <span class="ident">owner_info</span>);
 			<span class="kw-2">*</span><span class="ident">existing</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">module</span>);
-			<span class="op">&lt;</span><span class="ident">Pallet</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::deposit_event</span>(<span class="ident">Event::CodeStored</span> { <span class="ident">code_hash</span> });
+			<span class="op">&lt;</span><span class="ident">Pallet</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::deposit_event</span>(<span class="macro">vec!</span>[<span class="ident">code_hash</span>], <span class="ident">Event::CodeStored</span> { <span class="ident">code_hash</span> });
 			<span class="prelude-val">Ok</span>(())
 		},
 	})
@@ -372,7 +377,10 @@
 }
 
 <span class="doccomment">/// Try to remove code together with all associated information.</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">try_remove</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Config</span><span class="op">&gt;</span>(<span class="ident">origin</span>: <span class="kw-2">&amp;</span><span class="ident">T::AccountId</span>, <span class="ident">code_hash</span>: <span class="ident">CodeHash</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) -&gt; <span class="ident">DispatchResult</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">try_remove</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Config</span><span class="op">&gt;</span>(<span class="ident">origin</span>: <span class="kw-2">&amp;</span><span class="ident">T::AccountId</span>, <span class="ident">code_hash</span>: <span class="ident">CodeHash</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) -&gt; <span class="ident">DispatchResult</span>
+<span class="kw">where</span>
+	<span class="ident">T::AccountId</span>: <span class="ident">UncheckedFrom</span><span class="op">&lt;</span><span class="ident">T::Hash</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">AsRef</span><span class="op">&lt;</span>[<span class="ident">u8</span>]<span class="op">&gt;</span>,
+{
 	<span class="op">&lt;</span><span class="ident">OwnerInfoOf</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::try_mutate_exists</span>(<span class="kw-2">&amp;</span><span class="ident">code_hash</span>, <span class="op">|</span><span class="ident">existing</span><span class="op">|</span> {
 		<span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">owner_info</span>) <span class="op">=</span> <span class="ident">existing</span> {
 			<span class="macro">ensure!</span>(<span class="ident">owner_info</span>.<span class="ident">refcount</span> <span class="op">==</span> <span class="number">0</span>, <span class="op">&lt;</span><span class="ident">Error</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::CodeInUse</span>);
@@ -381,7 +389,7 @@
 			<span class="kw-2">*</span><span class="ident">existing</span> <span class="op">=</span> <span class="prelude-val">None</span>;
 			<span class="op">&lt;</span><span class="ident">PristineCode</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::remove</span>(<span class="kw-2">&amp;</span><span class="ident">code_hash</span>);
 			<span class="op">&lt;</span><span class="ident">CodeStorage</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::remove</span>(<span class="kw-2">&amp;</span><span class="ident">code_hash</span>);
-			<span class="op">&lt;</span><span class="ident">Pallet</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::deposit_event</span>(<span class="ident">Event::CodeRemoved</span> { <span class="ident">code_hash</span> });
+			<span class="op">&lt;</span><span class="ident">Pallet</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::deposit_event</span>(<span class="macro">vec!</span>[<span class="ident">code_hash</span>], <span class="ident">Event::CodeRemoved</span> { <span class="ident">code_hash</span> });
 			<span class="prelude-val">Ok</span>(())
 		} <span class="kw">else</span> {
 			<span class="prelude-val">Err</span>(<span class="op">&lt;</span><span class="ident">Error</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::CodeNotFound</span>.<span class="ident">into</span>())
