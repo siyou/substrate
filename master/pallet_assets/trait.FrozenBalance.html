@@ -17,7 +17,7 @@ the asset’s <code>minimum_balance</code> (the latter since there may be compli
 asset’s account completely).</p>
 <p>Under normal behaviour, the account balance should not go below the sum of this (if <code>Some</code>)
 and the asset’s minimum balance. However, the account balance may reasonably begin below
-this sum (e.g. if less than the sum had ever been transfered into the account).</p>
+this sum (e.g. if less than the sum had ever been transferred into the account).</p>
 <p>In special cases (privileged intervention) the account balance may also go below the sum.</p>
 <p>If <code>None</code> is returned, then nothing special is enforced.</p>
 </div></details><details class="rustdoc-toggle" open><summary><div id="tymethod.died" class="method has-srclink"><div class="rightside"><a class="srclink" href="../src/pallet_assets/types.rs.html#178">source</a></div><h4 class="code-header">fn <a href="#tymethod.died" class="fnname">died</a>(asset: AssetId, who: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;</a>AccountId)</h4></div></summary><div class="docblock"><p>Called after an account has been removed.</p>
