@@ -283,6 +283,8 @@
 <span id="277">277</span>
 <span id="278">278</span>
 <span id="279">279</span>
+<span id="280">280</span>
+<span id="281">281</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2020-2022 Parity Technologies (UK) Ltd.</span>
@@ -310,7 +312,7 @@
 	<span class="ident">types</span>::{<span class="ident">error::CallError</span>, <span class="ident">ErrorObject</span>},
 };
 
-<span class="kw">use</span> <span class="ident">sc_consensus_babe</span>::{<span class="ident">authorship</span>, <span class="ident">Config</span>, <span class="ident">Epoch</span>};
+<span class="kw">use</span> <span class="ident">sc_consensus_babe</span>::{<span class="ident">authorship</span>, <span class="ident">Epoch</span>};
 <span class="kw">use</span> <span class="ident">sc_consensus_epochs</span>::{<span class="ident">descendent_query</span>, <span class="ident">Epoch</span> <span class="kw">as</span> <span class="ident">EpochT</span>, <span class="ident">SharedEpochChanges</span>};
 <span class="kw">use</span> <span class="ident">sc_rpc_api::DenyUnsafe</span>;
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
@@ -318,7 +320,9 @@
 <span class="kw">use</span> <span class="ident">sp_application_crypto::AppKey</span>;
 <span class="kw">use</span> <span class="ident">sp_blockchain</span>::{<span class="ident">Error</span> <span class="kw">as</span> <span class="ident">BlockChainError</span>, <span class="ident">HeaderBackend</span>, <span class="ident">HeaderMetadata</span>};
 <span class="kw">use</span> <span class="ident">sp_consensus</span>::{<span class="ident">Error</span> <span class="kw">as</span> <span class="ident">ConsensusError</span>, <span class="ident">SelectChain</span>};
-<span class="kw">use</span> <span class="ident">sp_consensus_babe</span>::{<span class="ident">digests::PreDigest</span>, <span class="ident">AuthorityId</span>, <span class="ident">BabeApi</span> <span class="kw">as</span> <span class="ident">BabeRuntimeApi</span>};
+<span class="kw">use</span> <span class="ident">sp_consensus_babe</span>::{
+	<span class="ident">digests::PreDigest</span>, <span class="ident">AuthorityId</span>, <span class="ident">BabeApi</span> <span class="kw">as</span> <span class="ident">BabeRuntimeApi</span>, <span class="ident">BabeConfiguration</span>,
+};
 <span class="kw">use</span> <span class="ident">sp_core::crypto::ByteArray</span>;
 <span class="kw">use</span> <span class="ident">sp_keystore</span>::{<span class="ident">SyncCryptoStore</span>, <span class="ident">SyncCryptoStorePtr</span>};
 <span class="kw">use</span> <span class="ident">sp_runtime::traits</span>::{<span class="ident">Block</span> <span class="kw">as</span> <span class="ident">BlockT</span>, <span class="ident">Header</span> <span class="kw">as</span> <span class="kw">_</span>};
@@ -342,7 +346,7 @@
 	<span class="doccomment">/// shared reference to the Keystore</span>
 	<span class="ident">keystore</span>: <span class="ident">SyncCryptoStorePtr</span>,
 	<span class="doccomment">/// config (actually holds the slot duration)</span>
-	<span class="ident">babe_config</span>: <span class="ident">Config</span>,
+	<span class="ident">babe_config</span>: <span class="ident">BabeConfiguration</span>,
 	<span class="doccomment">/// The SelectChain strategy</span>
 	<span class="ident">select_chain</span>: <span class="ident">SC</span>,
 	<span class="doccomment">/// Whether to deny unsafe calls</span>
@@ -355,7 +359,7 @@
 		<span class="ident">client</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">C</span><span class="op">&gt;</span>,
 		<span class="ident">shared_epoch_changes</span>: <span class="ident">SharedEpochChanges</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">Epoch</span><span class="op">&gt;</span>,
 		<span class="ident">keystore</span>: <span class="ident">SyncCryptoStorePtr</span>,
-		<span class="ident">babe_config</span>: <span class="ident">Config</span>,
+		<span class="ident">babe_config</span>: <span class="ident">BabeConfiguration</span>,
 		<span class="ident">select_chain</span>: <span class="ident">SC</span>,
 		<span class="ident">deny_unsafe</span>: <span class="ident">DenyUnsafe</span>,
 	) -&gt; <span class="self">Self</span> {
@@ -470,7 +474,7 @@
 <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">epoch_data</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">C</span>, <span class="ident">SC</span><span class="op">&gt;</span>(
 	<span class="ident">epoch_changes</span>: <span class="kw-2">&amp;</span><span class="ident">SharedEpochChanges</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">Epoch</span><span class="op">&gt;</span>,
 	<span class="ident">client</span>: <span class="kw-2">&amp;</span><span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">C</span><span class="op">&gt;</span>,
-	<span class="ident">babe_config</span>: <span class="kw-2">&amp;</span><span class="ident">Config</span>,
+	<span class="ident">babe_config</span>: <span class="kw-2">&amp;</span><span class="ident">BabeConfiguration</span>,
 	<span class="ident">slot</span>: <span class="ident">u64</span>,
 	<span class="ident">select_chain</span>: <span class="kw-2">&amp;</span><span class="ident">SC</span>,
 ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Epoch</span>, <span class="ident">Error</span><span class="op">&gt;</span>
@@ -487,7 +491,7 @@
 			<span class="kw-2">&amp;</span><span class="ident">parent</span>.<span class="ident">hash</span>(),
 			<span class="kw-2">*</span><span class="ident">parent</span>.<span class="ident">number</span>(),
 			<span class="ident">slot</span>.<span class="ident">into</span>(),
-			<span class="op">|</span><span class="ident">slot</span><span class="op">|</span> <span class="ident">Epoch::genesis</span>(<span class="ident">babe_config</span>.<span class="ident">genesis_config</span>(), <span class="ident">slot</span>),
+			<span class="op">|</span><span class="ident">slot</span><span class="op">|</span> <span class="ident">Epoch::genesis</span>(<span class="ident">babe_config</span>, <span class="ident">slot</span>),
 		)
 		.<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">Error::Consensus</span>(<span class="ident">ConsensusError::ChainLookup</span>(<span class="ident">e</span>.<span class="ident">to_string</span>())))<span class="question-mark">?</span>
 		.<span class="ident">ok_or</span>(<span class="ident">Error::Consensus</span>(<span class="ident">ConsensusError::InvalidAuthoritiesSet</span>))
@@ -506,7 +510,7 @@
 		<span class="ident">TestClientBuilderExt</span>,
 	};
 
-	<span class="kw">use</span> <span class="ident">sc_consensus_babe</span>::{<span class="ident">block_import</span>, <span class="ident">AuthorityPair</span>, <span class="ident">Config</span>};
+	<span class="kw">use</span> <span class="ident">sc_consensus_babe</span>::{<span class="ident">block_import</span>, <span class="ident">AuthorityPair</span>};
 	<span class="kw">use</span> <span class="ident">std::sync::Arc</span>;
 
 	<span class="doccomment">/// creates keystore backed by a temp file</span>
@@ -528,7 +532,7 @@
 		<span class="kw">let</span> <span class="ident">builder</span> <span class="op">=</span> <span class="ident">TestClientBuilder::new</span>();
 		<span class="kw">let</span> (<span class="ident">client</span>, <span class="ident">longest_chain</span>) <span class="op">=</span> <span class="ident">builder</span>.<span class="ident">build_with_longest_chain</span>();
 		<span class="kw">let</span> <span class="ident">client</span> <span class="op">=</span> <span class="ident">Arc::new</span>(<span class="ident">client</span>);
-		<span class="kw">let</span> <span class="ident">config</span> <span class="op">=</span> <span class="ident">Config::get</span>(<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">client</span>).<span class="ident">expect</span>(<span class="string">&quot;config available&quot;</span>);
+		<span class="kw">let</span> <span class="ident">config</span> <span class="op">=</span> <span class="ident">sc_consensus_babe::configuration</span>(<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">client</span>).<span class="ident">expect</span>(<span class="string">&quot;config available&quot;</span>);
 		<span class="kw">let</span> (<span class="kw">_</span>, <span class="ident">link</span>) <span class="op">=</span> <span class="ident">block_import</span>(<span class="ident">config</span>.<span class="ident">clone</span>(), <span class="ident">client</span>.<span class="ident">clone</span>(), <span class="ident">client</span>.<span class="ident">clone</span>())
 			.<span class="ident">expect</span>(<span class="string">&quot;can initialize block-import&quot;</span>);
 

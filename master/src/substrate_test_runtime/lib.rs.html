@@ -2228,12 +2228,12 @@
 			}
 
 			<span class="kw">impl</span> <span class="ident">sp_consensus_babe::BabeApi</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Runtime</span> {
-				<span class="kw">fn</span> <span class="ident">configuration</span>() -&gt; <span class="ident">sp_consensus_babe::BabeGenesisConfiguration</span> {
-					<span class="ident">sp_consensus_babe::BabeGenesisConfiguration</span> {
+				<span class="kw">fn</span> <span class="ident">configuration</span>() -&gt; <span class="ident">sp_consensus_babe::BabeConfiguration</span> {
+					<span class="ident">sp_consensus_babe::BabeConfiguration</span> {
 						<span class="ident">slot_duration</span>: <span class="number">1000</span>,
 						<span class="ident">epoch_length</span>: <span class="ident">EpochDuration::get</span>(),
 						<span class="ident">c</span>: (<span class="number">3</span>, <span class="number">10</span>),
-						<span class="ident">genesis_authorities</span>: <span class="ident">system::authorities</span>()
+						<span class="ident">authorities</span>: <span class="ident">system::authorities</span>()
 							.<span class="ident">into_iter</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">x</span><span class="op">|</span>(<span class="ident">x</span>, <span class="number">1</span>)).<span class="ident">collect</span>(),
 						<span class="ident">randomness</span>: <span class="op">&lt;</span><span class="ident">pallet_babe::Pallet</span><span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::randomness</span>(),
 						<span class="ident">allowed_slots</span>: <span class="ident">AllowedSlots::PrimaryAndSecondaryPlainSlots</span>,
@@ -2502,12 +2502,12 @@
 			}
 
 			<span class="kw">impl</span> <span class="ident">sp_consensus_babe::BabeApi</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Runtime</span> {
-				<span class="kw">fn</span> <span class="ident">configuration</span>() -&gt; <span class="ident">sp_consensus_babe::BabeGenesisConfiguration</span> {
-					<span class="ident">sp_consensus_babe::BabeGenesisConfiguration</span> {
+				<span class="kw">fn</span> <span class="ident">configuration</span>() -&gt; <span class="ident">sp_consensus_babe::BabeConfiguration</span> {
+					<span class="ident">sp_consensus_babe::BabeConfiguration</span> {
 						<span class="ident">slot_duration</span>: <span class="number">1000</span>,
 						<span class="ident">epoch_length</span>: <span class="ident">EpochDuration::get</span>(),
 						<span class="ident">c</span>: (<span class="number">3</span>, <span class="number">10</span>),
-						<span class="ident">genesis_authorities</span>: <span class="ident">system::authorities</span>()
+						<span class="ident">authorities</span>: <span class="ident">system::authorities</span>()
 							.<span class="ident">into_iter</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">x</span><span class="op">|</span>(<span class="ident">x</span>, <span class="number">1</span>)).<span class="ident">collect</span>(),
 						<span class="ident">randomness</span>: <span class="op">&lt;</span><span class="ident">pallet_babe::Pallet</span><span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::randomness</span>(),
 						<span class="ident">allowed_slots</span>: <span class="ident">AllowedSlots::PrimaryAndSecondaryPlainSlots</span>,

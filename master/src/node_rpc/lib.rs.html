@@ -223,7 +223,7 @@
 <span class="kw">use</span> <span class="ident">jsonrpsee::RpcModule</span>;
 <span class="kw">use</span> <span class="ident">node_primitives</span>::{<span class="ident">AccountId</span>, <span class="ident">Balance</span>, <span class="ident">Block</span>, <span class="ident">BlockNumber</span>, <span class="ident">Hash</span>, <span class="ident">Index</span>};
 <span class="kw">use</span> <span class="ident">sc_client_api::AuxStore</span>;
-<span class="kw">use</span> <span class="ident">sc_consensus_babe</span>::{<span class="ident">Config</span>, <span class="ident">Epoch</span>};
+<span class="kw">use</span> <span class="ident">sc_consensus_babe</span>::{<span class="ident">BabeConfiguration</span>, <span class="ident">Epoch</span>};
 <span class="kw">use</span> <span class="ident">sc_consensus_epochs::SharedEpochChanges</span>;
 <span class="kw">use</span> <span class="ident">sc_finality_grandpa</span>::{
 	<span class="ident">FinalityProofProvider</span>, <span class="ident">GrandpaJustificationStream</span>, <span class="ident">SharedAuthoritySet</span>, <span class="ident">SharedVoterState</span>,
@@ -241,7 +241,7 @@
 <span class="doccomment">/// Extra dependencies for BABE.</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">BabeDeps</span> {
 	<span class="doccomment">/// BABE protocol config.</span>
-	<span class="kw">pub</span> <span class="ident">babe_config</span>: <span class="ident">Config</span>,
+	<span class="kw">pub</span> <span class="ident">babe_config</span>: <span class="ident">BabeConfiguration</span>,
 	<span class="doccomment">/// BABE pending epoch changes.</span>
 	<span class="kw">pub</span> <span class="ident">shared_epoch_changes</span>: <span class="ident">SharedEpochChanges</span><span class="op">&lt;</span><span class="ident">Block</span>, <span class="ident">Epoch</span><span class="op">&gt;</span>,
 	<span class="doccomment">/// The keystore that manages the keys of the node.</span>

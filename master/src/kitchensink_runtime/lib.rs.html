@@ -2214,10 +2214,6 @@
 <span id="2208">2208</span>
 <span id="2209">2209</span>
 <span id="2210">2210</span>
-<span id="2211">2211</span>
-<span id="2212">2212</span>
-<span id="2213">2213</span>
-<span id="2214">2214</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2018-2022 Parity Technologies (UK) Ltd.</span>
@@ -4079,19 +4075,15 @@
 	}
 
 	<span class="kw">impl</span> <span class="ident">sp_consensus_babe::BabeApi</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Runtime</span> {
-		<span class="kw">fn</span> <span class="ident">configuration</span>() -&gt; <span class="ident">sp_consensus_babe::BabeGenesisConfiguration</span> {
-			<span class="comment">// The choice of `c` parameter (where `1 - c` represents the</span>
-			<span class="comment">// probability of a slot being empty), is done in accordance to the</span>
-			<span class="comment">// slot duration and expected target block time, for safely</span>
-			<span class="comment">// resisting network delays of maximum two seconds.</span>
-			<span class="comment">// &lt;https://research.web3.foundation/en/latest/polkadot/BABE/Babe/#6-practical-results&gt;</span>
-			<span class="ident">sp_consensus_babe::BabeGenesisConfiguration</span> {
+		<span class="kw">fn</span> <span class="ident">configuration</span>() -&gt; <span class="ident">sp_consensus_babe::BabeConfiguration</span> {
+			<span class="kw">let</span> <span class="ident">epoch_config</span> <span class="op">=</span> <span class="ident">Babe::epoch_config</span>().<span class="ident">unwrap_or</span>(<span class="ident">BABE_GENESIS_EPOCH_CONFIG</span>);
+			<span class="ident">sp_consensus_babe::BabeConfiguration</span> {
 				<span class="ident">slot_duration</span>: <span class="ident">Babe::slot_duration</span>(),
 				<span class="ident">epoch_length</span>: <span class="ident">EpochDuration::get</span>(),
-				<span class="ident">c</span>: <span class="ident">BABE_GENESIS_EPOCH_CONFIG</span>.<span class="ident">c</span>,
-				<span class="ident">genesis_authorities</span>: <span class="ident">Babe::authorities</span>().<span class="ident">to_vec</span>(),
+				<span class="ident">c</span>: <span class="ident">epoch_config</span>.<span class="ident">c</span>,
+				<span class="ident">authorities</span>: <span class="ident">Babe::authorities</span>().<span class="ident">to_vec</span>(),
 				<span class="ident">randomness</span>: <span class="ident">Babe::randomness</span>(),
-				<span class="ident">allowed_slots</span>: <span class="ident">BABE_GENESIS_EPOCH_CONFIG</span>.<span class="ident">allowed_slots</span>,
+				<span class="ident">allowed_slots</span>: <span class="ident">epoch_config</span>.<span class="ident">allowed_slots</span>,
 			}
 		}
 

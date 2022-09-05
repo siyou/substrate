@@ -1017,6 +1017,7 @@
 <span id="1011">1011</span>
 <span id="1012">1012</span>
 <span id="1013">1013</span>
+<span id="1014">1014</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2019-2022 Parity Technologies (UK) Ltd.</span>
@@ -1325,6 +1326,7 @@
 	<span class="doccomment">/// The configuration for the current epoch. Should never be `None` as it is initialized in</span>
 	<span class="doccomment">/// genesis.</span>
 	<span class="attribute">#[<span class="ident">pallet::storage</span>]</span>
+	<span class="attribute">#[<span class="ident">pallet::getter</span>(<span class="kw">fn</span> <span class="ident">epoch_config</span>)]</span>
 	<span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">type</span> <span class="ident">EpochConfig</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">StorageValue</span><span class="op">&lt;</span><span class="kw">_</span>, <span class="ident">BabeEpochConfiguration</span><span class="op">&gt;</span>;
 
 	<span class="doccomment">/// The configuration for the next epoch, `None` if the config will not change</span>
