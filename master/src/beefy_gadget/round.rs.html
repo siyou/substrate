@@ -448,6 +448,14 @@
 <span id="442">442</span>
 <span id="443">443</span>
 <span id="444">444</span>
+<span id="445">445</span>
+<span id="446">446</span>
+<span id="447">447</span>
+<span id="448">448</span>
+<span id="449">449</span>
+<span id="450">450</span>
+<span id="451">451</span>
+<span id="452">452</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2021-2022 Parity Technologies (UK) Ltd.</span>
@@ -597,13 +605,8 @@
 		<span class="macro">trace!</span>(<span class="ident">target</span>: <span class="string">&quot;beefy&quot;</span>, <span class="string">&quot;🥩 Round #{} done: {}&quot;</span>, <span class="ident">round</span>.<span class="number">1</span>, <span class="ident">done</span>);
 
 		<span class="kw">if</span> <span class="ident">done</span> {
-			<span class="comment">// remove this and older (now stale) rounds</span>
 			<span class="kw">let</span> <span class="ident">signatures</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">rounds</span>.<span class="ident">remove</span>(<span class="ident">round</span>)<span class="question-mark">?</span>.<span class="ident">votes</span>;
-			<span class="self">self</span>.<span class="ident">rounds</span>.<span class="ident">retain</span>(<span class="op">|</span><span class="kw-2">&amp;</span>(<span class="kw">_</span>, <span class="ident">number</span>), <span class="kw">_</span><span class="op">|</span> <span class="ident">number</span> <span class="op">&gt;</span> <span class="ident">round</span>.<span class="number">1</span>);
-			<span class="self">self</span>.<span class="ident">mandatory_done</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">mandatory_done</span> <span class="op">|</span><span class="op">|</span> <span class="ident">round</span>.<span class="number">1</span> <span class="op">==</span> <span class="self">self</span>.<span class="ident">session_start</span>;
-			<span class="self">self</span>.<span class="ident">best_done</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">best_done</span>.<span class="ident">max</span>(<span class="prelude-val">Some</span>(<span class="ident">round</span>.<span class="number">1</span>));
-			<span class="macro">debug!</span>(<span class="ident">target</span>: <span class="string">&quot;beefy&quot;</span>, <span class="string">&quot;🥩 Concluded round #{}&quot;</span>, <span class="ident">round</span>.<span class="number">1</span>);
-
+			<span class="self">self</span>.<span class="ident">conclude</span>(<span class="ident">round</span>.<span class="number">1</span>);
 			<span class="prelude-val">Some</span>(
 				<span class="self">self</span>.<span class="ident">validators</span>()
 					.<span class="ident">iter</span>()
@@ -615,9 +618,12 @@
 		}
 	}
 
-	<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
-	<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">test_set_mandatory_done</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">done</span>: <span class="ident">bool</span>) {
-		<span class="self">self</span>.<span class="ident">mandatory_done</span> <span class="op">=</span> <span class="ident">done</span>;
+	<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">conclude</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">round_num</span>: <span class="ident">NumberFor</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>) {
+		<span class="comment">// Remove this and older (now stale) rounds.</span>
+		<span class="self">self</span>.<span class="ident">rounds</span>.<span class="ident">retain</span>(<span class="op">|</span><span class="kw-2">&amp;</span>(<span class="kw">_</span>, <span class="ident">number</span>), <span class="kw">_</span><span class="op">|</span> <span class="ident">number</span> <span class="op">&gt;</span> <span class="ident">round_num</span>);
+		<span class="self">self</span>.<span class="ident">mandatory_done</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">mandatory_done</span> <span class="op">|</span><span class="op">|</span> <span class="ident">round_num</span> <span class="op">==</span> <span class="self">self</span>.<span class="ident">session_start</span>;
+		<span class="self">self</span>.<span class="ident">best_done</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">best_done</span>.<span class="ident">max</span>(<span class="prelude-val">Some</span>(<span class="ident">round_num</span>));
+		<span class="macro">debug!</span>(<span class="ident">target</span>: <span class="string">&quot;beefy&quot;</span>, <span class="string">&quot;🥩 Concluded round #{}&quot;</span>, <span class="ident">round_num</span>);
 	}
 }
 
@@ -628,8 +634,18 @@
 
 	<span class="kw">use</span> <span class="ident">beefy_primitives</span>::{<span class="ident">crypto::Public</span>, <span class="ident">ValidatorSet</span>};
 
-	<span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">threshold</span>, <span class="ident">RoundTracker</span>, <span class="ident">Rounds</span>};
+	<span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">threshold</span>, <span class="ident">Block</span> <span class="kw">as</span> <span class="ident">BlockT</span>, <span class="ident">Hash</span>, <span class="ident">RoundTracker</span>, <span class="ident">Rounds</span>};
 	<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::keystore::tests::Keyring</span>;
+
+	<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">P</span>, <span class="ident">B</span><span class="op">&gt;</span> <span class="ident">Rounds</span><span class="op">&lt;</span><span class="ident">P</span>, <span class="ident">B</span><span class="op">&gt;</span>
+	<span class="kw">where</span>
+		<span class="ident">P</span>: <span class="ident">Ord</span> <span class="op">+</span> <span class="ident">Hash</span> <span class="op">+</span> <span class="ident">Clone</span>,
+		<span class="ident">B</span>: <span class="ident">BlockT</span>,
+	{
+		<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">test_set_mandatory_done</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">done</span>: <span class="ident">bool</span>) {
+			<span class="self">self</span>.<span class="ident">mandatory_done</span> <span class="op">=</span> <span class="ident">done</span>;
+		}
+	}
 
 	<span class="attribute">#[<span class="ident">test</span>]</span>
 	<span class="kw">fn</span> <span class="ident">round_tracker</span>() {
