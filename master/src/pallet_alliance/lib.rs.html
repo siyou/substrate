@@ -1203,16 +1203,6 @@
 <span id="1197">1197</span>
 <span id="1198">1198</span>
 <span id="1199">1199</span>
-<span id="1200">1200</span>
-<span id="1201">1201</span>
-<span id="1202">1202</span>
-<span id="1203">1203</span>
-<span id="1204">1204</span>
-<span id="1205">1205</span>
-<span id="1206">1206</span>
-<span id="1207">1207</span>
-<span id="1208">1208</span>
-<span id="1209">1209</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2022 Parity Technologies (UK) Ltd.</span>
@@ -1299,7 +1289,8 @@
 <span class="doccomment">//!</span>
 <span class="doccomment">//! #### Root Calls</span>
 <span class="doccomment">//!</span>
-<span class="doccomment">//! - `force_set_members` - Set the members via chain governance.</span>
+<span class="doccomment">//! - `init_members` - Initialize the Alliance, onboard founders, fellows, and allies.</span>
+<span class="doccomment">//! - `disband` - Disband the Alliance, remove all active members and unreserve deposits.</span>
 
 <span class="attribute">#![<span class="ident">cfg_attr</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>), <span class="ident">no_std</span>)]</span>
 
@@ -1419,14 +1410,6 @@
 
 	<span class="doccomment">/// Return a proposal of the given hash.</span>
 	<span class="kw">fn</span> <span class="ident">proposal_of</span>(<span class="ident">proposal_hash</span>: <span class="ident">Hash</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Proposal</span><span class="op">&gt;</span>;
-
-	<span class="doccomment">/// Return hashes of all active proposals.</span>
-	<span class="kw">fn</span> <span class="ident">proposals</span>() -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Hash</span><span class="op">&gt;</span>;
-
-	<span class="comment">// Return count of all active proposals.</span>
-	<span class="comment">//</span>
-	<span class="comment">// Used to check witness data for an extrinsic.</span>
-	<span class="kw">fn</span> <span class="ident">proposals_count</span>() -&gt; <span class="ident">u32</span>;
 }
 
 <span class="doccomment">/// The various roles that a member can hold.</span>
@@ -1643,8 +1626,8 @@
 		<span class="ident">UnscrupulousItemAdded</span> { <span class="ident">items</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">UnscrupulousItemOf</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="op">&gt;</span> },
 		<span class="doccomment">/// Accounts or websites have been removed from the list of unscrupulous items.</span>
 		<span class="ident">UnscrupulousItemRemoved</span> { <span class="ident">items</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">UnscrupulousItemOf</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="op">&gt;</span> },
-		<span class="doccomment">/// Alliance disbanded.</span>
-		<span class="ident">AllianceDisbanded</span> { <span class="ident">members</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T::AccountId</span><span class="op">&gt;</span>, <span class="ident">proposals</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T::Hash</span><span class="op">&gt;</span> },
+		<span class="doccomment">/// Alliance disbanded. Includes number deleted members and unreserved deposits.</span>
+		<span class="ident">AllianceDisbanded</span> { <span class="ident">voting_members</span>: <span class="ident">u32</span>, <span class="ident">ally_members</span>: <span class="ident">u32</span>, <span class="ident">unreserved</span>: <span class="ident">u32</span> },
 	}
 
 	<span class="attribute">#[<span class="ident">pallet::genesis_config</span>]</span>
@@ -1862,81 +1845,25 @@
 			<span class="prelude-val">Ok</span>(<span class="ident">info</span>.<span class="ident">into</span>())
 		}
 
-		<span class="doccomment">/// Initialize the founders, fellows, and allies.</span>
-		<span class="doccomment">/// Founders must be provided to initialize the Alliance.</span>
+		<span class="doccomment">/// Initialize the Alliance, onboard founders, fellows, and allies.</span>
 		<span class="doccomment">///</span>
-		<span class="doccomment">/// Provide witness data to disband current Alliance before initializing new.</span>
-		<span class="doccomment">/// Alliance must be empty or disband first to initialize new.</span>
-		<span class="doccomment">///</span>
-		<span class="doccomment">/// Alliance is only disbanded if new member set is not provided.</span>
-		<span class="doccomment">///</span>
+		<span class="doccomment">/// Founders must be not empty.</span>
+		<span class="doccomment">/// The Alliance must be empty.</span>
 		<span class="doccomment">/// Must be called by the Root origin.</span>
-		<span class="attribute">#[<span class="ident">pallet::weight</span>(<span class="ident">T::WeightInfo::force_set_members</span>(
-			<span class="ident">T::MaxFounders::get</span>(),
-			<span class="ident">T::MaxFellows::get</span>(),
-			<span class="ident">T::MaxAllies::get</span>(),
-			<span class="ident">witness</span>.<span class="ident">proposals</span>,
-			<span class="ident">witness</span>.<span class="ident">voting_members</span>,
-			<span class="ident">witness</span>.<span class="ident">ally_members</span>,
+		<span class="attribute">#[<span class="ident">pallet::weight</span>(<span class="ident">T::WeightInfo::init_members</span>(
+			<span class="ident">founders</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u32</span>,
+			<span class="ident">fellows</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u32</span>,
+			<span class="ident">allies</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u32</span>,
 		))]</span>
-		<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">force_set_members</span>(
+		<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">init_members</span>(
 			<span class="ident">origin</span>: <span class="ident">OriginFor</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
 			<span class="ident">founders</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T::AccountId</span><span class="op">&gt;</span>,
 			<span class="ident">fellows</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T::AccountId</span><span class="op">&gt;</span>,
 			<span class="ident">allies</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T::AccountId</span><span class="op">&gt;</span>,
-			<span class="ident">witness</span>: <span class="ident">ForceSetWitness</span>,
 		) -&gt; <span class="ident">DispatchResult</span> {
 			<span class="ident">ensure_root</span>(<span class="ident">origin</span>)<span class="question-mark">?</span>;
 
-			<span class="kw">if</span> <span class="op">!</span><span class="ident">witness</span>.<span class="ident">is_zero</span>() {
-				<span class="comment">// Disband Alliance by removing all members and returning deposits.</span>
-				<span class="comment">// Veto and remove all active proposals to avoid any unexpected behavior from</span>
-				<span class="comment">// actionable items managed outside of the pallet. Items managed within the pallet,</span>
-				<span class="comment">// like `UnscrupulousWebsites`, are left for the new Alliance to clean up or keep.</span>
-
-				<span class="macro">ensure!</span>(
-					<span class="ident">T::ProposalProvider::proposals_count</span>() <span class="op">&lt;</span><span class="op">=</span> <span class="ident">witness</span>.<span class="ident">proposals</span>,
-					<span class="ident">Error</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::BadWitness</span>
-				);
-				<span class="macro">ensure!</span>(
-					<span class="ident"><span class="self">Self</span>::voting_members_count</span>() <span class="op">&lt;</span><span class="op">=</span> <span class="ident">witness</span>.<span class="ident">voting_members</span>,
-					<span class="ident">Error</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::BadWitness</span>
-				);
-				<span class="macro">ensure!</span>(
-					<span class="ident"><span class="self">Self</span>::ally_members_count</span>() <span class="op">&lt;</span><span class="op">=</span> <span class="ident">witness</span>.<span class="ident">ally_members</span>,
-					<span class="ident">Error</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::BadWitness</span>
-				);
-
-				<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">proposals</span> <span class="op">=</span> <span class="ident">T::ProposalProvider::proposals</span>();
-				<span class="kw">for</span> <span class="ident">hash</span> <span class="kw">in</span> <span class="ident">proposals</span>.<span class="ident">iter</span>() {
-					<span class="ident">T::ProposalProvider::veto_proposal</span>(<span class="kw-2">*</span><span class="ident">hash</span>);
-				}
-
-				<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">members</span> <span class="op">=</span> <span class="ident"><span class="self">Self</span>::voting_members</span>();
-				<span class="ident">T::MembershipChanged::change_members_sorted</span>(<span class="kw-2">&amp;</span>[], <span class="kw-2">&amp;</span><span class="ident">members</span>, <span class="kw-2">&amp;</span>[]);
-
-				<span class="ident">members</span>.<span class="ident">append</span>(<span class="kw-2">&amp;mut</span> <span class="ident"><span class="self">Self</span>::members_of</span>(<span class="ident">MemberRole::Ally</span>));
-				<span class="kw">for</span> <span class="ident">member</span> <span class="kw">in</span> <span class="ident">members</span>.<span class="ident">iter</span>() {
-					<span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">deposit</span>) <span class="op">=</span> <span class="ident">DepositOf</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::take</span>(<span class="kw-2">&amp;</span><span class="ident">member</span>) {
-						<span class="kw">let</span> <span class="ident">err_amount</span> <span class="op">=</span> <span class="ident">T::Currency::unreserve</span>(<span class="kw-2">&amp;</span><span class="ident">member</span>, <span class="ident">deposit</span>);
-						<span class="macro">debug_assert!</span>(<span class="ident">err_amount</span>.<span class="ident">is_zero</span>());
-					}
-				}
-
-				<span class="ident">Members</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::remove</span>(<span class="kw-2">&amp;</span><span class="ident">MemberRole::Founder</span>);
-				<span class="ident">Members</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::remove</span>(<span class="kw-2">&amp;</span><span class="ident">MemberRole::Fellow</span>);
-				<span class="ident">Members</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::remove</span>(<span class="kw-2">&amp;</span><span class="ident">MemberRole::Ally</span>);
-
-				<span class="ident">members</span>.<span class="ident">sort</span>();
-				<span class="ident">proposals</span>.<span class="ident">sort</span>();
-				<span class="ident"><span class="self">Self</span>::deposit_event</span>(<span class="ident">Event::AllianceDisbanded</span> { <span class="ident">members</span>, <span class="ident">proposals</span> });
-			}
-
-			<span class="kw">if</span> <span class="ident">founders</span>.<span class="ident">is_empty</span>() {
-				<span class="macro">ensure!</span>(<span class="ident">fellows</span>.<span class="ident">is_empty</span>() <span class="op">&amp;&amp;</span> <span class="ident">allies</span>.<span class="ident">is_empty</span>(), <span class="ident">Error</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::FoundersMissing</span>);
-				<span class="comment">// new members set not provided.</span>
-				<span class="kw">return</span> <span class="prelude-val">Ok</span>(())
-			}
+			<span class="macro">ensure!</span>(<span class="op">!</span><span class="ident">founders</span>.<span class="ident">is_empty</span>(), <span class="ident">Error</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::FoundersMissing</span>);
 			<span class="macro">ensure!</span>(<span class="op">!</span><span class="ident"><span class="self">Self</span>::is_initialized</span>(), <span class="ident">Error</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::AllianceAlreadyInitialized</span>);
 
 			<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">founders</span>: <span class="ident">BoundedVec</span><span class="op">&lt;</span><span class="ident">T::AccountId</span>, <span class="ident">T::MaxMembersCount</span><span class="op">&gt;</span> <span class="op">=</span>
@@ -1978,6 +1905,59 @@
 				<span class="ident">allies</span>: <span class="ident">allies</span>.<span class="ident">into</span>(),
 			});
 			<span class="prelude-val">Ok</span>(())
+		}
+
+		<span class="doccomment">/// Disband the Alliance, remove all active members and unreserve deposits.</span>
+		<span class="doccomment">///</span>
+		<span class="doccomment">/// Witness data must be set.</span>
+		<span class="attribute">#[<span class="ident">pallet::weight</span>(<span class="ident">T::WeightInfo::disband</span>(
+			<span class="ident">witness</span>.<span class="ident">voting_members</span>,
+			<span class="ident">witness</span>.<span class="ident">ally_members</span>,
+			<span class="ident">witness</span>.<span class="ident">voting_members</span> <span class="op">+</span> <span class="ident">witness</span>.<span class="ident">ally_members</span>,
+		))]</span>
+		<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">disband</span>(
+			<span class="ident">origin</span>: <span class="ident">OriginFor</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
+			<span class="ident">witness</span>: <span class="ident">DisbandWitness</span>,
+		) -&gt; <span class="ident">DispatchResultWithPostInfo</span> {
+			<span class="ident">ensure_root</span>(<span class="ident">origin</span>)<span class="question-mark">?</span>;
+
+			<span class="macro">ensure!</span>(<span class="op">!</span><span class="ident">witness</span>.<span class="ident">is_zero</span>(), <span class="ident">Error</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::BadWitness</span>);
+			<span class="macro">ensure!</span>(
+				<span class="ident"><span class="self">Self</span>::voting_members_count</span>() <span class="op">&lt;</span><span class="op">=</span> <span class="ident">witness</span>.<span class="ident">voting_members</span>,
+				<span class="ident">Error</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::BadWitness</span>
+			);
+			<span class="macro">ensure!</span>(<span class="ident"><span class="self">Self</span>::ally_members_count</span>() <span class="op">&lt;</span><span class="op">=</span> <span class="ident">witness</span>.<span class="ident">ally_members</span>, <span class="ident">Error</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::BadWitness</span>);
+			<span class="macro">ensure!</span>(<span class="ident"><span class="self">Self</span>::is_initialized</span>(), <span class="ident">Error</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::AllianceNotYetInitialized</span>);
+
+			<span class="kw">let</span> <span class="ident">voting_members</span> <span class="op">=</span> <span class="ident"><span class="self">Self</span>::voting_members</span>();
+			<span class="ident">T::MembershipChanged::change_members_sorted</span>(<span class="kw-2">&amp;</span>[], <span class="kw-2">&amp;</span><span class="ident">voting_members</span>, <span class="kw-2">&amp;</span>[]);
+
+			<span class="kw">let</span> <span class="ident">ally_members</span> <span class="op">=</span> <span class="ident"><span class="self">Self</span>::members_of</span>(<span class="ident">MemberRole::Ally</span>);
+			<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">unreserve_count</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0</span>;
+			<span class="kw">for</span> <span class="ident">member</span> <span class="kw">in</span> <span class="ident">voting_members</span>.<span class="ident">iter</span>().<span class="ident">chain</span>(<span class="ident">ally_members</span>.<span class="ident">iter</span>()) {
+				<span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">deposit</span>) <span class="op">=</span> <span class="ident">DepositOf</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::take</span>(<span class="kw-2">&amp;</span><span class="ident">member</span>) {
+					<span class="kw">let</span> <span class="ident">err_amount</span> <span class="op">=</span> <span class="ident">T::Currency::unreserve</span>(<span class="kw-2">&amp;</span><span class="ident">member</span>, <span class="ident">deposit</span>);
+					<span class="macro">debug_assert!</span>(<span class="ident">err_amount</span>.<span class="ident">is_zero</span>());
+					<span class="ident">unreserve_count</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
+				}
+			}
+
+			<span class="ident">Members</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::remove</span>(<span class="kw-2">&amp;</span><span class="ident">MemberRole::Founder</span>);
+			<span class="ident">Members</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::remove</span>(<span class="kw-2">&amp;</span><span class="ident">MemberRole::Fellow</span>);
+			<span class="ident">Members</span>::<span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="ident">::remove</span>(<span class="kw-2">&amp;</span><span class="ident">MemberRole::Ally</span>);
+
+			<span class="ident"><span class="self">Self</span>::deposit_event</span>(<span class="ident">Event::AllianceDisbanded</span> {
+				<span class="ident">voting_members</span>: <span class="ident">voting_members</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u32</span>,
+				<span class="ident">ally_members</span>: <span class="ident">ally_members</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u32</span>,
+				<span class="ident">unreserved</span>: <span class="ident">unreserve_count</span>,
+			});
+
+			<span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(<span class="ident">T::WeightInfo::disband</span>(
+				<span class="ident">voting_members</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u32</span>,
+				<span class="ident">ally_members</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u32</span>,
+				<span class="ident">unreserve_count</span>,
+			))
+			.<span class="ident">into</span>())
 		}
 
 		<span class="doccomment">/// Set a new IPFS CID to the alliance rule.</span>

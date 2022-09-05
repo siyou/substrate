@@ -126,10 +126,6 @@
 <span id="120">120</span>
 <span id="121">121</span>
 <span id="122">122</span>
-<span id="123">123</span>
-<span id="124">124</span>
-<span id="125">125</span>
-<span id="126">126</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2022 Parity Technologies (UK) Ltd.</span>
@@ -226,32 +222,28 @@
 	}
 }
 
-<span class="doccomment">/// Witness data for the `force_set_members` call.</span>
-<span class="doccomment">/// Relevant only if executed on an initialized alliance to reset it.</span>
+<span class="doccomment">/// Witness data for the `disband` call.</span>
 <span class="attribute">#[<span class="ident">derive</span>(
 	<span class="ident">Copy</span>, <span class="ident">Clone</span>, <span class="ident">Encode</span>, <span class="ident">Decode</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>, <span class="ident">RuntimeDebug</span>, <span class="ident">MaxEncodedLen</span>, <span class="ident">TypeInfo</span>, <span class="ident">Default</span>,
 )]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ForceSetWitness</span> {
-	<span class="doccomment">/// Number of active proposals which will be vetoed and removed.</span>
-	<span class="attribute">#[<span class="ident">codec</span>(<span class="ident">compact</span>)]</span>
-	<span class="kw">pub</span>(<span class="kw">super</span>) <span class="ident">proposals</span>: <span class="ident">u32</span>,
-	<span class="doccomment">/// Total number of voting members in the current alliance.</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">DisbandWitness</span> {
+	<span class="doccomment">/// Total number of voting members in the current Alliance.</span>
 	<span class="attribute">#[<span class="ident">codec</span>(<span class="ident">compact</span>)]</span>
 	<span class="kw">pub</span>(<span class="kw">super</span>) <span class="ident">voting_members</span>: <span class="ident">u32</span>,
-	<span class="doccomment">/// Total number of ally members in the current alliance.</span>
+	<span class="doccomment">/// Total number of ally members in the current Alliance.</span>
 	<span class="attribute">#[<span class="ident">codec</span>(<span class="ident">compact</span>)]</span>
 	<span class="kw">pub</span>(<span class="kw">super</span>) <span class="ident">ally_members</span>: <span class="ident">u32</span>,
 }
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
-<span class="kw">impl</span> <span class="ident">ForceSetWitness</span> {
-	<span class="comment">// Creates new ForceSetWitness.</span>
-	<span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">proposals</span>: <span class="ident">u32</span>, <span class="ident">voting_members</span>: <span class="ident">u32</span>, <span class="ident">ally_members</span>: <span class="ident">u32</span>) -&gt; <span class="self">Self</span> {
-		<span class="self">Self</span> { <span class="ident">proposals</span>, <span class="ident">voting_members</span>, <span class="ident">ally_members</span> }
+<span class="kw">impl</span> <span class="ident">DisbandWitness</span> {
+	<span class="comment">// Creates new DisbandWitness.</span>
+	<span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">voting_members</span>: <span class="ident">u32</span>, <span class="ident">ally_members</span>: <span class="ident">u32</span>) -&gt; <span class="self">Self</span> {
+		<span class="self">Self</span> { <span class="ident">voting_members</span>, <span class="ident">ally_members</span> }
 	}
 }
 
-<span class="kw">impl</span> <span class="ident">ForceSetWitness</span> {
+<span class="kw">impl</span> <span class="ident">DisbandWitness</span> {
 	<span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn</span> <span class="ident">is_zero</span>(<span class="self">self</span>) -&gt; <span class="ident">bool</span> {
 		<span class="self">self</span> <span class="op">==</span> <span class="ident"><span class="self">Self</span>::default</span>()
 	}
