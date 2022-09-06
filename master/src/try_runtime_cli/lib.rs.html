@@ -852,6 +852,9 @@
 <span id="846">846</span>
 <span id="847">847</span>
 <span id="848">848</span>
+<span id="849">849</span>
+<span id="850">850</span>
+<span id="851">851</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2021-2022 Parity Technologies (UK) Ltd.</span>
@@ -1121,7 +1124,8 @@
 
 <span class="kw">use</span> <span class="ident">parity_scale_codec::Decode</span>;
 <span class="kw">use</span> <span class="ident">remote_externalities</span>::{
-	<span class="ident">Builder</span>, <span class="ident">Mode</span>, <span class="ident">OfflineConfig</span>, <span class="ident">OnlineConfig</span>, <span class="ident">SnapshotConfig</span>, <span class="ident">TestExternalities</span>,
+	<span class="ident">rpc_api::RpcService</span>, <span class="ident">Builder</span>, <span class="ident">Mode</span>, <span class="ident">OfflineConfig</span>, <span class="ident">OnlineConfig</span>, <span class="ident">SnapshotConfig</span>,
+	<span class="ident">TestExternalities</span>,
 };
 <span class="kw">use</span> <span class="ident">sc_chain_spec::ChainSpec</span>;
 <span class="kw">use</span> <span class="ident">sc_cli</span>::{
@@ -1395,8 +1399,8 @@
 <span class="kw">impl</span> <span class="ident">TryRuntimeCmd</span> {
 	<span class="kw">pub</span> <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">run</span><span class="op">&lt;</span><span class="ident">Block</span>, <span class="ident">ExecDispatch</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">config</span>: <span class="ident">Configuration</span>) -&gt; <span class="ident">sc_cli::Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>
 	<span class="kw">where</span>
-		<span class="ident">Block</span>: <span class="ident">BlockT</span><span class="op">&lt;</span><span class="ident">Hash</span> <span class="op">=</span> <span class="ident">H256</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">serde::de::DeserializeOwned</span>,
-		<span class="ident">Block::Header</span>: <span class="ident">serde::de::DeserializeOwned</span>,
+		<span class="ident">Block</span>: <span class="ident">BlockT</span><span class="op">&lt;</span><span class="ident">Hash</span> <span class="op">=</span> <span class="ident">H256</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">DeserializeOwned</span>,
+		<span class="ident">Block::Header</span>: <span class="ident">DeserializeOwned</span>,
 		<span class="ident">Block::Hash</span>: <span class="ident">FromStr</span>,
 		<span class="op">&lt;</span><span class="ident">Block::Hash</span> <span class="kw">as</span> <span class="ident">FromStr</span><span class="op">&gt;</span><span class="ident">::Err</span>: <span class="ident">Debug</span>,
 		<span class="ident">NumberFor</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span>: <span class="ident">FromStr</span>,
@@ -1480,13 +1484,15 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// If the spec names don&#39;t match, if `relaxed`, then it emits a warning, else it panics.</span>
 <span class="doccomment">/// If the spec versions don&#39;t match, it only ever emits a warning.</span>
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">ensure_matching_spec</span><span class="op">&lt;</span><span class="ident">Block</span>: <span class="ident">BlockT</span> <span class="op">+</span> <span class="ident">serde::de::DeserializeOwned</span><span class="op">&gt;</span>(
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">ensure_matching_spec</span><span class="op">&lt;</span><span class="ident">Block</span>: <span class="ident">BlockT</span> <span class="op">+</span> <span class="ident">DeserializeOwned</span><span class="op">&gt;</span>(
 	<span class="ident">uri</span>: <span class="ident">String</span>,
 	<span class="ident">expected_spec_name</span>: <span class="ident">String</span>,
 	<span class="ident">expected_spec_version</span>: <span class="ident">u32</span>,
 	<span class="ident">relaxed</span>: <span class="ident">bool</span>,
 ) {
-	<span class="kw">match</span> <span class="ident">remote_externalities::rpc_api::get_runtime_version</span>::<span class="op">&lt;</span><span class="ident">Block</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="ident">uri</span>.<span class="ident">clone</span>(), <span class="prelude-val">None</span>)
+	<span class="kw">let</span> <span class="ident">rpc_service</span> <span class="op">=</span> <span class="ident">RpcService::new</span>(<span class="ident">uri</span>.<span class="ident">clone</span>(), <span class="bool-val">false</span>).<span class="kw">await</span>.<span class="ident">unwrap</span>();
+	<span class="kw">match</span> <span class="ident">rpc_service</span>
+		.<span class="ident">get_runtime_version</span>::<span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span>(<span class="prelude-val">None</span>)
 		.<span class="kw">await</span>
 		.<span class="ident">map</span>(<span class="op">|</span><span class="ident">version</span><span class="op">|</span> (<span class="ident">String::from</span>(<span class="ident">version</span>.<span class="ident">spec_name</span>.<span class="ident">clone</span>()), <span class="ident">version</span>.<span class="ident">spec_version</span>))
 		.<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">spec_name</span>, <span class="ident">spec_version</span>)<span class="op">|</span> (<span class="ident">spec_name</span>.<span class="ident">to_lowercase</span>(), <span class="ident">spec_version</span>))

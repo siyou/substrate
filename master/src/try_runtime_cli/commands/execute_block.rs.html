@@ -217,6 +217,7 @@
 <span id="211">211</span>
 <span id="212">212</span>
 <span id="213">213</span>
+<span id="214">214</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2021-2022 Parity Technologies (UK) Ltd.</span>
@@ -308,6 +309,8 @@
 		<span class="ident">Block::Hash</span>: <span class="ident">FromStr</span>,
 		<span class="op">&lt;</span><span class="ident">Block::Hash</span> <span class="kw">as</span> <span class="ident">FromStr</span><span class="op">&gt;</span><span class="ident">::Err</span>: <span class="ident">Debug</span>,
 	{
+		<span class="kw">let</span> <span class="ident">rpc_service</span> <span class="op">=</span> <span class="ident">rpc_api::RpcService::new</span>(<span class="ident">ws_uri</span>, <span class="bool-val">false</span>).<span class="kw">await</span><span class="question-mark">?</span>;
+
 		<span class="kw">match</span> (<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">block_at</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">state</span>) {
 			(<span class="prelude-val">Some</span>(<span class="ident">block_at</span>), <span class="ident">State::Snap</span> { .. }) =&gt; <span class="ident">hash_of</span>::<span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span>(<span class="ident">block_at</span>),
 			(<span class="prelude-val">Some</span>(<span class="ident">block_at</span>), <span class="ident">State::Live</span> { .. }) =&gt; {
@@ -319,9 +322,7 @@
 					<span class="ident">target</span>: <span class="ident">LOG_TARGET</span>,
 					<span class="string">&quot;No --block-at or --at provided, using the latest finalized block instead&quot;</span>
 				);
-				<span class="ident">remote_externalities::rpc_api::get_finalized_head</span>::<span class="op">&lt;</span><span class="ident">Block</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="ident">ws_uri</span>)
-					.<span class="kw">await</span>
-					.<span class="ident">map_err</span>(<span class="ident">Into::into</span>)
+				<span class="ident">rpc_service</span>.<span class="ident">get_finalized_head</span>::<span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span>().<span class="kw">await</span>.<span class="ident">map_err</span>(<span class="ident">Into::into</span>)
 			},
 			(<span class="prelude-val">None</span>, <span class="ident">State::Live</span> { <span class="ident">at</span>: <span class="prelude-val">Some</span>(<span class="ident">at</span>), .. }) =&gt; <span class="ident">hash_of</span>::<span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span>(<span class="ident">at</span>),
 			<span class="kw">_</span> =&gt; {
@@ -367,7 +368,8 @@
 
 	<span class="kw">let</span> <span class="ident">block_ws_uri</span> <span class="op">=</span> <span class="ident">command</span>.<span class="ident">block_ws_uri</span>::<span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span>();
 	<span class="kw">let</span> <span class="ident">block_at</span> <span class="op">=</span> <span class="ident">command</span>.<span class="ident">block_at</span>::<span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span>(<span class="ident">block_ws_uri</span>.<span class="ident">clone</span>()).<span class="kw">await</span><span class="question-mark">?</span>;
-	<span class="kw">let</span> <span class="ident">block</span>: <span class="ident">Block</span> <span class="op">=</span> <span class="ident">rpc_api::get_block</span>::<span class="op">&lt;</span><span class="ident">Block</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="ident">block_ws_uri</span>.<span class="ident">clone</span>(), <span class="ident">block_at</span>).<span class="kw">await</span><span class="question-mark">?</span>;
+	<span class="kw">let</span> <span class="ident">rpc_service</span> <span class="op">=</span> <span class="ident">rpc_api::RpcService::new</span>(<span class="ident">block_ws_uri</span>.<span class="ident">clone</span>(), <span class="bool-val">false</span>).<span class="kw">await</span><span class="question-mark">?</span>;
+	<span class="kw">let</span> <span class="ident">block</span>: <span class="ident">Block</span> <span class="op">=</span> <span class="ident">rpc_service</span>.<span class="ident">get_block</span>::<span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span>(<span class="ident">block_at</span>).<span class="kw">await</span><span class="question-mark">?</span>;
 	<span class="kw">let</span> <span class="ident">parent_hash</span> <span class="op">=</span> <span class="ident">block</span>.<span class="ident">header</span>().<span class="ident">parent_hash</span>();
 	<span class="macro">log::info!</span>(
 		<span class="ident">target</span>: <span class="ident">LOG_TARGET</span>,
