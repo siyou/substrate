@@ -658,8 +658,6 @@
 <span id="652">652</span>
 <span id="653">653</span>
 <span id="654">654</span>
-<span id="655">655</span>
-<span id="656">656</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2022 Parity Technologies (UK) Ltd.</span>
@@ -1152,12 +1150,10 @@
 		<span class="macro">assert_eq!</span>(
 			<span class="ident">pool_events_since_last_call</span>(),
 			<span class="macro">vec!</span>[
-				<span class="comment">// This last pool got slashed only the leftover dust. Otherwise in principle, this</span>
-				<span class="comment">// chunk/pool should have not been affected.</span>
-				<span class="ident">PoolsEvent::UnbondingPoolSlashed</span> { <span class="ident">pool_id</span>: <span class="number">1</span>, <span class="ident">era</span>: <span class="number">127</span>, <span class="ident">balance</span>: <span class="number">19</span> },
-				<span class="comment">// This pool got slashed 12.5, which rounded down to 12.</span>
-				<span class="ident">PoolsEvent::UnbondingPoolSlashed</span> { <span class="ident">pool_id</span>: <span class="number">1</span>, <span class="ident">era</span>: <span class="number">128</span>, <span class="ident">balance</span>: <span class="number">8</span> },
-				<span class="comment">// This pool got slashed 12.5, which rounded down to 12.</span>
+				<span class="comment">// This era got slashed 12.5, which rounded up to 13.</span>
+				<span class="ident">PoolsEvent::UnbondingPoolSlashed</span> { <span class="ident">pool_id</span>: <span class="number">1</span>, <span class="ident">era</span>: <span class="number">128</span>, <span class="ident">balance</span>: <span class="number">7</span> },
+				<span class="comment">// This era got slashed 12 instead of 12.5 because an earlier chunk got 0.5 more</span>
+				<span class="comment">// slashed, and 12 is all the remaining slash</span>
 				<span class="ident">PoolsEvent::UnbondingPoolSlashed</span> { <span class="ident">pool_id</span>: <span class="number">1</span>, <span class="ident">era</span>: <span class="number">129</span>, <span class="ident">balance</span>: <span class="number">8</span> },
 				<span class="comment">// Bonded pool got slashed for 25, remaining 15 in it.</span>
 				<span class="ident">PoolsEvent::PoolSlashed</span> { <span class="ident">pool_id</span>: <span class="number">1</span>, <span class="ident">balance</span>: <span class="number">15</span> }

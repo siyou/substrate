@@ -969,6 +969,12 @@
 <span id="963">963</span>
 <span id="964">964</span>
 <span id="965">965</span>
+<span id="966">966</span>
+<span id="967">967</span>
+<span id="968">968</span>
+<span id="969">969</span>
+<span id="970">970</span>
+<span id="971">971</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2017-2022 Parity Technologies (UK) Ltd.</span>
@@ -1281,7 +1287,7 @@
 <span class="kw">use</span> <span class="ident">sp_runtime</span>::{
 	<span class="ident">curve::PiecewiseLinear</span>,
 	<span class="ident">traits</span>::{<span class="ident">AtLeast32BitUnsigned</span>, <span class="ident">Convert</span>, <span class="ident">Saturating</span>, <span class="ident">StaticLookup</span>, <span class="ident">Zero</span>},
-	<span class="ident">Perbill</span>, <span class="ident">Perquintill</span>, <span class="ident">RuntimeDebug</span>,
+	<span class="ident">Perbill</span>, <span class="ident">Perquintill</span>, <span class="ident">Rounding</span>, <span class="ident">RuntimeDebug</span>,
 };
 <span class="kw">use</span> <span class="ident">sp_staking</span>::{
 	<span class="ident">offence</span>::{<span class="ident">Offence</span>, <span class="ident">OffenceError</span>, <span class="ident">ReportOffence</span>},
@@ -1535,6 +1541,7 @@
 			<span class="kw">return</span> <span class="ident">Zero::zero</span>()
 		}
 
+		<span class="kw">use</span> <span class="ident">sp_runtime::PerThing</span> <span class="kw">as</span> <span class="kw">_</span>;
 		<span class="kw">use</span> <span class="ident">sp_staking::OnStakerSlash</span> <span class="kw">as</span> <span class="kw">_</span>;
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">remaining_slash</span> <span class="op">=</span> <span class="ident">slash_amount</span>;
 		<span class="kw">let</span> <span class="ident">pre_slash_total</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">total</span>;
@@ -1565,7 +1572,12 @@
 						}
 					});
 				<span class="kw">let</span> <span class="ident">affected_balance</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">active</span>.<span class="ident">saturating_add</span>(<span class="ident">unbonding_affected_balance</span>);
-				<span class="kw">let</span> <span class="ident">ratio</span> <span class="op">=</span> <span class="ident">Perquintill::from_rational</span>(<span class="ident">slash_amount</span>, <span class="ident">affected_balance</span>);
+				<span class="kw">let</span> <span class="ident">ratio</span> <span class="op">=</span> <span class="ident">Perquintill::from_rational_with_rounding</span>(
+					<span class="ident">slash_amount</span>,
+					<span class="ident">affected_balance</span>,
+					<span class="ident">Rounding::Up</span>,
+				)
+				.<span class="ident">unwrap_or_else</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="ident">Perquintill::one</span>());
 				(
 					<span class="prelude-val">Some</span>(<span class="ident">ratio</span>),
 					<span class="ident">affected_indices</span>.<span class="ident">chain</span>((<span class="number">0</span>..<span class="ident">first_slashable_index</span>).<span class="ident">rev</span>()).<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>(),
@@ -1589,7 +1601,7 @@
 
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">slash_out_of</span> <span class="op">=</span> <span class="op">|</span><span class="ident">target</span>: <span class="kw-2">&amp;mut</span> <span class="ident">BalanceOf</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">slash_remaining</span>: <span class="kw-2">&amp;mut</span> <span class="ident">BalanceOf</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">|</span> {
 			<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">slash_from_target</span> <span class="op">=</span> <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">ratio</span>) <span class="op">=</span> <span class="ident">maybe_proportional</span> {
-				<span class="ident">ratio</span> <span class="op">*</span> (<span class="kw-2">*</span><span class="ident">target</span>)
+				<span class="ident">ratio</span>.<span class="ident">mul_ceil</span>(<span class="kw-2">*</span><span class="ident">target</span>)
 			} <span class="kw">else</span> {
 				<span class="kw-2">*</span><span class="ident">slash_remaining</span>
 			}

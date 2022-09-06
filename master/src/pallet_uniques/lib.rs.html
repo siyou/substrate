@@ -1506,6 +1506,7 @@
 <span id="1500">1500</span>
 <span id="1501">1501</span>
 <span id="1502">1502</span>
+<span id="1503">1503</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2017-2022 Parity Technologies (UK) Ltd.</span>
@@ -2418,7 +2419,8 @@
 
 		<span class="doccomment">/// Approve an item to be transferred by a delegated third-party account.</span>
 		<span class="doccomment">///</span>
-		<span class="doccomment">/// Origin must be Signed and must be the owner of the `item`.</span>
+		<span class="doccomment">/// The origin must conform to `ForceOrigin` or must be `Signed` and the sender must be</span>
+		<span class="doccomment">/// either the owner of the `item` or the admin of the collection.</span>
 		<span class="doccomment">///</span>
 		<span class="doccomment">/// - `collection`: The collection of the item to be approved for delegated transfer.</span>
 		<span class="doccomment">/// - `item`: The item of the item to be approved for delegated transfer.</span>
