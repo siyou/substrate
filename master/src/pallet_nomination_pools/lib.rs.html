@@ -2521,6 +2521,8 @@
 <span id="2515">2515</span>
 <span id="2516">2516</span>
 <span id="2517">2517</span>
+<span id="2518">2518</span>
+<span id="2519">2519</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2020-2022 Parity Technologies (UK) Ltd.</span>
@@ -3664,7 +3666,7 @@
 	<span class="kw">use</span> <span class="ident">sp_runtime::traits::CheckedAdd</span>;
 
 	<span class="doccomment">/// The current storage version.</span>
-	<span class="kw">const</span> <span class="ident">STORAGE_VERSION</span>: <span class="ident">StorageVersion</span> <span class="op">=</span> <span class="ident">StorageVersion::new</span>(<span class="number">2</span>);
+	<span class="kw">const</span> <span class="ident">STORAGE_VERSION</span>: <span class="ident">StorageVersion</span> <span class="op">=</span> <span class="ident">StorageVersion::new</span>(<span class="number">3</span>);
 
 	<span class="attribute">#[<span class="ident">pallet::pallet</span>]</span>
 	<span class="attribute">#[<span class="ident">pallet::generate_store</span>(<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">trait</span> <span class="ident">Store</span>)]</span>
@@ -4714,8 +4716,8 @@
 	}
 	<span class="doccomment">/// Remove everything related to the given bonded pool.</span>
 	<span class="doccomment">///</span>
-	<span class="doccomment">/// All sub-pools are also deleted. All accounts are dusted and the leftover of the reward</span>
-	<span class="doccomment">/// account is returned to the depositor.</span>
+	<span class="doccomment">/// Metadata and all of the sub-pools are also deleted. All accounts are dusted and the leftover</span>
+	<span class="doccomment">/// of the reward account is returned to the depositor.</span>
 	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">dissolve_pool</span>(<span class="ident">bonded_pool</span>: <span class="ident">BondedPool</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) {
 		<span class="kw">let</span> <span class="ident">reward_account</span> <span class="op">=</span> <span class="ident">bonded_pool</span>.<span class="ident">reward_account</span>();
 		<span class="kw">let</span> <span class="ident">bonded_account</span> <span class="op">=</span> <span class="ident">bonded_pool</span>.<span class="ident">bonded_account</span>();
@@ -4752,6 +4754,9 @@
 		<span class="ident">T::Currency::make_free_balance_be</span>(<span class="kw-2">&amp;</span><span class="ident">bonded_pool</span>.<span class="ident">bonded_account</span>(), <span class="ident">Zero::zero</span>());
 
 		<span class="ident"><span class="self">Self</span>::deposit_event</span>(<span class="ident">Event</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::Destroyed</span> { <span class="ident">pool_id</span>: <span class="ident">bonded_pool</span>.<span class="ident">id</span> });
+		<span class="comment">// Remove bonded pool metadata.</span>
+		<span class="ident">Metadata</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::remove</span>(<span class="ident">bonded_pool</span>.<span class="ident">id</span>);
+
 		<span class="ident">bonded_pool</span>.<span class="ident">remove</span>();
 	}
 
@@ -4929,8 +4934,7 @@
 		<span class="kw">let</span> <span class="ident">reward_pools</span> <span class="op">=</span> <span class="ident">RewardPools</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::iter_keys</span>().<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>();
 		<span class="macro">assert_eq!</span>(<span class="ident">bonded_pools</span>, <span class="ident">reward_pools</span>);
 
-		<span class="comment">// TODO: can&#39;t check this right now: https://github.com/paritytech/substrate/issues/12077</span>
-		<span class="comment">// assert!(Metadata::&lt;T&gt;::iter_keys().all(|k| bonded_pools.contains(&amp;k)));</span>
+		<span class="macro">assert!</span>(<span class="ident">Metadata</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::iter_keys</span>().<span class="ident">all</span>(<span class="op">|</span><span class="ident">k</span><span class="op">|</span> <span class="ident">bonded_pools</span>.<span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="ident">k</span>)));
 		<span class="macro">assert!</span>(<span class="ident">SubPoolsStorage</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::iter_keys</span>().<span class="ident">all</span>(<span class="op">|</span><span class="ident">k</span><span class="op">|</span> <span class="ident">bonded_pools</span>.<span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="ident">k</span>)));
 
 		<span class="macro">assert!</span>(<span class="ident">MaxPools</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::get</span>().<span class="ident">map_or</span>(<span class="bool-val">true</span>, <span class="op">|</span><span class="ident">max</span><span class="op">|</span> <span class="ident">bonded_pools</span>.<span class="ident">len</span>() <span class="op">&lt;</span><span class="op">=</span> (<span class="ident">max</span> <span class="kw">as</span> <span class="ident">usize</span>)));
