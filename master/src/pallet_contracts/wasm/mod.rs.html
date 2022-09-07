@@ -2914,6 +2914,48 @@
 <span id="2908">2908</span>
 <span id="2909">2909</span>
 <span id="2910">2910</span>
+<span id="2911">2911</span>
+<span id="2912">2912</span>
+<span id="2913">2913</span>
+<span id="2914">2914</span>
+<span id="2915">2915</span>
+<span id="2916">2916</span>
+<span id="2917">2917</span>
+<span id="2918">2918</span>
+<span id="2919">2919</span>
+<span id="2920">2920</span>
+<span id="2921">2921</span>
+<span id="2922">2922</span>
+<span id="2923">2923</span>
+<span id="2924">2924</span>
+<span id="2925">2925</span>
+<span id="2926">2926</span>
+<span id="2927">2927</span>
+<span id="2928">2928</span>
+<span id="2929">2929</span>
+<span id="2930">2930</span>
+<span id="2931">2931</span>
+<span id="2932">2932</span>
+<span id="2933">2933</span>
+<span id="2934">2934</span>
+<span id="2935">2935</span>
+<span id="2936">2936</span>
+<span id="2937">2937</span>
+<span id="2938">2938</span>
+<span id="2939">2939</span>
+<span id="2940">2940</span>
+<span id="2941">2941</span>
+<span id="2942">2942</span>
+<span id="2943">2943</span>
+<span id="2944">2944</span>
+<span id="2945">2945</span>
+<span id="2946">2946</span>
+<span id="2947">2947</span>
+<span id="2948">2948</span>
+<span id="2949">2949</span>
+<span id="2950">2950</span>
+<span id="2951">2951</span>
+<span id="2952">2952</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2018-2022 Parity Technologies (UK) Ltd.</span>
@@ -3845,7 +3887,7 @@
 (module
 	(import &quot;seal0&quot; &quot;seal_return&quot; (func $seal_return (param i32 i32 i32)))
 	(import &quot;seal0&quot; &quot;seal_input&quot; (func $seal_input (param i32 i32)))
-	(import &quot;__unstable__&quot; &quot;seal_contains_storage&quot; (func $seal_contains_storage (param i32 i32) (result i32)))
+	(import &quot;__unstable__&quot; &quot;contains_storage&quot; (func $contains_storage (param i32 i32) (result i32)))
 	(import &quot;env&quot; &quot;memory&quot; (memory 1 1))
 
 
@@ -3863,7 +3905,7 @@
 		)
 		;; Call seal_clear_storage and save what it returns at 0
 		(i32.store (i32.const 0)
-			(call $seal_contains_storage
+			(call $contains_storage
 				(i32.const 8)			;; key_ptr
 				(i32.load (i32.const 4))	;; key_len
 			)
@@ -4596,9 +4638,51 @@
 )
 &quot;#</span>;
 
+	<span class="kw">const</span> <span class="ident">CODE_TIMESTAMP_NOW_UNPREFIXED</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">r#&quot;
+(module
+	(import &quot;seal0&quot; &quot;now&quot; (func $now (param i32 i32)))
+	(import &quot;env&quot; &quot;memory&quot; (memory 1 1))
+
+	;; size of our buffer is 32 bytes
+	(data (i32.const 32) &quot;\20&quot;)
+
+	(func $assert (param i32)
+		(block $ok
+			(br_if $ok
+				(get_local 0)
+			)
+			(unreachable)
+		)
+	)
+
+	(func (export &quot;call&quot;)
+		;; This stores the block timestamp in the buffer
+		(call $now (i32.const 0) (i32.const 32))
+
+		;; assert len == 8
+		(call $assert
+			(i32.eq
+				(i32.load (i32.const 32))
+				(i32.const 8)
+			)
+		)
+
+		;; assert that contents of the buffer is equal to the i64 value of 1111.
+		(call $assert
+			(i64.eq
+				(i64.load (i32.const 0))
+				(i64.const 1111)
+			)
+		)
+	)
+	(func (export &quot;deploy&quot;))
+)
+&quot;#</span>;
+
 	<span class="attribute">#[<span class="ident">test</span>]</span>
 	<span class="kw">fn</span> <span class="ident">now</span>() {
 		<span class="macro">assert_ok!</span>(<span class="ident">execute</span>(<span class="ident">CODE_TIMESTAMP_NOW</span>, <span class="macro">vec!</span>[], <span class="ident">MockExt::default</span>()));
+		<span class="macro">assert_ok!</span>(<span class="ident">execute</span>(<span class="ident">CODE_TIMESTAMP_NOW_UNPREFIXED</span>, <span class="macro">vec!</span>[], <span class="ident">MockExt::default</span>()));
 	}
 
 	<span class="kw">const</span> <span class="ident">CODE_MINIMUM_BALANCE</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">r#&quot;
@@ -5137,7 +5221,7 @@
 	<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;unstable-interface&quot;</span>)]</span>
 	<span class="kw">const</span> <span class="ident">CODE_CALL_RUNTIME</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">r#&quot;
 (module
-	(import &quot;__unstable__&quot; &quot;seal_call_runtime&quot; (func $seal_call_runtime (param i32 i32) (result i32)))
+	(import &quot;__unstable__&quot; &quot;call_runtime&quot; (func $call_runtime (param i32 i32) (result i32)))
 	(import &quot;seal0&quot; &quot;seal_input&quot; (func $seal_input (param i32 i32)))
 	(import &quot;seal0&quot; &quot;seal_return&quot; (func $seal_return (param i32 i32 i32)))
 	(import &quot;env&quot; &quot;memory&quot; (memory 1 1))
@@ -5154,7 +5238,7 @@
 		)
 		;; Just use the call passed as input and store result to memory
 		(i32.store (i32.const 0)
-			(call $seal_call_runtime
+			(call $call_runtime
 				(i32.const 4)				;; Pointer where the call is stored
 				(i32.load (i32.const 0))	;; Size of the call
 			)
@@ -5266,7 +5350,7 @@
 (module
 	(import &quot;seal0&quot; &quot;seal_input&quot; (func $seal_input (param i32 i32)))
 	(import &quot;seal0&quot; &quot;seal_return&quot; (func $seal_return (param i32 i32 i32)))
-	(import &quot;__unstable__&quot; &quot;seal_set_storage&quot; (func $seal_set_storage (param i32 i32 i32 i32) (result i32)))
+	(import &quot;__unstable__&quot; &quot;set_storage&quot; (func $set_storage (param i32 i32 i32 i32) (result i32)))
 	(import &quot;env&quot; &quot;memory&quot; (memory 1 1))
 
 	;; [0, 4) size of input buffer
@@ -5283,7 +5367,7 @@
 		)
 		;; Store the passed value to the passed key and store result to memory
 		(i32.store (i32.const 168)
-			(call $seal_set_storage
+			(call $set_storage
 				(i32.const 8)				;; key_ptr
 				(i32.load (i32.const 4))		;; key_len
 				(i32.add				;; value_ptr = 8 + key_len
@@ -5337,7 +5421,7 @@
 (module
 	(import &quot;seal0&quot; &quot;seal_input&quot; (func $seal_input (param i32 i32)))
 	(import &quot;seal0&quot; &quot;seal_return&quot; (func $seal_return (param i32 i32 i32)))
-	(import &quot;__unstable__&quot; &quot;seal_get_storage&quot; (func $seal_get_storage (param i32 i32 i32 i32) (result i32)))
+	(import &quot;__unstable__&quot; &quot;get_storage&quot; (func $get_storage (param i32 i32 i32 i32) (result i32)))
 	(import &quot;env&quot; &quot;memory&quot; (memory 1 1))
 
 	;; [0, 4) size of input buffer (160 bytes as we copy the key+len here)
@@ -5358,7 +5442,7 @@
 		)
 		;; Load a storage value and result of this call into the output buffer
 		(i32.store (i32.const 168)
-			(call $seal_get_storage
+			(call $get_storage
 				(i32.const 12)			;; key_ptr
 				(i32.load (i32.const 8))	;; key_len
 				(i32.const 172)			;; Pointer to the output buffer
@@ -5431,7 +5515,7 @@
 (module
 	(import &quot;seal0&quot; &quot;seal_input&quot; (func $seal_input (param i32 i32)))
 	(import &quot;seal0&quot; &quot;seal_return&quot; (func $seal_return (param i32 i32 i32)))
-	(import &quot;__unstable__&quot; &quot;seal_clear_storage&quot; (func $seal_clear_storage (param i32 i32) (result i32)))
+	(import &quot;__unstable__&quot; &quot;clear_storage&quot; (func $clear_storage (param i32 i32) (result i32)))
 	(import &quot;env&quot; &quot;memory&quot; (memory 1 1))
 
 	;; size of input buffer
@@ -5448,7 +5532,7 @@
 		)
 		;; Call seal_clear_storage and save what it returns at 0
 		(i32.store (i32.const 0)
-			(call $seal_clear_storage
+			(call $clear_storage
 				(i32.const 8)			;; key_ptr
 				(i32.load (i32.const 4))	;; key_len
 			)
@@ -5517,7 +5601,7 @@
 (module
 	(import &quot;seal0&quot; &quot;seal_return&quot; (func $seal_return (param i32 i32 i32)))
 	(import &quot;seal0&quot; &quot;seal_input&quot; (func $seal_input (param i32 i32)))
-	(import &quot;__unstable__&quot; &quot;seal_take_storage&quot; (func $seal_take_storage (param i32 i32 i32 i32) (result i32)))
+	(import &quot;__unstable__&quot; &quot;take_storage&quot; (func $take_storage (param i32 i32 i32 i32) (result i32)))
 	(import &quot;env&quot; &quot;memory&quot; (memory 1 1))
 
 	;; [0, 4) size of input buffer (160 bytes as we copy the key+len here)
@@ -5539,7 +5623,7 @@
 
 		;; Load a storage value and result of this call into the output buffer
 		(i32.store (i32.const 168)
-			(call $seal_take_storage
+			(call $take_storage
 				(i32.const 12)			;; key_ptr
 				(i32.load (i32.const 8))	;; key_len
 				(i32.const 172)			;; Pointer to the output buffer

@@ -2442,6 +2442,18 @@
 <span id="2436">2436</span>
 <span id="2437">2437</span>
 <span id="2438">2438</span>
+<span id="2439">2439</span>
+<span id="2440">2440</span>
+<span id="2441">2441</span>
+<span id="2442">2442</span>
+<span id="2443">2443</span>
+<span id="2444">2444</span>
+<span id="2445">2445</span>
+<span id="2446">2446</span>
+<span id="2447">2447</span>
+<span id="2448">2448</span>
+<span id="2449">2449</span>
+<span id="2450">2450</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2018-2022 Parity Technologies (UK) Ltd.</span>
@@ -3401,7 +3413,7 @@
 	<span class="doccomment">/// This call is supposed to be called only by instrumentation injected code.</span>
 	<span class="doccomment">///</span>
 	<span class="doccomment">/// - amount: How much gas is used.</span>
-	<span class="kw">fn</span> <span class="ident">gas</span>(<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>, <span class="ident">amount</span>: <span class="ident">u32</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">TrapReason</span><span class="op">&gt;</span> {
+	<span class="kw">fn</span> <span class="ident">gas</span>(<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>, <span class="ident">amount</span>: <span class="ident">u32</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">TrapReason</span><span class="op">&gt;</span> {
 		<span class="ident">ctx</span>.<span class="ident">charge_gas</span>(<span class="ident">RuntimeCosts::MeteringBlock</span>(<span class="ident">amount</span>))<span class="question-mark">?</span>;
 		<span class="prelude-val">Ok</span>(())
 	}
@@ -3410,8 +3422,9 @@
 	<span class="doccomment">///</span>
 	<span class="doccomment">/// Equivalent to the newer version of `seal_set_storage` with the exception of the return</span>
 	<span class="doccomment">/// type. Still a valid thing to call when not interested in the return value.</span>
-	<span class="kw">fn</span> <span class="ident">seal_set_storage</span>(
-		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>,
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">set_storage</span>(
+		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>,
 		<span class="ident">key_ptr</span>: <span class="ident">u32</span>,
 		<span class="ident">value_ptr</span>: <span class="ident">u32</span>,
 		<span class="ident">value_len</span>: <span class="ident">u32</span>,
@@ -3438,8 +3451,9 @@
 	<span class="doccomment">/// Returns the size of the pre-existing value at the specified key if any. Otherwise</span>
 	<span class="doccomment">/// `SENTINEL` is returned as a sentinel value.</span>
 	<span class="attribute">#[<span class="ident">version</span>(<span class="number">1</span>)]</span>
-	<span class="kw">fn</span> <span class="ident">seal_set_storage</span>(
-		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>,
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">set_storage</span>(
+		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>,
 		<span class="ident">key_ptr</span>: <span class="ident">u32</span>,
 		<span class="ident">value_ptr</span>: <span class="ident">u32</span>,
 		<span class="ident">value_len</span>: <span class="ident">u32</span>,
@@ -3464,8 +3478,9 @@
 	<span class="doccomment">/// Returns the size of the pre-existing value at the specified key if any. Otherwise</span>
 	<span class="doccomment">/// `SENTINEL` is returned as a sentinel value.</span>
 	<span class="attribute">#[<span class="ident">unstable</span>]</span>
-	<span class="kw">fn</span> <span class="ident">seal_set_storage</span>(
-		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>,
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">set_storage</span>(
+		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>,
 		<span class="ident">key_ptr</span>: <span class="ident">u32</span>,
 		<span class="ident">key_len</span>: <span class="ident">u32</span>,
 		<span class="ident">value_ptr</span>: <span class="ident">u32</span>,
@@ -3478,7 +3493,8 @@
 	<span class="doccomment">///</span>
 	<span class="doccomment">/// Equivalent to the newer version of `seal_clear_storage` with the exception of the return</span>
 	<span class="doccomment">/// type. Still a valid thing to call when not interested in the return value.</span>
-	<span class="kw">fn</span> <span class="ident">seal_clear_storage</span>(<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>, <span class="ident">key_ptr</span>: <span class="ident">u32</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">TrapReason</span><span class="op">&gt;</span> {
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">clear_storage</span>(<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>, <span class="ident">key_ptr</span>: <span class="ident">u32</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">TrapReason</span><span class="op">&gt;</span> {
 		<span class="ident">ctx</span>.<span class="ident">clear_storage</span>(<span class="ident">KeyType::Fix</span>, <span class="ident">key_ptr</span>).<span class="ident">map</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> ())
 	}
 
@@ -3494,11 +3510,8 @@
 	<span class="doccomment">/// Returns the size of the pre-existing value at the specified key if any. Otherwise</span>
 	<span class="doccomment">/// `SENTINEL` is returned as a sentinel value.</span>
 	<span class="attribute">#[<span class="ident">unstable</span>]</span>
-	<span class="kw">fn</span> <span class="ident">seal_clear_storage</span>(
-		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>,
-		<span class="ident">key_ptr</span>: <span class="ident">u32</span>,
-		<span class="ident">key_len</span>: <span class="ident">u32</span>,
-	) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">u32</span>, <span class="ident">TrapReason</span><span class="op">&gt;</span> {
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">clear_storage</span>(<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>, <span class="ident">key_ptr</span>: <span class="ident">u32</span>, <span class="ident">key_len</span>: <span class="ident">u32</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">u32</span>, <span class="ident">TrapReason</span><span class="op">&gt;</span> {
 		<span class="ident">ctx</span>.<span class="ident">clear_storage</span>(<span class="ident">KeyType::Variable</span>(<span class="ident">key_len</span>), <span class="ident">key_ptr</span>)
 	}
 
@@ -3517,8 +3530,9 @@
 	<span class="doccomment">/// # Errors</span>
 	<span class="doccomment">///</span>
 	<span class="doccomment">/// `ReturnCode::KeyNotFound`</span>
-	<span class="kw">fn</span> <span class="ident">seal_get_storage</span>(
-		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>,
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">get_storage</span>(
+		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>,
 		<span class="ident">key_ptr</span>: <span class="ident">u32</span>,
 		<span class="ident">out_ptr</span>: <span class="ident">u32</span>,
 		<span class="ident">out_len_ptr</span>: <span class="ident">u32</span>,
@@ -3545,8 +3559,9 @@
 	<span class="doccomment">///</span>
 	<span class="doccomment">/// `ReturnCode::KeyNotFound`</span>
 	<span class="attribute">#[<span class="ident">unstable</span>]</span>
-	<span class="kw">fn</span> <span class="ident">seal_get_storage</span>(
-		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>,
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">get_storage</span>(
+		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>,
 		<span class="ident">key_ptr</span>: <span class="ident">u32</span>,
 		<span class="ident">key_len</span>: <span class="ident">u32</span>,
 		<span class="ident">out_ptr</span>: <span class="ident">u32</span>,
@@ -3568,7 +3583,8 @@
 	<span class="doccomment">///</span>
 	<span class="doccomment">/// Returns the size of the pre-existing value at the specified key if any. Otherwise</span>
 	<span class="doccomment">/// `SENTINEL` is returned as a sentinel value.</span>
-	<span class="kw">fn</span> <span class="ident">seal_contains_storage</span>(<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>, <span class="ident">key_ptr</span>: <span class="ident">u32</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">u32</span>, <span class="ident">TrapReason</span><span class="op">&gt;</span> {
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">contains_storage</span>(<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>, <span class="ident">key_ptr</span>: <span class="ident">u32</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">u32</span>, <span class="ident">TrapReason</span><span class="op">&gt;</span> {
 		<span class="ident">ctx</span>.<span class="ident">contains_storage</span>(<span class="ident">KeyType::Fix</span>, <span class="ident">key_ptr</span>)
 	}
 
@@ -3586,11 +3602,8 @@
 	<span class="doccomment">/// Returns the size of the pre-existing value at the specified key if any. Otherwise</span>
 	<span class="doccomment">/// `SENTINEL` is returned as a sentinel value.</span>
 	<span class="attribute">#[<span class="ident">unstable</span>]</span>
-	<span class="kw">fn</span> <span class="ident">seal_contains_storage</span>(
-		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>,
-		<span class="ident">key_ptr</span>: <span class="ident">u32</span>,
-		<span class="ident">key_len</span>: <span class="ident">u32</span>,
-	) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">u32</span>, <span class="ident">TrapReason</span><span class="op">&gt;</span> {
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">contains_storage</span>(<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>, <span class="ident">key_ptr</span>: <span class="ident">u32</span>, <span class="ident">key_len</span>: <span class="ident">u32</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">u32</span>, <span class="ident">TrapReason</span><span class="op">&gt;</span> {
 		<span class="ident">ctx</span>.<span class="ident">contains_storage</span>(<span class="ident">KeyType::Variable</span>(<span class="ident">key_len</span>), <span class="ident">key_ptr</span>)
 	}
 
@@ -3608,8 +3621,9 @@
 	<span class="doccomment">///</span>
 	<span class="doccomment">/// `ReturnCode::KeyNotFound`</span>
 	<span class="attribute">#[<span class="ident">unstable</span>]</span>
-	<span class="kw">fn</span> <span class="ident">seal_take_storage</span>(
-		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>,
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">take_storage</span>(
+		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>,
 		<span class="ident">key_ptr</span>: <span class="ident">u32</span>,
 		<span class="ident">key_len</span>: <span class="ident">u32</span>,
 		<span class="ident">out_ptr</span>: <span class="ident">u32</span>,
@@ -3644,8 +3658,9 @@
 	<span class="doccomment">/// # Errors</span>
 	<span class="doccomment">///</span>
 	<span class="doccomment">/// `ReturnCode::TransferFailed`</span>
-	<span class="kw">fn</span> <span class="ident">seal_transfer</span>(
-		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>,
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">transfer</span>(
+		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>,
 		<span class="ident">account_ptr</span>: <span class="ident">u32</span>,
 		<span class="ident">_account_len</span>: <span class="ident">u32</span>,
 		<span class="ident">value_ptr</span>: <span class="ident">u32</span>,
@@ -3677,8 +3692,9 @@
 	<span class="doccomment">/// The values `_callee_len` and `_value_len` are ignored because the encoded sizes</span>
 	<span class="doccomment">/// of those types are fixed through `[`MaxEncodedLen`]. The fields exist for backwards</span>
 	<span class="doccomment">/// compatibility. Consider switching to the newest version of this function.</span>
-	<span class="kw">fn</span> <span class="ident">seal_call</span>(
-		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>,
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">call</span>(
+		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>,
 		<span class="ident">callee_ptr</span>: <span class="ident">u32</span>,
 		<span class="ident">_callee_len</span>: <span class="ident">u32</span>,
 		<span class="ident">gas</span>: <span class="ident">u64</span>,
@@ -3729,8 +3745,9 @@
 	<span class="doccomment">/// `ReturnCode::TransferFailed`</span>
 	<span class="doccomment">/// `ReturnCode::NotCallable`</span>
 	<span class="attribute">#[<span class="ident">version</span>(<span class="number">1</span>)]</span>
-	<span class="kw">fn</span> <span class="ident">seal_call</span>(
-		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>,
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">call</span>(
+		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>,
 		<span class="ident">flags</span>: <span class="ident">u32</span>,
 		<span class="ident">callee_ptr</span>: <span class="ident">u32</span>,
 		<span class="ident">gas</span>: <span class="ident">u64</span>,
@@ -3774,8 +3791,9 @@
 	<span class="doccomment">/// `ReturnCode::CalleeReverted`: Output buffer is returned.</span>
 	<span class="doccomment">/// `ReturnCode::CalleeTrapped`</span>
 	<span class="doccomment">/// `ReturnCode::CodeNotFound`</span>
-	<span class="kw">fn</span> <span class="ident">seal_delegate_call</span>(
-		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>,
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">delegate_call</span>(
+		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>,
 		<span class="ident">flags</span>: <span class="ident">u32</span>,
 		<span class="ident">code_hash_ptr</span>: <span class="ident">u32</span>,
 		<span class="ident">input_data_ptr</span>: <span class="ident">u32</span>,
@@ -3804,8 +3822,9 @@
 	<span class="doccomment">/// The values `_code_hash_len` and `_value_len` are ignored because the encoded sizes</span>
 	<span class="doccomment">/// of those types are fixed through `[`MaxEncodedLen`]. The fields exist for backwards</span>
 	<span class="doccomment">/// compatibility. Consider switching to the newest version of this function.</span>
-	<span class="kw">fn</span> <span class="ident">seal_instantiate</span>(
-		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>,
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">instantiate</span>(
+		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>,
 		<span class="ident">code_hash_ptr</span>: <span class="ident">u32</span>,
 		<span class="ident">_code_hash_len</span>: <span class="ident">u32</span>,
 		<span class="ident">gas</span>: <span class="ident">u64</span>,
@@ -3876,8 +3895,9 @@
 	<span class="doccomment">/// `ReturnCode::TransferFailed`</span>
 	<span class="doccomment">/// `ReturnCode::CodeNotFound`</span>
 	<span class="attribute">#[<span class="ident">version</span>(<span class="number">1</span>)]</span>
-	<span class="kw">fn</span> <span class="ident">seal_instantiate</span>(
-		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>,
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">instantiate</span>(
+		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>,
 		<span class="ident">code_hash_ptr</span>: <span class="ident">u32</span>,
 		<span class="ident">gas</span>: <span class="ident">u64</span>,
 		<span class="ident">value_ptr</span>: <span class="ident">u32</span>,
@@ -3917,8 +3937,9 @@
 	<span class="doccomment">/// The value `_beneficiary_len` is ignored because the encoded sizes</span>
 	<span class="doccomment">/// this type is fixed through `[`MaxEncodedLen`]. The field exist for backwards</span>
 	<span class="doccomment">/// compatibility. Consider switching to the newest version of this function.</span>
-	<span class="kw">fn</span> <span class="ident">seal_terminate</span>(
-		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>,
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">terminate</span>(
+		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>,
 		<span class="ident">beneficiary_ptr</span>: <span class="ident">u32</span>,
 		<span class="ident">_beneficiary_len</span>: <span class="ident">u32</span>,
 	) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">TrapReason</span><span class="op">&gt;</span> {
@@ -3941,7 +3962,8 @@
 	<span class="doccomment">/// - Failed to send the balance to the beneficiary.</span>
 	<span class="doccomment">/// - The deletion queue is full.</span>
 	<span class="attribute">#[<span class="ident">version</span>(<span class="number">1</span>)]</span>
-	<span class="kw">fn</span> <span class="ident">seal_terminate</span>(<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>, <span class="ident">beneficiary_ptr</span>: <span class="ident">u32</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">TrapReason</span><span class="op">&gt;</span> {
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">terminate</span>(<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>, <span class="ident">beneficiary_ptr</span>: <span class="ident">u32</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">TrapReason</span><span class="op">&gt;</span> {
 		<span class="ident">ctx</span>.<span class="ident">terminate</span>(<span class="ident">beneficiary_ptr</span>)
 	}
 
@@ -3955,7 +3977,8 @@
 	<span class="doccomment">/// # Note</span>
 	<span class="doccomment">///</span>
 	<span class="doccomment">/// This function traps if the input was previously forwarded by a `seal_call`.</span>
-	<span class="kw">fn</span> <span class="ident">seal_input</span>(<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>, <span class="ident">out_ptr</span>: <span class="ident">u32</span>, <span class="ident">out_len_ptr</span>: <span class="ident">u32</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">TrapReason</span><span class="op">&gt;</span> {
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">input</span>(<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>, <span class="ident">out_ptr</span>: <span class="ident">u32</span>, <span class="ident">out_len_ptr</span>: <span class="ident">u32</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">TrapReason</span><span class="op">&gt;</span> {
 		<span class="ident">ctx</span>.<span class="ident">charge_gas</span>(<span class="ident">RuntimeCosts::InputBase</span>)<span class="question-mark">?</span>;
 		<span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">input</span>) <span class="op">=</span> <span class="ident">ctx</span>.<span class="ident">input_data</span>.<span class="ident">take</span>() {
 			<span class="ident">ctx</span>.<span class="ident">write_sandbox_output</span>(<span class="ident">out_ptr</span>, <span class="ident">out_len_ptr</span>, <span class="kw-2">&amp;</span><span class="ident">input</span>, <span class="bool-val">false</span>, <span class="op">|</span><span class="ident">len</span><span class="op">|</span> {
@@ -3986,7 +4009,7 @@
 	<span class="doccomment">///</span>
 	<span class="doccomment">/// Using a reserved bit triggers a trap.</span>
 	<span class="kw">fn</span> <span class="ident">seal_return</span>(
-		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>,
+		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>,
 		<span class="ident">flags</span>: <span class="ident">u32</span>,
 		<span class="ident">data_ptr</span>: <span class="ident">u32</span>,
 		<span class="ident">data_len</span>: <span class="ident">u32</span>,
@@ -4008,7 +4031,8 @@
 	<span class="doccomment">/// If this is a top-level call (i.e. initiated by an extrinsic) the origin address of the</span>
 	<span class="doccomment">/// extrinsic will be returned. Otherwise, if this call is initiated by another contract then</span>
 	<span class="doccomment">/// the address of the contract will be returned. The value is encoded as T::AccountId.</span>
-	<span class="kw">fn</span> <span class="ident">seal_caller</span>(<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>, <span class="ident">out_ptr</span>: <span class="ident">u32</span>, <span class="ident">out_len_ptr</span>: <span class="ident">u32</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">TrapReason</span><span class="op">&gt;</span> {
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">caller</span>(<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>, <span class="ident">out_ptr</span>: <span class="ident">u32</span>, <span class="ident">out_len_ptr</span>: <span class="ident">u32</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">TrapReason</span><span class="op">&gt;</span> {
 		<span class="ident">ctx</span>.<span class="ident">charge_gas</span>(<span class="ident">RuntimeCosts::Caller</span>)<span class="question-mark">?</span>;
 		<span class="prelude-val">Ok</span>(<span class="ident">ctx</span>.<span class="ident">write_sandbox_output</span>(
 			<span class="ident">out_ptr</span>,
@@ -4027,7 +4051,8 @@
 	<span class="doccomment">///   `T::AccountId`. Traps otherwise.</span>
 	<span class="doccomment">///</span>
 	<span class="doccomment">/// Returned value is a u32-encoded boolean: (0 = false, 1 = true).</span>
-	<span class="kw">fn</span> <span class="ident">seal_is_contract</span>(<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>, <span class="ident">account_ptr</span>: <span class="ident">u32</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">u32</span>, <span class="ident">TrapReason</span><span class="op">&gt;</span> {
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">is_contract</span>(<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>, <span class="ident">account_ptr</span>: <span class="ident">u32</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">u32</span>, <span class="ident">TrapReason</span><span class="op">&gt;</span> {
 		<span class="ident">ctx</span>.<span class="ident">charge_gas</span>(<span class="ident">RuntimeCosts::IsContract</span>)<span class="question-mark">?</span>;
 		<span class="kw">let</span> <span class="ident">address</span>: <span class="op">&lt;</span><span class="op">&lt;</span><span class="ident">E</span> <span class="kw">as</span> <span class="ident">Ext</span><span class="op">&gt;</span><span class="ident">::T</span> <span class="kw">as</span> <span class="ident">frame_system::Config</span><span class="op">&gt;</span><span class="ident">::AccountId</span> <span class="op">=</span>
 			<span class="ident">ctx</span>.<span class="ident">read_sandbox_memory_as</span>(<span class="ident">account_ptr</span>)<span class="question-mark">?</span>;
@@ -4048,8 +4073,9 @@
 	<span class="doccomment">/// # Errors</span>
 	<span class="doccomment">///</span>
 	<span class="doccomment">/// `ReturnCode::KeyNotFound`</span>
-	<span class="kw">fn</span> <span class="ident">seal_code_hash</span>(
-		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>,
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">code_hash</span>(
+		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>,
 		<span class="ident">account_ptr</span>: <span class="ident">u32</span>,
 		<span class="ident">out_ptr</span>: <span class="ident">u32</span>,
 		<span class="ident">out_len_ptr</span>: <span class="ident">u32</span>,
@@ -4078,11 +4104,8 @@
 	<span class="doccomment">/// - `out_ptr`: pointer to the linear memory where the returning value is written to.</span>
 	<span class="doccomment">/// - `out_len_ptr`: in-out pointer into linear memory where the buffer length is read from and</span>
 	<span class="doccomment">///   the value length is written to.</span>
-	<span class="kw">fn</span> <span class="ident">seal_own_code_hash</span>(
-		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>,
-		<span class="ident">out_ptr</span>: <span class="ident">u32</span>,
-		<span class="ident">out_len_ptr</span>: <span class="ident">u32</span>,
-	) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">TrapReason</span><span class="op">&gt;</span> {
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">own_code_hash</span>(<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>, <span class="ident">out_ptr</span>: <span class="ident">u32</span>, <span class="ident">out_len_ptr</span>: <span class="ident">u32</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">TrapReason</span><span class="op">&gt;</span> {
 		<span class="ident">ctx</span>.<span class="ident">charge_gas</span>(<span class="ident">RuntimeCosts::OwnCodeHash</span>)<span class="question-mark">?</span>;
 		<span class="kw">let</span> <span class="ident">code_hash_encoded</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">ctx</span>.<span class="ident">ext</span>.<span class="ident">own_code_hash</span>().<span class="ident">encode</span>();
 		<span class="prelude-val">Ok</span>(<span class="ident">ctx</span>.<span class="ident">write_sandbox_output</span>(
@@ -4104,7 +4127,8 @@
 	<span class="doccomment">/// and `false` indicates that the caller is another contract.</span>
 	<span class="doccomment">///</span>
 	<span class="doccomment">/// Returned value is a u32-encoded boolean: (0 = false, 1 = true).</span>
-	<span class="kw">fn</span> <span class="ident">seal_caller_is_origin</span>(<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">u32</span>, <span class="ident">TrapReason</span><span class="op">&gt;</span> {
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">caller_is_origin</span>(<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">u32</span>, <span class="ident">TrapReason</span><span class="op">&gt;</span> {
 		<span class="ident">ctx</span>.<span class="ident">charge_gas</span>(<span class="ident">RuntimeCosts::CallerIsOrigin</span>)<span class="question-mark">?</span>;
 		<span class="prelude-val">Ok</span>(<span class="ident">ctx</span>.<span class="ident">ext</span>.<span class="ident">caller_is_origin</span>() <span class="kw">as</span> <span class="ident">u32</span>)
 	}
@@ -4115,11 +4139,8 @@
 	<span class="doccomment">/// `out_len_ptr` must point to a u32 value that describes the available space at</span>
 	<span class="doccomment">/// `out_ptr`. This call overwrites it with the size of the value. If the available</span>
 	<span class="doccomment">/// space at `out_ptr` is less than the size of the value a trap is triggered.</span>
-	<span class="kw">fn</span> <span class="ident">seal_address</span>(
-		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>,
-		<span class="ident">out_ptr</span>: <span class="ident">u32</span>,
-		<span class="ident">out_len_ptr</span>: <span class="ident">u32</span>,
-	) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">TrapReason</span><span class="op">&gt;</span> {
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">address</span>(<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>, <span class="ident">out_ptr</span>: <span class="ident">u32</span>, <span class="ident">out_len_ptr</span>: <span class="ident">u32</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">TrapReason</span><span class="op">&gt;</span> {
 		<span class="ident">ctx</span>.<span class="ident">charge_gas</span>(<span class="ident">RuntimeCosts::Address</span>)<span class="question-mark">?</span>;
 		<span class="prelude-val">Ok</span>(<span class="ident">ctx</span>.<span class="ident">write_sandbox_output</span>(
 			<span class="ident">out_ptr</span>,
@@ -4143,8 +4164,9 @@
 	<span class="doccomment">///</span>
 	<span class="doccomment">/// It is recommended to avoid specifying very small values for `gas` as the prices for a single</span>
 	<span class="doccomment">/// gas can be smaller than one.</span>
-	<span class="kw">fn</span> <span class="ident">seal_weight_to_fee</span>(
-		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>,
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">weight_to_fee</span>(
+		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>,
 		<span class="ident">gas</span>: <span class="ident">u64</span>,
 		<span class="ident">out_ptr</span>: <span class="ident">u32</span>,
 		<span class="ident">out_len_ptr</span>: <span class="ident">u32</span>,
@@ -4168,11 +4190,8 @@
 	<span class="doccomment">/// space at `out_ptr` is less than the size of the value a trap is triggered.</span>
 	<span class="doccomment">///</span>
 	<span class="doccomment">/// The data is encoded as Gas.</span>
-	<span class="kw">fn</span> <span class="ident">seal_gas_left</span>(
-		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>,
-		<span class="ident">out_ptr</span>: <span class="ident">u32</span>,
-		<span class="ident">out_len_ptr</span>: <span class="ident">u32</span>,
-	) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">TrapReason</span><span class="op">&gt;</span> {
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">gas_left</span>(<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>, <span class="ident">out_ptr</span>: <span class="ident">u32</span>, <span class="ident">out_len_ptr</span>: <span class="ident">u32</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">TrapReason</span><span class="op">&gt;</span> {
 		<span class="ident">ctx</span>.<span class="ident">charge_gas</span>(<span class="ident">RuntimeCosts::GasLeft</span>)<span class="question-mark">?</span>;
 		<span class="kw">let</span> <span class="ident">gas_left</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">ctx</span>.<span class="ident">ext</span>.<span class="ident">gas_meter</span>().<span class="ident">gas_left</span>().<span class="ident">encode</span>();
 		<span class="prelude-val">Ok</span>(<span class="ident">ctx</span>.<span class="ident">write_sandbox_output</span>(<span class="ident">out_ptr</span>, <span class="ident">out_len_ptr</span>, <span class="ident">gas_left</span>, <span class="bool-val">false</span>, <span class="ident">already_charged</span>)<span class="question-mark">?</span>)
@@ -4186,11 +4205,8 @@
 	<span class="doccomment">/// space at `out_ptr` is less than the size of the value a trap is triggered.</span>
 	<span class="doccomment">///</span>
 	<span class="doccomment">/// The data is encoded as T::Balance.</span>
-	<span class="kw">fn</span> <span class="ident">seal_balance</span>(
-		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>,
-		<span class="ident">out_ptr</span>: <span class="ident">u32</span>,
-		<span class="ident">out_len_ptr</span>: <span class="ident">u32</span>,
-	) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">TrapReason</span><span class="op">&gt;</span> {
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">balance</span>(<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>, <span class="ident">out_ptr</span>: <span class="ident">u32</span>, <span class="ident">out_len_ptr</span>: <span class="ident">u32</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">TrapReason</span><span class="op">&gt;</span> {
 		<span class="ident">ctx</span>.<span class="ident">charge_gas</span>(<span class="ident">RuntimeCosts::Balance</span>)<span class="question-mark">?</span>;
 		<span class="prelude-val">Ok</span>(<span class="ident">ctx</span>.<span class="ident">write_sandbox_output</span>(
 			<span class="ident">out_ptr</span>,
@@ -4209,8 +4225,9 @@
 	<span class="doccomment">/// space at `out_ptr` is less than the size of the value a trap is triggered.</span>
 	<span class="doccomment">///</span>
 	<span class="doccomment">/// The data is encoded as T::Balance.</span>
-	<span class="kw">fn</span> <span class="ident">seal_value_transferred</span>(
-		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>,
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">value_transferred</span>(
+		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>,
 		<span class="ident">out_ptr</span>: <span class="ident">u32</span>,
 		<span class="ident">out_len_ptr</span>: <span class="ident">u32</span>,
 	) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">TrapReason</span><span class="op">&gt;</span> {
@@ -4236,8 +4253,9 @@
 	<span class="doccomment">/// # Deprecation</span>
 	<span class="doccomment">///</span>
 	<span class="doccomment">/// This function is deprecated. Users should migrate to the version in the &quot;seal1&quot; module.</span>
-	<span class="kw">fn</span> <span class="ident">seal_random</span>(
-		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>,
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">random</span>(
+		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>,
 		<span class="ident">subject_ptr</span>: <span class="ident">u32</span>,
 		<span class="ident">subject_len</span>: <span class="ident">u32</span>,
 		<span class="ident">out_ptr</span>: <span class="ident">u32</span>,
@@ -4279,8 +4297,9 @@
 	<span class="doccomment">/// call this on later blocks until the block number returned is later than the latest</span>
 	<span class="doccomment">/// commitment.</span>
 	<span class="attribute">#[<span class="ident">version</span>(<span class="number">1</span>)]</span>
-	<span class="kw">fn</span> <span class="ident">seal_random</span>(
-		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>,
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">random</span>(
+		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>,
 		<span class="ident">subject_ptr</span>: <span class="ident">u32</span>,
 		<span class="ident">subject_len</span>: <span class="ident">u32</span>,
 		<span class="ident">out_ptr</span>: <span class="ident">u32</span>,
@@ -4306,7 +4325,8 @@
 	<span class="doccomment">/// `out_len_ptr` must point to a u32 value that describes the available space at</span>
 	<span class="doccomment">/// `out_ptr`. This call overwrites it with the size of the value. If the available</span>
 	<span class="doccomment">/// space at `out_ptr` is less than the size of the value a trap is triggered.</span>
-	<span class="kw">fn</span> <span class="ident">seal_now</span>(<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>, <span class="ident">out_ptr</span>: <span class="ident">u32</span>, <span class="ident">out_len_ptr</span>: <span class="ident">u32</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">TrapReason</span><span class="op">&gt;</span> {
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">now</span>(<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>, <span class="ident">out_ptr</span>: <span class="ident">u32</span>, <span class="ident">out_len_ptr</span>: <span class="ident">u32</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">TrapReason</span><span class="op">&gt;</span> {
 		<span class="ident">ctx</span>.<span class="ident">charge_gas</span>(<span class="ident">RuntimeCosts::Now</span>)<span class="question-mark">?</span>;
 		<span class="prelude-val">Ok</span>(<span class="ident">ctx</span>.<span class="ident">write_sandbox_output</span>(
 			<span class="ident">out_ptr</span>,
@@ -4320,11 +4340,8 @@
 	<span class="doccomment">/// Stores the minimum balance (a.k.a. existential deposit) into the supplied buffer.</span>
 	<span class="doccomment">///</span>
 	<span class="doccomment">/// The data is encoded as T::Balance.</span>
-	<span class="kw">fn</span> <span class="ident">seal_minimum_balance</span>(
-		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>,
-		<span class="ident">out_ptr</span>: <span class="ident">u32</span>,
-		<span class="ident">out_len_ptr</span>: <span class="ident">u32</span>,
-	) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">TrapReason</span><span class="op">&gt;</span> {
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">minimum_balance</span>(<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>, <span class="ident">out_ptr</span>: <span class="ident">u32</span>, <span class="ident">out_len_ptr</span>: <span class="ident">u32</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">TrapReason</span><span class="op">&gt;</span> {
 		<span class="ident">ctx</span>.<span class="ident">charge_gas</span>(<span class="ident">RuntimeCosts::MinimumBalance</span>)<span class="question-mark">?</span>;
 		<span class="prelude-val">Ok</span>(<span class="ident">ctx</span>.<span class="ident">write_sandbox_output</span>(
 			<span class="ident">out_ptr</span>,
@@ -4345,8 +4362,9 @@
 	<span class="doccomment">/// # Deprecation</span>
 	<span class="doccomment">///</span>
 	<span class="doccomment">/// There is no longer a tombstone deposit. This function always returns 0.</span>
-	<span class="kw">fn</span> <span class="ident">seal_tombstone_deposit</span>(
-		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>,
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">tombstone_deposit</span>(
+		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>,
 		<span class="ident">out_ptr</span>: <span class="ident">u32</span>,
 		<span class="ident">out_len_ptr</span>: <span class="ident">u32</span>,
 	) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">TrapReason</span><span class="op">&gt;</span> {
@@ -4361,8 +4379,9 @@
 	<span class="doccomment">///</span>
 	<span class="doccomment">/// The state rent functionality was removed. This is stub only exists for</span>
 	<span class="doccomment">/// backwards compatiblity</span>
-	<span class="kw">fn</span> <span class="ident">seal_restore_to</span>(
-		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>,
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">restore_to</span>(
+		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>,
 		<span class="ident">_dest_ptr</span>: <span class="ident">u32</span>,
 		<span class="ident">_dest_len</span>: <span class="ident">u32</span>,
 		<span class="ident">_code_hash_ptr</span>: <span class="ident">u32</span>,
@@ -4383,8 +4402,9 @@
 	<span class="doccomment">/// The state rent functionality was removed. This is stub only exists for</span>
 	<span class="doccomment">/// backwards compatiblity</span>
 	<span class="attribute">#[<span class="ident">version</span>(<span class="number">1</span>)]</span>
-	<span class="kw">fn</span> <span class="ident">seal_restore_to</span>(
-		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>,
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">restore_to</span>(
+		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>,
 		<span class="ident">_dest_ptr</span>: <span class="ident">u32</span>,
 		<span class="ident">_code_hash_ptr</span>: <span class="ident">u32</span>,
 		<span class="ident">_rent_allowance_ptr</span>: <span class="ident">u32</span>,
@@ -4403,8 +4423,9 @@
 	<span class="doccomment">/// - topics_len - the length of the topics buffer. Pass 0 if you want to pass an empty vector.</span>
 	<span class="doccomment">/// - data_ptr - a pointer to a raw data buffer which will saved along the event.</span>
 	<span class="doccomment">/// - data_len - the length of the data buffer.</span>
-	<span class="kw">fn</span> <span class="ident">seal_deposit_event</span>(
-		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>,
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">deposit_event</span>(
+		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>,
 		<span class="ident">topics_ptr</span>: <span class="ident">u32</span>,
 		<span class="ident">topics_len</span>: <span class="ident">u32</span>,
 		<span class="ident">data_ptr</span>: <span class="ident">u32</span>,
@@ -4461,8 +4482,9 @@
 	<span class="doccomment">///</span>
 	<span class="doccomment">/// The state rent functionality was removed. This is stub only exists for</span>
 	<span class="doccomment">/// backwards compatiblity.</span>
-	<span class="kw">fn</span> <span class="ident">seal_set_rent_allowance</span>(
-		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>,
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">set_rent_allowance</span>(
+		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>,
 		<span class="ident">_value_ptr</span>: <span class="ident">u32</span>,
 		<span class="ident">_value_len</span>: <span class="ident">u32</span>,
 	) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">TrapReason</span><span class="op">&gt;</span> {
@@ -4477,7 +4499,8 @@
 	<span class="doccomment">/// The state rent functionality was removed. This is stub only exists for</span>
 	<span class="doccomment">/// backwards compatiblity.</span>
 	<span class="attribute">#[<span class="ident">version</span>(<span class="number">1</span>)]</span>
-	<span class="kw">fn</span> <span class="ident">seal_set_rent_allowance</span>(<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>, <span class="ident">_value_ptr</span>: <span class="ident">u32</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">TrapReason</span><span class="op">&gt;</span> {
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">set_rent_allowance</span>(<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>, <span class="ident">_value_ptr</span>: <span class="ident">u32</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">TrapReason</span><span class="op">&gt;</span> {
 		<span class="ident">ctx</span>.<span class="ident">charge_gas</span>(<span class="ident">RuntimeCosts::DebugMessage</span>)<span class="question-mark">?</span>;
 		<span class="prelude-val">Ok</span>(())
 	}
@@ -4488,11 +4511,8 @@
 	<span class="doccomment">///</span>
 	<span class="doccomment">/// The state rent functionality was removed. This is stub only exists for</span>
 	<span class="doccomment">/// backwards compatiblity.</span>
-	<span class="kw">fn</span> <span class="ident">seal_rent_allowance</span>(
-		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>,
-		<span class="ident">out_ptr</span>: <span class="ident">u32</span>,
-		<span class="ident">out_len_ptr</span>: <span class="ident">u32</span>,
-	) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">TrapReason</span><span class="op">&gt;</span> {
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">rent_allowance</span>(<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>, <span class="ident">out_ptr</span>: <span class="ident">u32</span>, <span class="ident">out_len_ptr</span>: <span class="ident">u32</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">TrapReason</span><span class="op">&gt;</span> {
 		<span class="ident">ctx</span>.<span class="ident">charge_gas</span>(<span class="ident">RuntimeCosts::Balance</span>)<span class="question-mark">?</span>;
 		<span class="kw">let</span> <span class="ident">rent_allowance</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">BalanceOf</span><span class="op">&lt;</span><span class="ident">E::T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::max_value</span>().<span class="ident">encode</span>();
 		<span class="prelude-val">Ok</span>(<span class="ident">ctx</span>.<span class="ident">write_sandbox_output</span>(
@@ -4510,11 +4530,8 @@
 	<span class="doccomment">/// `out_len_ptr` must point to a u32 value that describes the available space at</span>
 	<span class="doccomment">/// `out_ptr`. This call overwrites it with the size of the value. If the available</span>
 	<span class="doccomment">/// space at `out_ptr` is less than the size of the value a trap is triggered.</span>
-	<span class="kw">fn</span> <span class="ident">seal_block_number</span>(
-		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>,
-		<span class="ident">out_ptr</span>: <span class="ident">u32</span>,
-		<span class="ident">out_len_ptr</span>: <span class="ident">u32</span>,
-	) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">TrapReason</span><span class="op">&gt;</span> {
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">block_number</span>(<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>, <span class="ident">out_ptr</span>: <span class="ident">u32</span>, <span class="ident">out_len_ptr</span>: <span class="ident">u32</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">TrapReason</span><span class="op">&gt;</span> {
 		<span class="ident">ctx</span>.<span class="ident">charge_gas</span>(<span class="ident">RuntimeCosts::BlockNumber</span>)<span class="question-mark">?</span>;
 		<span class="prelude-val">Ok</span>(<span class="ident">ctx</span>.<span class="ident">write_sandbox_output</span>(
 			<span class="ident">out_ptr</span>,
@@ -4542,8 +4559,9 @@
 	<span class="doccomment">/// - `input_len`: the length of the input data in bytes.</span>
 	<span class="doccomment">/// - `output_ptr`: the pointer into the linear memory where the output data is placed. The</span>
 	<span class="doccomment">///   function will write the result directly into this buffer.</span>
-	<span class="kw">fn</span> <span class="ident">seal_hash_sha2_256</span>(
-		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>,
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">hash_sha2_256</span>(
+		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>,
 		<span class="ident">input_ptr</span>: <span class="ident">u32</span>,
 		<span class="ident">input_len</span>: <span class="ident">u32</span>,
 		<span class="ident">output_ptr</span>: <span class="ident">u32</span>,
@@ -4569,8 +4587,9 @@
 	<span class="doccomment">/// - `input_len`: the length of the input data in bytes.</span>
 	<span class="doccomment">/// - `output_ptr`: the pointer into the linear memory where the output data is placed. The</span>
 	<span class="doccomment">///   function will write the result directly into this buffer.</span>
-	<span class="kw">fn</span> <span class="ident">seal_hash_keccak_256</span>(
-		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>,
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">hash_keccak_256</span>(
+		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>,
 		<span class="ident">input_ptr</span>: <span class="ident">u32</span>,
 		<span class="ident">input_len</span>: <span class="ident">u32</span>,
 		<span class="ident">output_ptr</span>: <span class="ident">u32</span>,
@@ -4596,8 +4615,9 @@
 	<span class="doccomment">/// - `input_len`: the length of the input data in bytes.</span>
 	<span class="doccomment">/// - `output_ptr`: the pointer into the linear memory where the output data is placed. The</span>
 	<span class="doccomment">///   function will write the result directly into this buffer.</span>
-	<span class="kw">fn</span> <span class="ident">seal_hash_blake2_256</span>(
-		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>,
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">hash_blake2_256</span>(
+		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>,
 		<span class="ident">input_ptr</span>: <span class="ident">u32</span>,
 		<span class="ident">input_len</span>: <span class="ident">u32</span>,
 		<span class="ident">output_ptr</span>: <span class="ident">u32</span>,
@@ -4623,8 +4643,9 @@
 	<span class="doccomment">/// - `input_len`: the length of the input data in bytes.</span>
 	<span class="doccomment">/// - `output_ptr`: the pointer into the linear memory where the output data is placed. The</span>
 	<span class="doccomment">///   function will write the result directly into this buffer.</span>
-	<span class="kw">fn</span> <span class="ident">seal_hash_blake2_128</span>(
-		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>,
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">hash_blake2_128</span>(
+		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>,
 		<span class="ident">input_ptr</span>: <span class="ident">u32</span>,
 		<span class="ident">input_len</span>: <span class="ident">u32</span>,
 		<span class="ident">output_ptr</span>: <span class="ident">u32</span>,
@@ -4644,8 +4665,9 @@
 	<span class="doccomment">///</span>
 	<span class="doccomment">/// If no chain extension exists the contract will trap with the `NoChainExtension`</span>
 	<span class="doccomment">/// module error.</span>
-	<span class="kw">fn</span> <span class="ident">seal_call_chain_extension</span>(
-		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>,
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">call_chain_extension</span>(
+		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>,
 		<span class="ident">id</span>: <span class="ident">u32</span>,
 		<span class="ident">input_ptr</span>: <span class="ident">u32</span>,
 		<span class="ident">input_len</span>: <span class="ident">u32</span>,
@@ -4687,8 +4709,9 @@
 	<span class="doccomment">/// not being executed as an RPC. For example, they could allow users to disable logging</span>
 	<span class="doccomment">/// through compile time flags (cargo features) for on-chain deployment. Additionally, the</span>
 	<span class="doccomment">/// return value of this function can be cached in order to prevent further calls at runtime.</span>
-	<span class="kw">fn</span> <span class="ident">seal_debug_message</span>(
-		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>,
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">debug_message</span>(
+		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>,
 		<span class="ident">str_ptr</span>: <span class="ident">u32</span>,
 		<span class="ident">str_len</span>: <span class="ident">u32</span>,
 	) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ReturnCode</span>, <span class="ident">TrapReason</span><span class="op">&gt;</span> {
@@ -4741,8 +4764,9 @@
 	<span class="doccomment">/// This function is unstable and subject to change (or removal) in the future. Do not</span>
 	<span class="doccomment">/// deploy a contract using it to a production chain.</span>
 	<span class="attribute">#[<span class="ident">unstable</span>]</span>
-	<span class="kw">fn</span> <span class="ident">seal_call_runtime</span>(
-		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>,
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">call_runtime</span>(
+		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>,
 		<span class="ident">call_ptr</span>: <span class="ident">u32</span>,
 		<span class="ident">call_len</span>: <span class="ident">u32</span>,
 	) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ReturnCode</span>, <span class="ident">TrapReason</span><span class="op">&gt;</span> {
@@ -4778,8 +4802,9 @@
 	<span class="doccomment">/// # Errors</span>
 	<span class="doccomment">///</span>
 	<span class="doccomment">/// `ReturnCode::EcdsaRecoverFailed`</span>
-	<span class="kw">fn</span> <span class="ident">seal_ecdsa_recover</span>(
-		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>,
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">ecdsa_recover</span>(
+		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>,
 		<span class="ident">signature_ptr</span>: <span class="ident">u32</span>,
 		<span class="ident">message_hash_ptr</span>: <span class="ident">u32</span>,
 		<span class="ident">output_ptr</span>: <span class="ident">u32</span>,
@@ -4831,10 +4856,8 @@
 	<span class="doccomment">/// # Errors</span>
 	<span class="doccomment">///</span>
 	<span class="doccomment">/// `ReturnCode::CodeNotFound`</span>
-	<span class="kw">fn</span> <span class="ident">seal_set_code_hash</span>(
-		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>,
-		<span class="ident">code_hash_ptr</span>: <span class="ident">u32</span>,
-	) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ReturnCode</span>, <span class="ident">TrapReason</span><span class="op">&gt;</span> {
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">set_code_hash</span>(<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>, <span class="ident">code_hash_ptr</span>: <span class="ident">u32</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ReturnCode</span>, <span class="ident">TrapReason</span><span class="op">&gt;</span> {
 		<span class="ident">ctx</span>.<span class="ident">charge_gas</span>(<span class="ident">RuntimeCosts::SetCodeHash</span>)<span class="question-mark">?</span>;
 		<span class="kw">let</span> <span class="ident">code_hash</span>: <span class="ident">CodeHash</span><span class="op">&lt;</span><span class="op">&lt;</span><span class="ident">E</span> <span class="kw">as</span> <span class="ident">Ext</span><span class="op">&gt;</span><span class="ident">::T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">ctx</span>.<span class="ident">read_sandbox_memory_as</span>(<span class="ident">code_hash_ptr</span>)<span class="question-mark">?</span>;
 		<span class="kw">match</span> <span class="ident">ctx</span>.<span class="ident">ext</span>.<span class="ident">set_code_hash</span>(<span class="ident">code_hash</span>) {
@@ -4862,8 +4885,9 @@
 	<span class="doccomment">/// # Errors</span>
 	<span class="doccomment">///</span>
 	<span class="doccomment">/// `ReturnCode::EcdsaRecoverFailed`</span>
-	<span class="kw">fn</span> <span class="ident">seal_ecdsa_to_eth_address</span>(
-		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="ident">Ext</span><span class="op">&gt;</span>,
+	<span class="attribute">#[<span class="ident">prefixed_alias</span>]</span>
+	<span class="kw">fn</span> <span class="ident">ecdsa_to_eth_address</span>(
+		<span class="ident">ctx</span>: <span class="ident">Runtime</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>,
 		<span class="ident">key_ptr</span>: <span class="ident">u32</span>,
 		<span class="ident">out_ptr</span>: <span class="ident">u32</span>,
 	) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ReturnCode</span>, <span class="ident">TrapReason</span><span class="op">&gt;</span> {
