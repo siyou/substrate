@@ -1167,7 +1167,7 @@
 			<span class="ident">elements::deserialize_buffer</span>(<span class="ident">original_code</span>).<span class="ident">map_err</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="string">&quot;Can&#39;t decode wasm code&quot;</span>)<span class="question-mark">?</span>;
 
 		<span class="comment">// Make sure that the module is valid.</span>
-		<span class="ident">validate_module</span>::<span class="op">&lt;</span><span class="ident">PlainValidator</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="ident">module</span>).<span class="ident">map_err</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="string">&quot;Module is not valid&quot;</span>)<span class="question-mark">?</span>;
+		<span class="ident">validate_module</span>::<span class="op">&lt;</span><span class="ident">PlainValidator</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="ident">module</span>, ()).<span class="ident">map_err</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="string">&quot;Module is not valid&quot;</span>)<span class="question-mark">?</span>;
 
 		<span class="comment">// Return a `ContractModule` instance with</span>
 		<span class="comment">// __valid__ module.</span>

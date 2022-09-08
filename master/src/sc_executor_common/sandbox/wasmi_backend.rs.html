@@ -332,6 +332,17 @@
 <span id="326">326</span>
 <span id="327">327</span>
 <span id="328">328</span>
+<span id="329">329</span>
+<span id="330">330</span>
+<span id="331">331</span>
+<span id="332">332</span>
+<span id="333">333</span>
+<span id="334">334</span>
+<span id="335">335</span>
+<span id="336">336</span>
+<span id="337">337</span>
+<span id="338">338</span>
+<span id="339">339</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2019-2021 Parity Technologies (UK) Ltd.</span>
@@ -352,14 +363,14 @@
 
 <span class="doccomment">//! Wasmi specific impls for sandbox</span>
 
-<span class="kw">use</span> <span class="ident">std::rc::Rc</span>;
+<span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">fmt</span>, <span class="ident">rc::Rc</span>};
 
 <span class="kw">use</span> <span class="ident">codec</span>::{<span class="ident">Decode</span>, <span class="ident">Encode</span>};
 <span class="kw">use</span> <span class="ident">sp_sandbox::HostError</span>;
 <span class="kw">use</span> <span class="ident">sp_wasm_interface</span>::{<span class="ident">FunctionContext</span>, <span class="ident">Pointer</span>, <span class="ident">ReturnValue</span>, <span class="ident">Value</span>, <span class="ident">WordSize</span>};
 <span class="kw">use</span> <span class="ident">wasmi</span>::{
 	<span class="ident">memory_units::Pages</span>, <span class="ident">ImportResolver</span>, <span class="ident">MemoryInstance</span>, <span class="ident">Module</span>, <span class="ident">ModuleInstance</span>, <span class="ident">RuntimeArgs</span>,
-	<span class="ident">RuntimeValue</span>, <span class="ident">Trap</span>, <span class="ident">TrapKind</span>,
+	<span class="ident">RuntimeValue</span>, <span class="ident">Trap</span>,
 };
 
 <span class="kw">use</span> <span class="kw">crate</span>::{
@@ -373,9 +384,20 @@
 
 <span class="macro">environmental::environmental!</span>(<span class="ident">SandboxContextStore</span>: <span class="kw">trait</span> <span class="ident">SandboxContext</span>);
 
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
+<span class="kw">struct</span> <span class="ident">CustomHostError</span>(<span class="ident">String</span>);
+
+<span class="kw">impl</span> <span class="ident">fmt::Display</span> <span class="kw">for</span> <span class="ident">CustomHostError</span> {
+	<span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;mut</span> <span class="ident">fmt::Formatter</span>) -&gt; <span class="ident">fmt::Result</span> {
+		<span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;HostError: {}&quot;</span>, <span class="self">self</span>.<span class="number">0</span>)
+	}
+}
+
+<span class="kw">impl</span> <span class="ident">wasmi::HostError</span> <span class="kw">for</span> <span class="ident">CustomHostError</span> {}
+
 <span class="doccomment">/// Construct trap error from specified message</span>
 <span class="kw">fn</span> <span class="ident">trap</span>(<span class="ident">msg</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span>) -&gt; <span class="ident">Trap</span> {
-	<span class="ident">TrapKind::Host</span>(<span class="ident">Box::new</span>(<span class="ident">Error::Other</span>(<span class="ident">msg</span>.<span class="ident">into</span>()))).<span class="ident">into</span>()
+	<span class="ident">Trap::host</span>(<span class="ident">CustomHostError</span>(<span class="ident">msg</span>.<span class="ident">into</span>()))
 }
 
 <span class="kw">impl</span> <span class="ident">ImportResolver</span> <span class="kw">for</span> <span class="ident">Imports</span> {

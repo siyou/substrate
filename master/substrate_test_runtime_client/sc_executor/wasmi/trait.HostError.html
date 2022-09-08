@@ -13,7 +13,7 @@ and will be represented as a boxed <code>HostError</code>. You can then use the 
 to get your custom error type back</p>
 <h2 id="examples"><a href="#examples">Examples</a></h2>
 <div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use</span> <span class="ident">std::fmt</span>;
-<span class="kw">use</span> <span class="ident">wasmi</span>::{<span class="ident">Error</span>, <span class="ident">HostError</span>};
+<span class="kw">use</span> <span class="ident">wasmi_core</span>::{<span class="ident">Trap</span>, <span class="ident">HostError</span>};
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">struct</span> <span class="ident">MyError</span> {
@@ -28,7 +28,7 @@ to get your custom error type back</p>
 
 <span class="kw">impl</span> <span class="ident">HostError</span> <span class="kw">for</span> <span class="ident">MyError</span> { }
 
-<span class="kw">fn</span> <span class="ident">failable_fn</span>() -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
+<span class="kw">fn</span> <span class="ident">failable_fn</span>() -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Trap</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="ident">my_error</span> <span class="op">=</span> <span class="ident">MyError</span> { <span class="ident">code</span>: <span class="number">1312</span> };
     <span class="comment">// Note how you can just convert your errors to `wasmi::Error`</span>
     <span class="prelude-val">Err</span>(<span class="ident">my_error</span>.<span class="ident">into</span>())
@@ -36,7 +36,7 @@ to get your custom error type back</p>
 
 <span class="comment">// Get a reference to the concrete error</span>
 <span class="kw">match</span> <span class="ident">failable_fn</span>() {
-    <span class="prelude-val">Err</span>(<span class="ident">Error::Host</span>(<span class="ident">host_error</span>)) =&gt; {
+    <span class="prelude-val">Err</span>(<span class="ident">Trap::Host</span>(<span class="ident">host_error</span>)) =&gt; {
         <span class="kw">let</span> <span class="ident">my_error</span>: <span class="kw-2">&amp;</span><span class="ident">MyError</span> <span class="op">=</span> <span class="ident">host_error</span>.<span class="ident">downcast_ref</span>::<span class="op">&lt;</span><span class="ident">MyError</span><span class="op">&gt;</span>().<span class="ident">unwrap</span>();
         <span class="macro">assert_eq!</span>(<span class="ident">my_error</span>.<span class="ident">code</span>, <span class="number">1312</span>);
     }
@@ -46,7 +46,10 @@ to get your custom error type back</p>
 <span class="comment">// get the concrete error itself</span>
 <span class="kw">match</span> <span class="ident">failable_fn</span>() {
     <span class="prelude-val">Err</span>(<span class="ident">err</span>) =&gt; {
-        <span class="kw">let</span> <span class="ident">my_error</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">MyError</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">err</span>.<span class="ident">try_into_host_error</span>().<span class="ident">unwrap</span>().<span class="ident">downcast</span>::<span class="op">&lt;</span><span class="ident">MyError</span><span class="op">&gt;</span>().<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="ident">my_error</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">err</span> {
+            <span class="ident">Trap::Host</span>(<span class="ident">host_error</span>) =&gt; <span class="ident">host_error</span>.<span class="ident">downcast</span>::<span class="op">&lt;</span><span class="ident">MyError</span><span class="op">&gt;</span>().<span class="ident">unwrap</span>(),
+            <span class="ident">unexpected</span> =&gt; <span class="macro">panic!</span>(<span class="string">&quot;expected host error but found: {}&quot;</span>, <span class="ident">unexpected</span>),
+        };
         <span class="macro">assert_eq!</span>(<span class="ident">my_error</span>.<span class="ident">code</span>, <span class="number">1312</span>);
     }
     <span class="kw">_</span> =&gt; <span class="macro">panic!</span>(),
@@ -61,5 +64,5 @@ type <code>__T</code>. Returns the original <code>Rc</code>-ed trait if it isn�
 <code>None</code> if it isn’t.</p>
 </div></details><details class="rustdoc-toggle method-toggle" open><summary><section id="method.downcast_mut" class="method has-srclink"><h4 class="code-header">pub fn <a href="#method.downcast_mut" class="fnname">downcast_mut</a>&lt;__T&gt;(&amp;mut self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;mut </a>__T&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;__T: <a class="trait" href="trait.HostError.html" title="trait substrate_test_runtime_client::sc_executor::wasmi::HostError">HostError</a>,&nbsp;</span></h4></section></summary><div class="docblock"><p>Returns a mutable reference to the object within the trait object if it is of type
 <code>__T</code>, or <code>None</code> if it isn’t.</p>
-</div></details></div></details></div><h2 id="implementors" class="small-section-header">Implementors<a href="#implementors" class="anchor"></a></h2><div class="item-list" id="implementors-list"><section id="impl-HostError-for-Error" class="impl has-srclink"><span class="rightside"><a class="srclink" href="../../../src/sc_executor_common/error.rs.html#112">source</a></span><a href="#impl-HostError-for-Error" class="anchor"></a><h3 class="code-header in-band">impl <a class="trait" href="trait.HostError.html" title="trait substrate_test_runtime_client::sc_executor::wasmi::HostError">HostError</a> for <a class="enum" href="../error/enum.Error.html" title="enum substrate_test_runtime_client::sc_executor::error::Error">Error</a></h3></section></div><script type="text/javascript" src="../../../implementors/wasmi/host/trait.HostError.js" data-ignore-extern-crates="sc_executor_common" async></script></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="substrate_test_runtime_client" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (7fe022f5a 2022-07-24)" ></div>
+</div></details></div></details></div><h2 id="implementors" class="small-section-header">Implementors<a href="#implementors" class="anchor"></a></h2><div class="item-list" id="implementors-list"><section id="impl-HostError-for-Error" class="impl has-srclink"><span class="rightside"><a class="srclink" href="../../../src/sc_executor_common/error.rs.html#112">source</a></span><a href="#impl-HostError-for-Error" class="anchor"></a><h3 class="code-header in-band">impl <a class="trait" href="trait.HostError.html" title="trait substrate_test_runtime_client::sc_executor::wasmi::HostError">HostError</a> for <a class="enum" href="../error/enum.Error.html" title="enum substrate_test_runtime_client::sc_executor::error::Error">Error</a></h3></section></div><script type="text/javascript" src="../../../implementors/wasmi_core/host_error/trait.HostError.js" data-ignore-extern-crates="sc_executor_common" async></script></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="substrate_test_runtime_client" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (7fe022f5a 2022-07-24)" ></div>
 </body></html>

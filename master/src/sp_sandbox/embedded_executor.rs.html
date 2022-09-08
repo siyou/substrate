@@ -506,7 +506,7 @@
 <span class="kw">use</span> <span class="ident">wasmi</span>::{
 	<span class="ident">memory_units::Pages</span>, <span class="ident">Externals</span>, <span class="ident">FuncInstance</span>, <span class="ident">FuncRef</span>, <span class="ident">GlobalDescriptor</span>, <span class="ident">GlobalRef</span>,
 	<span class="ident">ImportResolver</span>, <span class="ident">MemoryDescriptor</span>, <span class="ident">MemoryInstance</span>, <span class="ident">MemoryRef</span>, <span class="ident">Module</span>, <span class="ident">ModuleInstance</span>, <span class="ident">ModuleRef</span>,
-	<span class="ident">RuntimeArgs</span>, <span class="ident">RuntimeValue</span>, <span class="ident">Signature</span>, <span class="ident">TableDescriptor</span>, <span class="ident">TableRef</span>, <span class="ident">Trap</span>, <span class="ident">TrapKind</span>,
+	<span class="ident">RuntimeArgs</span>, <span class="ident">RuntimeValue</span>, <span class="ident">Signature</span>, <span class="ident">TableDescriptor</span>, <span class="ident">TableRef</span>, <span class="ident">Trap</span>,
 };
 
 <span class="kw">use</span> <span class="ident">sp_std</span>::{
@@ -597,7 +597,7 @@
 				<span class="ident">ReturnValue::Value</span>(<span class="ident">v</span>) =&gt; <span class="prelude-val">Some</span>(<span class="ident">to_wasmi</span>(<span class="ident">v</span>)),
 				<span class="ident">ReturnValue::Unit</span> =&gt; <span class="prelude-val">None</span>,
 			}),
-			<span class="prelude-val">Err</span>(<span class="ident">HostError</span>) =&gt; <span class="prelude-val">Err</span>(<span class="ident">TrapKind::Host</span>(<span class="ident">Box::new</span>(<span class="ident">DummyHostError</span>)).<span class="ident">into</span>()),
+			<span class="prelude-val">Err</span>(<span class="ident">HostError</span>) =&gt; <span class="prelude-val">Err</span>(<span class="ident">Trap::host</span>(<span class="ident">DummyHostError</span>)),
 		}
 	}
 }

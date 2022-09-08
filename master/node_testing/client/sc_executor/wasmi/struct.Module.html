@@ -37,7 +37,7 @@
 <h5 id="examples-1"><a href="#examples-1">Examples</a></h5>
 <div class="example-wrap"><pre class="rust rust-example-rendered"><code>
 <span class="kw">let</span> <span class="ident">wasm_binary</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> <span class="op">=</span>
-    <span class="ident">wabt::wat2wasm</span>(
+    <span class="ident">wat::parse_str</span>(
         <span class="string">r#&quot;
         (module
          (func $add (param $lhs i32) (param $rhs i32) (result i32)
@@ -53,7 +53,7 @@
 <span class="macro">assert!</span>(<span class="ident">module</span>.<span class="ident">deny_floating_point</span>().<span class="ident">is_ok</span>());
 
 <span class="kw">let</span> <span class="ident">wasm_binary</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> <span class="op">=</span>
-    <span class="ident">wabt::wat2wasm</span>(
+    <span class="ident">wat::parse_str</span>(
         <span class="string">r#&quot;
         (module
          (func $add (param $lhs f32) (param $rhs f32) (result f32)
@@ -68,7 +68,7 @@
 <span class="macro">assert!</span>(<span class="ident">module</span>.<span class="ident">deny_floating_point</span>().<span class="ident">is_err</span>());
 
 <span class="kw">let</span> <span class="ident">wasm_binary</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> <span class="op">=</span>
-    <span class="ident">wabt::wat2wasm</span>(
+    <span class="ident">wat::parse_str</span>(
         <span class="string">r#&quot;
         (module
          (func $add (param $lhs f32) (param $rhs f32) (result f32)
