@@ -111,20 +111,20 @@
 		<span class="kw">fn</span> <span class="ident">sane</span>() {
 			<span class="comment">// At least 1 µs.</span>
 			<span class="macro">assert!</span>(
-				<span class="ident">W::get</span>().<span class="ident">reads</span>(<span class="number">1</span>) <span class="op">&gt;</span><span class="op">=</span> <span class="ident">constants::WEIGHT_PER_MICROS</span>,
+				<span class="ident">W::get</span>().<span class="ident">reads</span>(<span class="number">1</span>).<span class="ident">ref_time</span>() <span class="op">&gt;</span><span class="op">=</span> <span class="ident">constants::WEIGHT_PER_MICROS</span>.<span class="ident">ref_time</span>(),
 				<span class="string">&quot;Read weight should be at least 1 µs.&quot;</span>
 			);
 			<span class="macro">assert!</span>(
-				<span class="ident">W::get</span>().<span class="ident">writes</span>(<span class="number">1</span>) <span class="op">&gt;</span><span class="op">=</span> <span class="ident">constants::WEIGHT_PER_MICROS</span>,
+				<span class="ident">W::get</span>().<span class="ident">writes</span>(<span class="number">1</span>).<span class="ident">ref_time</span>() <span class="op">&gt;</span><span class="op">=</span> <span class="ident">constants::WEIGHT_PER_MICROS</span>.<span class="ident">ref_time</span>(),
 				<span class="string">&quot;Write weight should be at least 1 µs.&quot;</span>
 			);
 			<span class="comment">// At most 1 ms.</span>
 			<span class="macro">assert!</span>(
-				<span class="ident">W::get</span>().<span class="ident">reads</span>(<span class="number">1</span>) <span class="op">&lt;</span><span class="op">=</span> <span class="ident">constants::WEIGHT_PER_MILLIS</span>,
+				<span class="ident">W::get</span>().<span class="ident">reads</span>(<span class="number">1</span>).<span class="ident">ref_time</span>() <span class="op">&lt;</span><span class="op">=</span> <span class="ident">constants::WEIGHT_PER_MILLIS</span>.<span class="ident">ref_time</span>(),
 				<span class="string">&quot;Read weight should be at most 1 ms.&quot;</span>
 			);
 			<span class="macro">assert!</span>(
-				<span class="ident">W::get</span>().<span class="ident">writes</span>(<span class="number">1</span>) <span class="op">&lt;</span><span class="op">=</span> <span class="ident">constants::WEIGHT_PER_MILLIS</span>,
+				<span class="ident">W::get</span>().<span class="ident">writes</span>(<span class="number">1</span>).<span class="ident">ref_time</span>() <span class="op">&lt;</span><span class="op">=</span> <span class="ident">constants::WEIGHT_PER_MILLIS</span>.<span class="ident">ref_time</span>(),
 				<span class="string">&quot;Write weight should be at most 1 ms.&quot;</span>
 			);
 		}

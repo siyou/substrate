@@ -1759,7 +1759,7 @@
 	<span class="ident">Perbill</span>, <span class="ident">Percent</span>,
 };
 <span class="kw">use</span> <span class="ident">sp_staking</span>::{<span class="ident">EraIndex</span>, <span class="ident">SessionIndex</span>};
-<span class="kw">use</span> <span class="ident">sp_std</span>::{<span class="ident">cmp::max</span>, <span class="ident">prelude</span>::<span class="kw-2">*</span>};
+<span class="kw">use</span> <span class="ident">sp_std::prelude</span>::<span class="kw-2">*</span>;
 
 <span class="kw">mod</span> <span class="ident">impls</span>;
 
@@ -3297,10 +3297,10 @@
 		<span class="doccomment">/// to kick people under the new limits, `chill_other` should be called.</span>
 		<span class="comment">// We assume the worst case for this call is either: all items are set or all items are</span>
 		<span class="comment">// removed.</span>
-		<span class="attribute">#[<span class="ident">pallet::weight</span>(<span class="ident">max</span>(
-			<span class="ident">T::WeightInfo::set_staking_configs_all_set</span>(),
-			<span class="ident">T::WeightInfo::set_staking_configs_all_remove</span>()
-		))]</span>
+		<span class="attribute">#[<span class="ident">pallet::weight</span>(
+			<span class="ident">T::WeightInfo::set_staking_configs_all_set</span>()
+				.<span class="ident">max</span>(<span class="ident">T::WeightInfo::set_staking_configs_all_remove</span>())
+		)]</span>
 		<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_staking_configs</span>(
 			<span class="ident">origin</span>: <span class="ident">OriginFor</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
 			<span class="ident">min_nominator_bond</span>: <span class="ident">ConfigOp</span><span class="op">&lt;</span><span class="ident">BalanceOf</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>,

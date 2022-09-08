@@ -2014,7 +2014,7 @@
 		<span class="kw">let</span> <span class="ident">max_weight</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">System::BlockWeights</span> <span class="kw">as</span> <span class="ident">frame_support::traits::Get</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::get</span>().<span class="ident">max_block</span>;
 		<span class="kw">let</span> <span class="ident">remaining_weight</span> <span class="op">=</span> <span class="ident">max_weight</span>.<span class="ident">saturating_sub</span>(<span class="ident">weight</span>.<span class="ident">total</span>());
 
-		<span class="kw">if</span> <span class="ident">remaining_weight</span> <span class="op">&gt;</span> <span class="ident">Weight::zero</span>() {
+		<span class="kw">if</span> <span class="ident">remaining_weight</span>.<span class="ident">all_gt</span>(<span class="ident">Weight::zero</span>()) {
 			<span class="kw">let</span> <span class="ident">used_weight</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">AllPalletsWithSystem</span> <span class="kw">as</span> <span class="ident">OnIdle</span><span class="op">&lt;</span><span class="ident">System::BlockNumber</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::on_idle</span>(
 				<span class="ident">block_number</span>,
 				<span class="ident">remaining_weight</span>,

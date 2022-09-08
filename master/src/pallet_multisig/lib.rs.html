@@ -758,6 +758,9 @@
 <span id="752">752</span>
 <span id="753">753</span>
 <span id="754">754</span>
+<span id="755">755</span>
+<span id="756">756</span>
+<span id="757">757</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2019-2022 Parity Technologies (UK) Ltd.</span>
@@ -1323,7 +1326,10 @@
 
 			<span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>((<span class="ident">call</span>, <span class="ident">call_len</span>)) <span class="op">=</span> <span class="ident">maybe_approved_call</span> {
 				<span class="comment">// verify weight</span>
-				<span class="macro">ensure!</span>(<span class="ident">call</span>.<span class="ident">get_dispatch_info</span>().<span class="ident">weight</span> <span class="op">&lt;</span><span class="op">=</span> <span class="ident">max_weight</span>, <span class="ident">Error</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::MaxWeightTooLow</span>);
+				<span class="macro">ensure!</span>(
+					<span class="ident">call</span>.<span class="ident">get_dispatch_info</span>().<span class="ident">weight</span>.<span class="ident">all_lte</span>(<span class="ident">max_weight</span>),
+					<span class="ident">Error</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::MaxWeightTooLow</span>
+				);
 
 				<span class="comment">// Clean up storage before executing call to avoid an possibility of reentrancy</span>
 				<span class="comment">// attack.</span>
