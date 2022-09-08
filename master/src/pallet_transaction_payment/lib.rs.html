@@ -1769,8 +1769,6 @@
 <span id="1763">1763</span>
 <span id="1764">1764</span>
 <span id="1765">1765</span>
-<span id="1766">1766</span>
-<span id="1767">1767</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2019-2022 Parity Technologies (UK) Ltd.</span>
@@ -2583,8 +2581,6 @@
 	<span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
 	<span class="kw">use</span> <span class="kw">crate</span> <span class="kw">as</span> <span class="ident">pallet_transaction_payment</span>;
 
-	<span class="kw">use</span> <span class="ident">std::cell::RefCell</span>;
-
 	<span class="kw">use</span> <span class="ident">codec::Encode</span>;
 
 	<span class="kw">use</span> <span class="ident">sp_core::H256</span>;
@@ -2623,8 +2619,8 @@
 	<span class="kw">const</span> <span class="ident">CALL</span>: <span class="kw-2">&amp;</span><span class="op">&lt;</span><span class="ident">Runtime</span> <span class="kw">as</span> <span class="ident">frame_system::Config</span><span class="op">&gt;</span><span class="ident">::Call</span> <span class="op">=</span>
 		<span class="kw-2">&amp;</span><span class="ident">Call::Balances</span>(<span class="ident">BalancesCall::transfer</span> { <span class="ident">dest</span>: <span class="number">2</span>, <span class="ident">value</span>: <span class="number">69</span> });
 
-	<span class="macro">thread_local!</span> {
-		<span class="kw">static</span> <span class="ident">EXTRINSIC_BASE_WEIGHT</span>: <span class="ident">RefCell</span><span class="op">&lt;</span><span class="ident">Weight</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">RefCell::new</span>(<span class="ident">Weight::zero</span>());
+	<span class="macro">parameter_types!</span> {
+		<span class="kw">static</span> <span class="ident">ExtrinsicBaseWeight</span>: <span class="ident">Weight</span> <span class="op">=</span> <span class="ident">Weight::zero</span>();
 	}
 
 	<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">BlockWeights</span>;
@@ -2633,7 +2629,7 @@
 			<span class="ident">frame_system::limits::BlockWeights::builder</span>()
 				.<span class="ident">base_block</span>(<span class="ident">Weight::zero</span>())
 				.<span class="ident">for_class</span>(<span class="ident">DispatchClass::all</span>(), <span class="op">|</span><span class="ident">weights</span><span class="op">|</span> {
-					<span class="ident">weights</span>.<span class="ident">base_extrinsic</span> <span class="op">=</span> <span class="ident">EXTRINSIC_BASE_WEIGHT</span>.<span class="ident">with</span>(<span class="op">|</span><span class="ident">v</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">v</span>.<span class="ident">borrow</span>()).<span class="ident">into</span>();
+					<span class="ident">weights</span>.<span class="ident">base_extrinsic</span> <span class="op">=</span> <span class="ident">ExtrinsicBaseWeight::get</span>().<span class="ident">into</span>();
 				})
 				.<span class="ident">for_class</span>(<span class="ident">DispatchClass::non_mandatory</span>(), <span class="op">|</span><span class="ident">weights</span><span class="op">|</span> {
 					<span class="ident">weights</span>.<span class="ident">max_total</span> <span class="op">=</span> <span class="ident">Weight::from_ref_time</span>(<span class="number">1024</span>).<span class="ident">into</span>();
@@ -2705,9 +2701,9 @@
 		}
 	}
 
-	<span class="macro">thread_local!</span> {
-		<span class="kw">static</span> <span class="ident">TIP_UNBALANCED_AMOUNT</span>: <span class="ident">RefCell</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">RefCell::new</span>(<span class="number">0</span>);
-		<span class="kw">static</span> <span class="ident">FEE_UNBALANCED_AMOUNT</span>: <span class="ident">RefCell</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">RefCell::new</span>(<span class="number">0</span>);
+	<span class="macro">parameter_types!</span> {
+		<span class="kw">static</span> <span class="ident">TipUnbalancedAmount</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">0</span>;
+		<span class="kw">static</span> <span class="ident">FeeUnbalancedAmount</span>: <span class="ident">u64</span> <span class="op">=</span> <span class="number">0</span>;
 	}
 
 	<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">DealWithFees</span>;
@@ -2716,9 +2712,9 @@
 			<span class="kw-2">mut</span> <span class="ident">fees_then_tips</span>: <span class="kw">impl</span> <span class="ident">Iterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="ident">pallet_balances::NegativeImbalance</span><span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 		) {
 			<span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">fees</span>) <span class="op">=</span> <span class="ident">fees_then_tips</span>.<span class="ident">next</span>() {
-				<span class="ident">FEE_UNBALANCED_AMOUNT</span>.<span class="ident">with</span>(<span class="op">|</span><span class="ident">a</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">a</span>.<span class="ident">borrow_mut</span>() <span class="op">+</span><span class="op">=</span> <span class="ident">fees</span>.<span class="ident">peek</span>());
+				<span class="ident">FeeUnbalancedAmount::mutate</span>(<span class="op">|</span><span class="ident">a</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">a</span> <span class="op">+</span><span class="op">=</span> <span class="ident">fees</span>.<span class="ident">peek</span>());
 				<span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">tips</span>) <span class="op">=</span> <span class="ident">fees_then_tips</span>.<span class="ident">next</span>() {
-					<span class="ident">TIP_UNBALANCED_AMOUNT</span>.<span class="ident">with</span>(<span class="op">|</span><span class="ident">a</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">a</span>.<span class="ident">borrow_mut</span>() <span class="op">+</span><span class="op">=</span> <span class="ident">tips</span>.<span class="ident">peek</span>());
+					<span class="ident">TipUnbalancedAmount::mutate</span>(<span class="op">|</span><span class="ident">a</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">a</span> <span class="op">+</span><span class="op">=</span> <span class="ident">tips</span>.<span class="ident">peek</span>());
 				}
 			}
 		}
@@ -2775,7 +2771,7 @@
 			<span class="self">self</span>
 		}
 		<span class="kw">fn</span> <span class="ident">set_constants</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) {
-			<span class="ident">EXTRINSIC_BASE_WEIGHT</span>.<span class="ident">with</span>(<span class="op">|</span><span class="ident">v</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">v</span>.<span class="ident">borrow_mut</span>() <span class="op">=</span> <span class="self">self</span>.<span class="ident">base_weight</span>);
+			<span class="ident">ExtrinsicBaseWeight::mutate</span>(<span class="op">|</span><span class="ident">v</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">v</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">base_weight</span>);
 			<span class="ident">TRANSACTION_BYTE_FEE</span>.<span class="ident">with</span>(<span class="op">|</span><span class="ident">v</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">v</span>.<span class="ident">borrow_mut</span>() <span class="op">=</span> <span class="self">self</span>.<span class="ident">byte_fee</span>);
 			<span class="ident">WEIGHT_TO_FEE</span>.<span class="ident">with</span>(<span class="op">|</span><span class="ident">v</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">v</span>.<span class="ident">borrow_mut</span>() <span class="op">=</span> <span class="self">self</span>.<span class="ident">weight_to_fee</span>);
 		}
@@ -2847,10 +2843,10 @@
 					<span class="kw-2">&amp;</span><span class="prelude-val">Ok</span>(())
 				));
 				<span class="macro">assert_eq!</span>(<span class="ident">Balances::free_balance</span>(<span class="number">1</span>), <span class="number">100</span> <span class="op">-</span> <span class="number">5</span> <span class="op">-</span> <span class="number">5</span> <span class="op">-</span> <span class="number">10</span>);
-				<span class="macro">assert_eq!</span>(<span class="ident">FEE_UNBALANCED_AMOUNT</span>.<span class="ident">with</span>(<span class="op">|</span><span class="ident">a</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">a</span>.<span class="ident">borrow</span>()), <span class="number">5</span> <span class="op">+</span> <span class="number">5</span> <span class="op">+</span> <span class="number">10</span>);
-				<span class="macro">assert_eq!</span>(<span class="ident">TIP_UNBALANCED_AMOUNT</span>.<span class="ident">with</span>(<span class="op">|</span><span class="ident">a</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">a</span>.<span class="ident">borrow</span>()), <span class="number">0</span>);
+				<span class="macro">assert_eq!</span>(<span class="ident">FeeUnbalancedAmount::get</span>(), <span class="number">5</span> <span class="op">+</span> <span class="number">5</span> <span class="op">+</span> <span class="number">10</span>);
+				<span class="macro">assert_eq!</span>(<span class="ident">TipUnbalancedAmount::get</span>(), <span class="number">0</span>);
 
-				<span class="ident">FEE_UNBALANCED_AMOUNT</span>.<span class="ident">with</span>(<span class="op">|</span><span class="ident">a</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">a</span>.<span class="ident">borrow_mut</span>() <span class="op">=</span> <span class="number">0</span>);
+				<span class="ident">FeeUnbalancedAmount::mutate</span>(<span class="op">|</span><span class="ident">a</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">a</span> <span class="op">=</span> <span class="number">0</span>);
 
 				<span class="kw">let</span> <span class="ident">pre</span> <span class="op">=</span> <span class="ident">ChargeTransactionPayment</span>::<span class="op">&lt;</span><span class="ident">Runtime</span><span class="op">&gt;</span><span class="ident">::from</span>(<span class="number">5</span> <span class="comment">/* tipped */</span>)
 					.<span class="ident">pre_dispatch</span>(<span class="kw-2">&amp;</span><span class="number">2</span>, <span class="ident">CALL</span>, <span class="kw-2">&amp;</span><span class="ident">info_from_weight</span>(<span class="ident">Weight::from_ref_time</span>(<span class="number">100</span>)), <span class="ident">len</span>)
@@ -2865,8 +2861,8 @@
 					<span class="kw-2">&amp;</span><span class="prelude-val">Ok</span>(())
 				));
 				<span class="macro">assert_eq!</span>(<span class="ident">Balances::free_balance</span>(<span class="number">2</span>), <span class="number">200</span> <span class="op">-</span> <span class="number">5</span> <span class="op">-</span> <span class="number">10</span> <span class="op">-</span> <span class="number">50</span> <span class="op">-</span> <span class="number">5</span>);
-				<span class="macro">assert_eq!</span>(<span class="ident">FEE_UNBALANCED_AMOUNT</span>.<span class="ident">with</span>(<span class="op">|</span><span class="ident">a</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">a</span>.<span class="ident">borrow</span>()), <span class="number">5</span> <span class="op">+</span> <span class="number">10</span> <span class="op">+</span> <span class="number">50</span>);
-				<span class="macro">assert_eq!</span>(<span class="ident">TIP_UNBALANCED_AMOUNT</span>.<span class="ident">with</span>(<span class="op">|</span><span class="ident">a</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">a</span>.<span class="ident">borrow</span>()), <span class="number">5</span>);
+				<span class="macro">assert_eq!</span>(<span class="ident">FeeUnbalancedAmount::get</span>(), <span class="number">5</span> <span class="op">+</span> <span class="number">10</span> <span class="op">+</span> <span class="number">50</span>);
+				<span class="macro">assert_eq!</span>(<span class="ident">TipUnbalancedAmount::get</span>(), <span class="number">5</span>);
 			});
 	}
 

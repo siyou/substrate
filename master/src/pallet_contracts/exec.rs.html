@@ -3244,17 +3244,6 @@
 <span id="3238">3238</span>
 <span id="3239">3239</span>
 <span id="3240">3240</span>
-<span id="3241">3241</span>
-<span id="3242">3242</span>
-<span id="3243">3243</span>
-<span id="3244">3244</span>
-<span id="3245">3245</span>
-<span id="3246">3246</span>
-<span id="3247">3247</span>
-<span id="3248">3248</span>
-<span id="3249">3249</span>
-<span id="3250">3250</span>
-<span id="3251">3251</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2018-2022 Parity Technologies (UK) Ltd.</span>
@@ -4633,7 +4622,7 @@
 	};
 	<span class="kw">use</span> <span class="ident">assert_matches::assert_matches</span>;
 	<span class="kw">use</span> <span class="ident">codec</span>::{<span class="ident">Decode</span>, <span class="ident">Encode</span>};
-	<span class="kw">use</span> <span class="ident">frame_support</span>::{<span class="ident">assert_err</span>, <span class="ident">assert_ok</span>};
+	<span class="kw">use</span> <span class="ident">frame_support</span>::{<span class="ident">assert_err</span>, <span class="ident">assert_ok</span>, <span class="ident">parameter_types</span>};
 	<span class="kw">use</span> <span class="ident">frame_system</span>::{<span class="ident">EventRecord</span>, <span class="ident">Phase</span>};
 	<span class="kw">use</span> <span class="ident">hex_literal::hex</span>;
 	<span class="kw">use</span> <span class="ident">pallet_contracts_primitives::ReturnFlags</span>;
@@ -4650,8 +4639,8 @@
 
 	<span class="kw">type</span> <span class="ident">MockStack</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Stack</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">Test</span>, <span class="ident">MockExecutable</span><span class="op">&gt;</span>;
 
-	<span class="macro">thread_local!</span> {
-		<span class="kw">static</span> <span class="ident">LOADER</span>: <span class="ident">RefCell</span><span class="op">&lt;</span><span class="ident">MockLoader</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">RefCell::new</span>(<span class="ident">MockLoader::default</span>());
+	<span class="macro">parameter_types!</span> {
+		<span class="kw">static</span> <span class="ident">Loader</span>: <span class="ident">MockLoader</span> <span class="op">=</span> <span class="ident">MockLoader::default</span>();
 	}
 
 	<span class="kw">fn</span> <span class="ident">events</span>() -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Event</span><span class="op">&lt;</span><span class="ident">Test</span><span class="op">&gt;</span><span class="op">&gt;</span> {
@@ -4677,8 +4666,8 @@
 		<span class="ident">refcount</span>: <span class="ident">u64</span>,
 	}
 
-	<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Default</span>)]</span>
-	<span class="kw">struct</span> <span class="ident">MockLoader</span> {
+	<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Default</span>, <span class="ident">Clone</span>)]</span>
+	<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">MockLoader</span> {
 		<span class="ident">map</span>: <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">CodeHash</span><span class="op">&lt;</span><span class="ident">Test</span><span class="op">&gt;</span>, <span class="ident">MockExecutable</span><span class="op">&gt;</span>,
 		<span class="ident">counter</span>: <span class="ident">u64</span>,
 	}
@@ -4688,8 +4677,7 @@
 			<span class="ident">func_type</span>: <span class="ident">ExportedFunction</span>,
 			<span class="ident">f</span>: <span class="kw">impl</span> <span class="ident">Fn</span>(<span class="ident">MockCtx</span>, <span class="kw-2">&amp;</span><span class="ident">MockExecutable</span>) -&gt; <span class="ident">ExecResult</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
 		) -&gt; <span class="ident">CodeHash</span><span class="op">&lt;</span><span class="ident">Test</span><span class="op">&gt;</span> {
-			<span class="ident">LOADER</span>.<span class="ident">with</span>(<span class="op">|</span><span class="ident">loader</span><span class="op">|</span> {
-				<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">loader</span> <span class="op">=</span> <span class="ident">loader</span>.<span class="ident">borrow_mut</span>();
+			<span class="ident">Loader::mutate</span>(<span class="op">|</span><span class="ident">loader</span><span class="op">|</span> {
 				<span class="comment">// Generate code hashes as monotonically increasing values.</span>
 				<span class="kw">let</span> <span class="ident">hash</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">Test</span> <span class="kw">as</span> <span class="ident">frame_system::Config</span><span class="op">&gt;</span><span class="ident">::Hash::from_low_u64_be</span>(<span class="ident">loader</span>.<span class="ident">counter</span>);
 				<span class="ident">loader</span>.<span class="ident">counter</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
@@ -4702,8 +4690,7 @@
 		}
 
 		<span class="kw">fn</span> <span class="ident">increment_refcount</span>(<span class="ident">code_hash</span>: <span class="ident">CodeHash</span><span class="op">&lt;</span><span class="ident">Test</span><span class="op">&gt;</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">DispatchError</span><span class="op">&gt;</span> {
-			<span class="ident">LOADER</span>.<span class="ident">with</span>(<span class="op">|</span><span class="ident">loader</span><span class="op">|</span> {
-				<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">loader</span> <span class="op">=</span> <span class="ident">loader</span>.<span class="ident">borrow_mut</span>();
+			<span class="ident">Loader::mutate</span>(<span class="op">|</span><span class="ident">loader</span><span class="op">|</span> {
 				<span class="kw">match</span> <span class="ident">loader</span>.<span class="ident">map</span>.<span class="ident">entry</span>(<span class="ident">code_hash</span>) {
 					<span class="ident">Entry::Vacant</span>(<span class="kw">_</span>) =&gt; <span class="prelude-val">Err</span>(<span class="op">&lt;</span><span class="ident">Error</span><span class="op">&lt;</span><span class="ident">Test</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::CodeNotFound</span>)<span class="question-mark">?</span>,
 					<span class="ident">Entry::Occupied</span>(<span class="kw-2">mut</span> <span class="ident">entry</span>) =&gt; <span class="ident">entry</span>.<span class="ident">get_mut</span>().<span class="ident">refcount</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>,
@@ -4714,8 +4701,7 @@
 
 		<span class="kw">fn</span> <span class="ident">decrement_refcount</span>(<span class="ident">code_hash</span>: <span class="ident">CodeHash</span><span class="op">&lt;</span><span class="ident">Test</span><span class="op">&gt;</span>) {
 			<span class="kw">use</span> <span class="ident">std::collections::hash_map::Entry::Occupied</span>;
-			<span class="ident">LOADER</span>.<span class="ident">with</span>(<span class="op">|</span><span class="ident">loader</span><span class="op">|</span> {
-				<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">loader</span> <span class="op">=</span> <span class="ident">loader</span>.<span class="ident">borrow_mut</span>();
+			<span class="ident">Loader::mutate</span>(<span class="op">|</span><span class="ident">loader</span><span class="op">|</span> {
 				<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">entry</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">loader</span>.<span class="ident">map</span>.<span class="ident">entry</span>(<span class="ident">code_hash</span>) {
 					<span class="ident">Occupied</span>(<span class="ident">e</span>) =&gt; <span class="ident">e</span>,
 					<span class="kw">_</span> =&gt; <span class="macro">panic!</span>(<span class="string">&quot;code_hash does not exist&quot;</span>),
@@ -4735,13 +4721,8 @@
 			<span class="ident">_schedule</span>: <span class="kw-2">&amp;</span><span class="ident">Schedule</span><span class="op">&lt;</span><span class="ident">Test</span><span class="op">&gt;</span>,
 			<span class="ident">_gas_meter</span>: <span class="kw-2">&amp;mut</span> <span class="ident">GasMeter</span><span class="op">&lt;</span><span class="ident">Test</span><span class="op">&gt;</span>,
 		) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">DispatchError</span><span class="op">&gt;</span> {
-			<span class="ident">LOADER</span>.<span class="ident">with</span>(<span class="op">|</span><span class="ident">loader</span><span class="op">|</span> {
-				<span class="ident">loader</span>
-					.<span class="ident">borrow_mut</span>()
-					.<span class="ident">map</span>
-					.<span class="ident">get</span>(<span class="kw-2">&amp;</span><span class="ident">code_hash</span>)
-					.<span class="ident">cloned</span>()
-					.<span class="ident">ok_or</span>(<span class="ident">Error</span>::<span class="op">&lt;</span><span class="ident">Test</span><span class="op">&gt;</span><span class="ident">::CodeNotFound</span>.<span class="ident">into</span>())
+			<span class="ident">Loader::mutate</span>(<span class="op">|</span><span class="ident">loader</span><span class="op">|</span> {
+				<span class="ident">loader</span>.<span class="ident">map</span>.<span class="ident">get</span>(<span class="kw-2">&amp;</span><span class="ident">code_hash</span>).<span class="ident">cloned</span>().<span class="ident">ok_or</span>(<span class="ident">Error</span>::<span class="op">&lt;</span><span class="ident">Test</span><span class="op">&gt;</span><span class="ident">::CodeNotFound</span>.<span class="ident">into</span>())
 			})
 		}
 
@@ -4788,14 +4769,14 @@
 
 	<span class="attribute">#[<span class="ident">test</span>]</span>
 	<span class="kw">fn</span> <span class="ident">it_works</span>() {
-		<span class="macro">thread_local!</span> {
-			<span class="kw">static</span> <span class="ident">TEST_DATA</span>: <span class="ident">RefCell</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">RefCell::new</span>(<span class="macro">vec!</span>[<span class="number">0</span>]);
+		<span class="macro">parameter_types!</span> {
+			<span class="kw">static</span> <span class="ident">TestData</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> <span class="op">=</span> <span class="macro">vec!</span>[<span class="number">0</span>];
 		}
 
 		<span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">Default::default</span>();
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">gas_meter</span> <span class="op">=</span> <span class="ident">GasMeter</span>::<span class="op">&lt;</span><span class="ident">Test</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="ident">GAS_LIMIT</span>);
 		<span class="kw">let</span> <span class="ident">exec_ch</span> <span class="op">=</span> <span class="ident">MockLoader::insert</span>(<span class="ident">Call</span>, <span class="op">|</span><span class="ident">_ctx</span>, <span class="ident">_executable</span><span class="op">|</span> {
-			<span class="ident">TEST_DATA</span>.<span class="ident">with</span>(<span class="op">|</span><span class="ident">data</span><span class="op">|</span> <span class="ident">data</span>.<span class="ident">borrow_mut</span>().<span class="ident">push</span>(<span class="number">1</span>));
+			<span class="ident">TestData::mutate</span>(<span class="op">|</span><span class="ident">data</span><span class="op">|</span> <span class="ident">data</span>.<span class="ident">push</span>(<span class="number">1</span>));
 			<span class="ident">exec_success</span>()
 		});
 
@@ -4819,7 +4800,7 @@
 			);
 		});
 
-		<span class="ident">TEST_DATA</span>.<span class="ident">with</span>(<span class="op">|</span><span class="ident">data</span><span class="op">|</span> <span class="macro">assert_eq!</span>(<span class="kw-2">*</span><span class="ident">data</span>.<span class="ident">borrow</span>(), <span class="macro">vec!</span>[<span class="number">0</span>, <span class="number">1</span>]));
+		<span class="macro">assert_eq!</span>(<span class="ident">TestData::get</span>(), <span class="macro">vec!</span>[<span class="number">0</span>, <span class="number">1</span>]);
 	}
 
 	<span class="attribute">#[<span class="ident">test</span>]</span>
@@ -5098,16 +5079,15 @@
 	<span class="kw">fn</span> <span class="ident">max_depth</span>() {
 		<span class="comment">// This test verifies that when we reach the maximal depth creation of an</span>
 		<span class="comment">// yet another context fails.</span>
-		<span class="macro">thread_local!</span> {
-			<span class="kw">static</span> <span class="ident">REACHED_BOTTOM</span>: <span class="ident">RefCell</span><span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">RefCell::new</span>(<span class="bool-val">false</span>);
+		<span class="macro">parameter_types!</span> {
+			<span class="kw">static</span> <span class="ident">ReachedBottom</span>: <span class="ident">bool</span> <span class="op">=</span> <span class="bool-val">false</span>;
 		}
 		<span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">Default::default</span>();
 		<span class="kw">let</span> <span class="ident">recurse_ch</span> <span class="op">=</span> <span class="ident">MockLoader::insert</span>(<span class="ident">Call</span>, <span class="op">|</span><span class="ident">ctx</span>, <span class="kw">_</span><span class="op">|</span> {
 			<span class="comment">// Try to call into yourself.</span>
 			<span class="kw">let</span> <span class="ident">r</span> <span class="op">=</span> <span class="ident">ctx</span>.<span class="ident">ext</span>.<span class="ident">call</span>(<span class="ident">Weight::zero</span>(), <span class="ident">BOB</span>, <span class="number">0</span>, <span class="macro">vec!</span>[], <span class="bool-val">true</span>);
 
-			<span class="ident">REACHED_BOTTOM</span>.<span class="ident">with</span>(<span class="op">|</span><span class="ident">reached_bottom</span><span class="op">|</span> {
-				<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">reached_bottom</span> <span class="op">=</span> <span class="ident">reached_bottom</span>.<span class="ident">borrow_mut</span>();
+			<span class="ident">ReachedBottom::mutate</span>(<span class="op">|</span><span class="ident">reached_bottom</span><span class="op">|</span> {
 				<span class="kw">if</span> <span class="op">!</span><span class="kw-2">*</span><span class="ident">reached_bottom</span> {
 					<span class="comment">// We are first time here, it means we just reached bottom.</span>
 					<span class="comment">// Verify that we&#39;ve got proper error and set `reached_bottom`.</span>
@@ -5148,15 +5128,14 @@
 		<span class="kw">let</span> <span class="ident">origin</span> <span class="op">=</span> <span class="ident">ALICE</span>;
 		<span class="kw">let</span> <span class="ident">dest</span> <span class="op">=</span> <span class="ident">BOB</span>;
 
-		<span class="macro">thread_local!</span> {
-			<span class="kw">static</span> <span class="ident">WITNESSED_CALLER_BOB</span>: <span class="ident">RefCell</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">AccountIdOf</span><span class="op">&lt;</span><span class="ident">Test</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">RefCell::new</span>(<span class="prelude-val">None</span>);
-			<span class="kw">static</span> <span class="ident">WITNESSED_CALLER_CHARLIE</span>: <span class="ident">RefCell</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">AccountIdOf</span><span class="op">&lt;</span><span class="ident">Test</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">RefCell::new</span>(<span class="prelude-val">None</span>);
+		<span class="macro">parameter_types!</span> {
+			<span class="kw">static</span> <span class="ident">WitnessedCallerBob</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">AccountIdOf</span><span class="op">&lt;</span><span class="ident">Test</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">=</span> <span class="prelude-val">None</span>;
+			<span class="kw">static</span> <span class="ident">WitnessedCallerCharlie</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">AccountIdOf</span><span class="op">&lt;</span><span class="ident">Test</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">=</span> <span class="prelude-val">None</span>;
 		}
 
 		<span class="kw">let</span> <span class="ident">bob_ch</span> <span class="op">=</span> <span class="ident">MockLoader::insert</span>(<span class="ident">Call</span>, <span class="op">|</span><span class="ident">ctx</span>, <span class="kw">_</span><span class="op">|</span> {
 			<span class="comment">// Record the caller for bob.</span>
-			<span class="ident">WITNESSED_CALLER_BOB</span>
-				.<span class="ident">with</span>(<span class="op">|</span><span class="ident">caller</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">caller</span>.<span class="ident">borrow_mut</span>() <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">ctx</span>.<span class="ident">ext</span>.<span class="ident">caller</span>().<span class="ident">clone</span>()));
+			<span class="ident">WitnessedCallerBob::mutate</span>(<span class="op">|</span><span class="ident">caller</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">caller</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">ctx</span>.<span class="ident">ext</span>.<span class="ident">caller</span>().<span class="ident">clone</span>()));
 
 			<span class="comment">// Call into CHARLIE contract.</span>
 			<span class="macro">assert_matches!</span>(<span class="ident">ctx</span>.<span class="ident">ext</span>.<span class="ident">call</span>(<span class="ident">Weight::zero</span>(), <span class="ident">CHARLIE</span>, <span class="number">0</span>, <span class="macro">vec!</span>[], <span class="bool-val">true</span>), <span class="prelude-val">Ok</span>(<span class="kw">_</span>));
@@ -5164,8 +5143,7 @@
 		});
 		<span class="kw">let</span> <span class="ident">charlie_ch</span> <span class="op">=</span> <span class="ident">MockLoader::insert</span>(<span class="ident">Call</span>, <span class="op">|</span><span class="ident">ctx</span>, <span class="kw">_</span><span class="op">|</span> {
 			<span class="comment">// Record the caller for charlie.</span>
-			<span class="ident">WITNESSED_CALLER_CHARLIE</span>
-				.<span class="ident">with</span>(<span class="op">|</span><span class="ident">caller</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">caller</span>.<span class="ident">borrow_mut</span>() <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">ctx</span>.<span class="ident">ext</span>.<span class="ident">caller</span>().<span class="ident">clone</span>()));
+			<span class="ident">WitnessedCallerCharlie::mutate</span>(<span class="op">|</span><span class="ident">caller</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">caller</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">ctx</span>.<span class="ident">ext</span>.<span class="ident">caller</span>().<span class="ident">clone</span>()));
 			<span class="ident">exec_success</span>()
 		});
 
@@ -5189,8 +5167,8 @@
 			<span class="macro">assert_matches!</span>(<span class="ident">result</span>, <span class="prelude-val">Ok</span>(<span class="kw">_</span>));
 		});
 
-		<span class="ident">WITNESSED_CALLER_BOB</span>.<span class="ident">with</span>(<span class="op">|</span><span class="ident">caller</span><span class="op">|</span> <span class="macro">assert_eq!</span>(<span class="kw-2">*</span><span class="ident">caller</span>.<span class="ident">borrow</span>(), <span class="prelude-val">Some</span>(<span class="ident">origin</span>)));
-		<span class="ident">WITNESSED_CALLER_CHARLIE</span>.<span class="ident">with</span>(<span class="op">|</span><span class="ident">caller</span><span class="op">|</span> <span class="macro">assert_eq!</span>(<span class="kw-2">*</span><span class="ident">caller</span>.<span class="ident">borrow</span>(), <span class="prelude-val">Some</span>(<span class="ident">dest</span>)));
+		<span class="macro">assert_eq!</span>(<span class="ident">WitnessedCallerBob::get</span>(), <span class="prelude-val">Some</span>(<span class="ident">origin</span>));
+		<span class="macro">assert_eq!</span>(<span class="ident">WitnessedCallerCharlie::get</span>(), <span class="prelude-val">Some</span>(<span class="ident">dest</span>));
 	}
 
 	<span class="attribute">#[<span class="ident">test</span>]</span>
