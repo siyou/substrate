@@ -25,7 +25,9 @@ sc-finality-grandpa = { version = "0.10.0-dev", path = "../../../client/finality
 sc-finality-grandpa-rpc = { version = "0.10.0-dev", path = "../../../client/finality-grandpa/rpc" }
 sc-rpc = { version = "4.0.0-dev", path = "../../../client/rpc" }
 sc-rpc-api = { version = "0.10.0-dev", path = "../../../client/rpc-api" }
-sc-sync-state-rpc = { version = "0.10.0-dev", path = "../../../client/sync-state-rpc" }
+sc-rpc-spec = { version = "0.10.0-dev", path = "../../../client/rpc-spec" }
+# Replaced by the new RPC API.
+# sc-sync-state-rpc = { version = "0.10.0-dev", path = "../../../client/sync-state-rpc" }
 sc-transaction-pool-api = { version = "4.0.0-dev", path = "../../../client/transaction-pool/api" }
 sp-api = { version = "4.0.0-dev", path = "../../../primitives/api" }
 sp-block-builder = { version = "4.0.0-dev", path = "../../../primitives/block-builder" }

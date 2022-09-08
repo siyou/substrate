@@ -25,3 +25,6 @@
 pub mod api;
 pub mod chain_spec;
 pub mod error;
+
+pub use api::ChainSpecApiServer;
+pub use chain_spec::ChainSpec;

@@ -124,9 +124,12 @@ where
 	use sc_consensus_babe_rpc::{Babe, BabeApiServer};
 	use sc_finality_grandpa_rpc::{Grandpa, GrandpaApiServer};
 	use sc_rpc::dev::{Dev, DevApiServer};
-	use sc_sync_state_rpc::{SyncState, SyncStateApiServer};
 	use substrate_frame_rpc_system::{System, SystemApiServer};
 	use substrate_state_trie_migration_rpc::{StateMigration, StateMigrationApiServer};
+
+	use sc_rpc_spec::chain_spec::{ChainSpec, ChainSpecApiServer};
+	// TODO: This should be replaced by the new API.
+	// use sc_sync_state_rpc::{SyncState, SyncStateApiServer};
 
 	let mut io = RpcModule::new(());
 	let FullDeps { client, pool, select_chain, chain_spec, deny_unsafe, babe, grandpa } = deps;
@@ -170,9 +173,14 @@ where
 	)?;
 
 	io.merge(
-		SyncState::new(chain_spec, client.clone(), shared_authority_set, shared_epoch_changes)?
-			.into_rpc(),
+		ChainSpec::new(chain_spec).into_rpc(),
 	)?;
+
+	// TODO: This should be replaced by the new API.
+	// io.merge(
+	// 	SyncState::new(chain_spec, client.clone(), shared_authority_set, shared_epoch_changes)?
+	// 		.into_rpc(),
+	// )?;
 
 	io.merge(StateMigration::new(client.clone(), backend, deny_unsafe).into_rpc())?;
 	io.merge(Dev::new(client, deny_unsafe).into_rpc())?;
