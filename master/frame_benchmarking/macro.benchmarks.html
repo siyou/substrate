@@ -31,11 +31,11 @@ few examples:</p>
   <span class="ident">combine_into</span>(<span class="ident">z</span>, <span class="ident">b</span>);
 }</code></pre></div>
 <p>Note that due to parsing restrictions, if the <code>from</code> expression is not a single token (i.e. a
-literal or constant), then it must be parenthesised.</p>
+literal or constant), then it must be parenthesized.</p>
 <p>The macro allows for a number of “arms”, each representing an individual benchmark. Using the
 simple syntax, the associated dispatchable function maps 1:1 with the benchmark and the name of
 the benchmark is the same as that of the associated function. However, extended syntax allows
-for arbitrary expresions to be evaluated in a benchmark (including for example,
+for arbitrary expressions to be evaluated in a benchmark (including for example,
 <code>on_initialize</code>).</p>
 <p>Note that the ranges are <em>inclusive</em> on both sides. This is in contrast to ranges in Rust which
 are left-inclusive right-exclusive.</p>

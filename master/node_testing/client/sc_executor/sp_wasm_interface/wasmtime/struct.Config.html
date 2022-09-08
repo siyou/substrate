@@ -8,7 +8,9 @@
     <h1 class="fqn"><span class="in-band">Struct <a href="../../../../index.html">node_testing</a>::<wbr><a href="../../../index.html">client</a>::<wbr><a href="../../index.html">sc_executor</a>::<wbr><a href="../index.html">sp_wasm_interface</a>::<wbr><a href="index.html">wasmtime</a>::<wbr><a class="struct" href="#">Config</a><button id="copy-path" onclick="copy_path(this)" title="Copy item path to clipboard"><img src="../../../../../clipboard.svg" width="19" height="18" alt="Copy item path"></button></span></h1><span class="out-of-band"><a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class="inner">&#x2212;</span>]</a></span></div><div class="docblock item-decl"><pre class="rust struct"><code>pub struct Config { /* private fields */ }</code></pre></div><details class="rustdoc-toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Global configuration options used to create an <a href="struct.Engine.html"><code>Engine</code></a>
 and customize its behavior.</p>
 <p>This structure exposed a builder-like interface and is primarily consumed by
-<a href="struct.Engine.html#method.new"><code>Engine::new()</code></a></p>
+<a href="struct.Engine.html#method.new"><code>Engine::new()</code></a>.</p>
+<p>The validation of <code>Config</code> is deferred until the engine is being built, thus
+a problematic config may cause <code>Engine::new</code> to fail.</p>
 </div></details><h2 id="implementations" class="small-section-header">Implementations<a href="#implementations" class="anchor"></a></h2><div id="implementations-list"><details class="rustdoc-toggle implementors-toggle" open><summary><section id="impl-Config" class="impl has-srclink"><a href="#impl-Config" class="anchor"></a><h3 class="code-header in-band">impl <a class="struct" href="struct.Config.html" title="struct node_testing::client::sc_executor::sp_wasm_interface::wasmtime::Config">Config</a></h3></section></summary><div class="impl-items"><details class="rustdoc-toggle method-toggle" open><summary><section id="method.new" class="method has-srclink"><h4 class="code-header">pub fn <a href="#method.new" class="fnname">new</a>() -&gt; <a class="struct" href="struct.Config.html" title="struct node_testing::client::sc_executor::sp_wasm_interface::wasmtime::Config">Config</a></h4></section></summary><div class="docblock"><p>Creates a new configuration object with the default configuration
 specified.</p>
 </div></details><details class="rustdoc-toggle method-toggle" open><summary><section id="method.target" class="method has-srclink"><h4 class="code-header">pub fn <a href="#method.target" class="fnname">target</a>(&amp;mut self, target: &amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;&amp;mut <a class="struct" href="struct.Config.html" title="struct node_testing::client::sc_executor::sp_wasm_interface::wasmtime::Config">Config</a>, <a class="struct" href="https://docs.rs/anyhow/1.0.38/anyhow/struct.Error.html" title="struct anyhow::Error">Error</a>&gt;</h4></section></summary><div class="docblock"><p>Sets the target triple for the <a href="struct.Config.html" title="Config"><code>Config</code></a>.</p>
@@ -76,6 +78,9 @@ deterministic, but if the embedder increments the epoch in a
 periodic way (say, every regular timer tick by a thread or
 signal handler), then we can ensure that all async code will
 yield to the executor within a bounded time.</p>
+<p>The deadline check cannot be avoided by malicious wasm code. It is safe
+to use epoch deadlines to limit the execution time of untrusted
+code.</p>
 <p>The <a href="struct.Store.html"><code>Store</code></a> tracks the deadline, and controls
 what happens when the deadline is reached during
 execution. Several behaviors are possible:</p>
@@ -102,9 +107,9 @@ the timeslicing behavior described above.</p>
 However, without async support, the timeslicing behaviour is
 not available. This means epoch-based interruption can only
 serve as a simple external-interruption mechanism.</p>
-<p>An initial deadline can be set before executing code by
-calling
-<a href="struct.Store.html#method.set_epoch_deadline"><code>Store::set_epoch_deadline</code></a>.</p>
+<p>An initial deadline must be set before executing code by calling
+<a href="struct.Store.html#method.set_epoch_deadline"><code>Store::set_epoch_deadline</code></a>. If this
+deadline is not configured then wasm will immediately trap.</p>
 <h6 id="when-to-use-fuel-vs-epochs"><a href="#when-to-use-fuel-vs-epochs">When to use fuel vs. epochs</a></h6>
 <p>In general, epoch-based interruption results in faster
 execution. This difference is sometimes significant: in some
@@ -127,7 +132,7 @@ used.</p>
 <li><a href="struct.Store.html#method.epoch_deadline_callback"><code>Store::epoch_deadline_callback</code></a></li>
 <li><a href="crate::Store::epoch_deadline_async_yield_and_update"><code>Store::epoch_deadline_async_yield_and_update</code></a></li>
 </ul>
-</div></details><details class="rustdoc-toggle method-toggle" open><summary><section id="method.max_wasm_stack" class="method has-srclink"><h4 class="code-header">pub fn <a href="#method.max_wasm_stack" class="fnname">max_wasm_stack</a>(&amp;mut self, size: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a>) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;&amp;mut <a class="struct" href="struct.Config.html" title="struct node_testing::client::sc_executor::sp_wasm_interface::wasmtime::Config">Config</a>, <a class="struct" href="https://docs.rs/anyhow/1.0.38/anyhow/struct.Error.html" title="struct anyhow::Error">Error</a>&gt;</h4></section></summary><div class="docblock"><p>Configures the maximum amount of stack space available for
+</div></details><details class="rustdoc-toggle method-toggle" open><summary><section id="method.max_wasm_stack" class="method has-srclink"><h4 class="code-header">pub fn <a href="#method.max_wasm_stack" class="fnname">max_wasm_stack</a>(&amp;mut self, size: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a>) -&gt; &amp;mut <a class="struct" href="struct.Config.html" title="struct node_testing::client::sc_executor::sp_wasm_interface::wasmtime::Config">Config</a></h4></section></summary><div class="docblock"><p>Configures the maximum amount of stack space available for
 executing WebAssembly code.</p>
 <p>WebAssembly has well-defined semantics on stack overflow. This is
 intended to be a knob which can help configure how much stack space
@@ -136,13 +141,37 @@ super-precise, but rather wasm will take at most “pretty close to this
 much” stack space.</p>
 <p>If a wasm call (or series of nested wasm calls) take more stack space
 than the <code>size</code> specified then a stack overflow trap will be raised.</p>
+<p>Caveat: this knob only limits the stack space consumed by wasm code.
+More importantly, it does not ensure that this much stack space is
+available on the calling thread stack. Exhausting the thread stack
+typically leads to an <strong>abort</strong> of the process.</p>
+<p>Here are some examples of how that could happen:</p>
+<ul>
+<li>
+<p>Let’s assume this option is set to 2 MiB and then a thread that has
+a stack with 512 KiB left.</p>
+<p>If wasm code consumes more than 512 KiB then the process will be aborted.</p>
+</li>
+<li>
+<p>Assuming the same conditions, but this time wasm code does not consume
+any stack but calls into a host function. The host function consumes
+more than 512 KiB of stack space. The process will be aborted.</p>
+</li>
+</ul>
+<p>There’s another gotcha related to recursive calling into wasm: the stack
+space consumed by a host function is counted towards this limit. The
+host functions are not prevented from consuming more than this limit.
+However, if the host function that used more than this limit and called
+back into wasm, then the execution will trap immediatelly because of
+stack overflow.</p>
 <p>When the <code>async</code> feature is enabled, this value cannot exceed the
 <code>async_stack_size</code> option. Be careful not to set this value too close
 to <code>async_stack_size</code> as doing so may limit how much stack space
-is available for host functions. Unlike wasm functions that trap
-on stack overflow, a host function that overflows the stack will
-abort the process.</p>
+is available for host functions.</p>
 <p>By default this option is 512 KiB.</p>
+<h5 id="errors-1"><a href="#errors-1">Errors</a></h5>
+<p>The <code>Engine::new</code> method will fail if the <code>size</code> specified here is
+either 0 or larger than the [<code>Config::async_stack_size</code>] configuration.</p>
 </div></details><details class="rustdoc-toggle method-toggle" open><summary><section id="method.wasm_threads" class="method has-srclink"><h4 class="code-header">pub fn <a href="#method.wasm_threads" class="fnname">wasm_threads</a>(&amp;mut self, enable: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a>) -&gt; &amp;mut <a class="struct" href="struct.Config.html" title="struct node_testing::client::sc_executor::sp_wasm_interface::wasmtime::Config">Config</a></h4></section></summary><div class="docblock"><p>Configures whether the WebAssembly threads proposal will be enabled for
 compilation.</p>
 <p>The <a href="https://github.com/webassembly/threads">WebAssembly threads proposal</a> is not currently fully
@@ -150,8 +179,8 @@ standardized and is undergoing development. Additionally the support in
 wasmtime itself is still being worked on. Support for this feature can
 be enabled through this method for appropriate wasm modules.</p>
 <p>This feature gates items such as shared memories and atomic
-instructions. Note that enabling the threads feature will
-also enable the bulk memory feature.</p>
+instructions. Note that the threads feature depends on the
+bulk memory feature, which is enabled by default.</p>
 <p>This is <code>false</code> by default.</p>
 <blockquote>
 <p><strong>Note</strong>: Wasmtime does not implement everything for the wasm threads
@@ -159,13 +188,18 @@ spec at this time, so bugs, panics, and possibly segfaults should be
 expected. This should not be enabled in a production setting right
 now.</p>
 </blockquote>
+<h5 id="errors-2"><a href="#errors-2">Errors</a></h5>
+<p>The validation of this feature are deferred until the engine is being built,
+and thus may cause <code>Engine::new</code> fail if the <code>bulk_memory</code> feature is disabled.</p>
 </div></details><details class="rustdoc-toggle method-toggle" open><summary><section id="method.wasm_reference_types" class="method has-srclink"><h4 class="code-header">pub fn <a href="#method.wasm_reference_types" class="fnname">wasm_reference_types</a>(&amp;mut self, enable: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a>) -&gt; &amp;mut <a class="struct" href="struct.Config.html" title="struct node_testing::client::sc_executor::sp_wasm_interface::wasmtime::Config">Config</a></h4></section></summary><div class="docblock"><p>Configures whether the <a href="https://github.com/webassembly/reference-types">WebAssembly reference types proposal</a>
 will be enabled for compilation.</p>
 <p>This feature gates items such as the <code>externref</code> and <code>funcref</code> types as
 well as allowing a module to define multiple tables.</p>
-<p>Note that enabling the reference types feature will also enable the bulk
-memory feature.</p>
+<p>Note that the reference types proposal depends on the bulk memory proposal.</p>
 <p>This feature is <code>true</code> by default.</p>
+<h5 id="errors-3"><a href="#errors-3">Errors</a></h5>
+<p>The validation of this feature are deferred until the engine is being built,
+and thus may cause <code>Engine::new</code> fail if the <code>bulk_memory</code> feature is disabled.</p>
 </div></details><details class="rustdoc-toggle method-toggle" open><summary><section id="method.wasm_simd" class="method has-srclink"><h4 class="code-header">pub fn <a href="#method.wasm_simd" class="fnname">wasm_simd</a>(&amp;mut self, enable: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a>) -&gt; &amp;mut <a class="struct" href="struct.Config.html" title="struct node_testing::client::sc_executor::sp_wasm_interface::wasmtime::Config">Config</a></h4></section></summary><div class="docblock"><p>Configures whether the WebAssembly SIMD proposal will be
 enabled for compilation.</p>
 <p>The <a href="https://github.com/webassembly/simd">WebAssembly SIMD proposal</a>. This feature gates items such
@@ -181,6 +215,12 @@ proposal</a> will be enabled for compilation.</p>
 <p>This feature gates items such as the <code>memory.copy</code> instruction, passive
 data/table segments, etc, being in a module.</p>
 <p>This is <code>true</code> by default.</p>
+<p>Feature <code>reference_types</code>, which is also <code>true</code> by default, requires
+this feature to be enabled. Thus disabling this feature must also disable
+<code>reference_types</code> as well using <a href="struct.Config.html#method.wasm_reference_types"><code>wasm_reference_types</code></a>.</p>
+<h5 id="errors-4"><a href="#errors-4">Errors</a></h5>
+<p>Disabling this feature without disabling <code>reference_types</code> will cause
+<code>Engine::new</code> to fail.</p>
 </div></details><details class="rustdoc-toggle method-toggle" open><summary><section id="method.wasm_multi_value" class="method has-srclink"><h4 class="code-header">pub fn <a href="#method.wasm_multi_value" class="fnname">wasm_multi_value</a>(&amp;mut self, enable: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a>) -&gt; &amp;mut <a class="struct" href="struct.Config.html" title="struct node_testing::client::sc_executor::sp_wasm_interface::wasmtime::Config">Config</a></h4></section></summary><div class="docblock"><p>Configures whether the WebAssembly multi-value <a href="https://github.com/webassembly/multi-value">proposal</a> will
 be enabled for compilation.</p>
 <p>This feature gates functions and blocks returning multiple values in a
@@ -197,18 +237,21 @@ be enabled for compilation.</p>
 may also have bugs for this feature since it hasn’t been exercised
 much.</p>
 <p>This is <code>false</code> by default.</p>
-</div></details><details class="rustdoc-toggle method-toggle" open><summary><section id="method.strategy" class="method has-srclink"><h4 class="code-header">pub fn <a href="#method.strategy" class="fnname">strategy</a>(&amp;mut self, strategy: <a class="enum" href="enum.Strategy.html" title="enum node_testing::client::sc_executor::sp_wasm_interface::wasmtime::Strategy">Strategy</a>) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;&amp;mut <a class="struct" href="struct.Config.html" title="struct node_testing::client::sc_executor::sp_wasm_interface::wasmtime::Config">Config</a>, <a class="struct" href="https://docs.rs/anyhow/1.0.38/anyhow/struct.Error.html" title="struct anyhow::Error">Error</a>&gt;</h4></section></summary><div class="docblock"><p>Configures which compilation strategy will be used for wasm modules.</p>
+</div></details><details class="rustdoc-toggle method-toggle" open><summary><section id="method.strategy" class="method has-srclink"><h4 class="code-header">pub fn <a href="#method.strategy" class="fnname">strategy</a>(&amp;mut self, strategy: <a class="enum" href="enum.Strategy.html" title="enum node_testing::client::sc_executor::sp_wasm_interface::wasmtime::Strategy">Strategy</a>) -&gt; &amp;mut <a class="struct" href="struct.Config.html" title="struct node_testing::client::sc_executor::sp_wasm_interface::wasmtime::Config">Config</a></h4></section></summary><div class="docblock"><p>Configures which compilation strategy will be used for wasm modules.</p>
 <p>This method can be used to configure which compiler is used for wasm
 modules, and for more documentation consult the <a href="enum.Strategy.html" title="Strategy"><code>Strategy</code></a> enumeration
 and its documentation.</p>
 <p>The default value for this is <code>Strategy::Auto</code>.</p>
-<h5 id="errors-1"><a href="#errors-1">Errors</a></h5>
-<p>Some compilation strategies require compile-time options of <code>wasmtime</code>
-itself to be set, but if they’re not set and the strategy is specified
-here then an error will be returned.</p>
-</div></details><details class="rustdoc-toggle method-toggle" open><summary><section id="method.profiler" class="method has-srclink"><h4 class="code-header">pub fn <a href="#method.profiler" class="fnname">profiler</a>(<br>&nbsp;&nbsp;&nbsp;&nbsp;&amp;mut self,<br>&nbsp;&nbsp;&nbsp;&nbsp;profile: <a class="enum" href="enum.ProfilingStrategy.html" title="enum node_testing::client::sc_executor::sp_wasm_interface::wasmtime::ProfilingStrategy">ProfilingStrategy</a><br>) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;&amp;mut <a class="struct" href="struct.Config.html" title="struct node_testing::client::sc_executor::sp_wasm_interface::wasmtime::Config">Config</a>, <a class="struct" href="https://docs.rs/anyhow/1.0.38/anyhow/struct.Error.html" title="struct anyhow::Error">Error</a>&gt;</h4></section></summary><div class="docblock"><p>Creates a default profiler based on the profiling strategy chosen.</p>
+</div></details><details class="rustdoc-toggle method-toggle" open><summary><section id="method.profiler" class="method has-srclink"><h4 class="code-header">pub fn <a href="#method.profiler" class="fnname">profiler</a>(&amp;mut self, profile: <a class="enum" href="enum.ProfilingStrategy.html" title="enum node_testing::client::sc_executor::sp_wasm_interface::wasmtime::ProfilingStrategy">ProfilingStrategy</a>) -&gt; &amp;mut <a class="struct" href="struct.Config.html" title="struct node_testing::client::sc_executor::sp_wasm_interface::wasmtime::Config">Config</a></h4></section></summary><div class="docblock"><p>Creates a default profiler based on the profiling strategy chosen.</p>
 <p>Profiler creation calls the type’s default initializer where the purpose is
 really just to put in place the type used for profiling.</p>
+<p>Some <a href="enum.ProfilingStrategy.html" title="ProfilingStrategy"><code>ProfilingStrategy</code></a> require specific platforms or particular feature
+to be enabled, such as <code>ProfilingStrategy::JitDump</code> requires the <code>jitdump</code>
+feature.</p>
+<h5 id="errors-5"><a href="#errors-5">Errors</a></h5>
+<p>The validation of this field is deferred until the engine is being built, and thus may
+cause <code>Engine::new</code> fail if the required feature is disabled, or the platform is not
+supported.</p>
 </div></details><details class="rustdoc-toggle method-toggle" open><summary><section id="method.cranelift_debug_verifier" class="method has-srclink"><h4 class="code-header">pub fn <a href="#method.cranelift_debug_verifier" class="fnname">cranelift_debug_verifier</a>(&amp;mut self, enable: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a>) -&gt; &amp;mut <a class="struct" href="struct.Config.html" title="struct node_testing::client::sc_executor::sp_wasm_interface::wasmtime::Config">Config</a></h4></section></summary><div class="docblock"><p>Configures whether the debug verifier of Cranelift is enabled or not.</p>
 <p>When Cranelift is used as a code generation backend this will configure
 it to have the <code>enable_verifier</code> flag which will enable a number of debug
@@ -226,24 +269,30 @@ it to replace NaNs with a single canonical value. This is useful for users
 requiring entirely deterministic WebAssembly computation.
 This is not required by the WebAssembly spec, so it is not enabled by default.</p>
 <p>The default value for this is <code>false</code></p>
-</div></details><details class="rustdoc-toggle method-toggle" open><summary><section id="method.cranelift_flag_enable" class="method has-srclink"><h4 class="code-header">pub unsafe fn <a href="#method.cranelift_flag_enable" class="fnname">cranelift_flag_enable</a>(<br>&nbsp;&nbsp;&nbsp;&nbsp;&amp;mut self,<br>&nbsp;&nbsp;&nbsp;&nbsp;flag: &amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a><br>) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;&amp;mut <a class="struct" href="struct.Config.html" title="struct node_testing::client::sc_executor::sp_wasm_interface::wasmtime::Config">Config</a>, <a class="struct" href="https://docs.rs/anyhow/1.0.38/anyhow/struct.Error.html" title="struct anyhow::Error">Error</a>&gt;</h4></section></summary><div class="docblock"><p>Allows setting a Cranelift boolean flag or preset. This allows
+</div></details><details class="rustdoc-toggle method-toggle" open><summary><section id="method.cranelift_flag_enable" class="method has-srclink"><h4 class="code-header">pub unsafe fn <a href="#method.cranelift_flag_enable" class="fnname">cranelift_flag_enable</a>(&amp;mut self, flag: &amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>) -&gt; &amp;mut <a class="struct" href="struct.Config.html" title="struct node_testing::client::sc_executor::sp_wasm_interface::wasmtime::Config">Config</a></h4></section></summary><div class="docblock"><p>Allows setting a Cranelift boolean flag or preset. This allows
 fine-tuning of Cranelift settings.</p>
 <p>Since Cranelift flags may be unstable, this method should not be considered to be stable
 either; other <code>Config</code> functions should be preferred for stability.</p>
 <h5 id="safety"><a href="#safety">Safety</a></h5>
 <p>This is marked as unsafe, because setting the wrong flag might break invariants,
 resulting in execution hazards.</p>
-<h5 id="errors-2"><a href="#errors-2">Errors</a></h5>
-<p>This method can fail if the flag’s name does not exist.</p>
-</div></details><details class="rustdoc-toggle method-toggle" open><summary><section id="method.cranelift_flag_set" class="method has-srclink"><h4 class="code-header">pub unsafe fn <a href="#method.cranelift_flag_set" class="fnname">cranelift_flag_set</a>(<br>&nbsp;&nbsp;&nbsp;&nbsp;&amp;mut self,<br>&nbsp;&nbsp;&nbsp;&nbsp;name: &amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>,<br>&nbsp;&nbsp;&nbsp;&nbsp;value: &amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a><br>) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;&amp;mut <a class="struct" href="struct.Config.html" title="struct node_testing::client::sc_executor::sp_wasm_interface::wasmtime::Config">Config</a>, <a class="struct" href="https://docs.rs/anyhow/1.0.38/anyhow/struct.Error.html" title="struct anyhow::Error">Error</a>&gt;</h4></section></summary><div class="docblock"><p>Allows settings another Cranelift flag defined by a flag name and value. This allows
+<h5 id="errors-6"><a href="#errors-6">Errors</a></h5>
+<p>The validation of the flags are deferred until the engine is being built, and thus may
+cause <code>Engine::new</code> fail if the flag’s name does not exist, or the value is not appropriate
+for the flag type.</p>
+</div></details><details class="rustdoc-toggle method-toggle" open><summary><section id="method.cranelift_flag_set" class="method has-srclink"><h4 class="code-header">pub unsafe fn <a href="#method.cranelift_flag_set" class="fnname">cranelift_flag_set</a>(<br>&nbsp;&nbsp;&nbsp;&nbsp;&amp;mut self,<br>&nbsp;&nbsp;&nbsp;&nbsp;name: &amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>,<br>&nbsp;&nbsp;&nbsp;&nbsp;value: &amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a><br>) -&gt; &amp;mut <a class="struct" href="struct.Config.html" title="struct node_testing::client::sc_executor::sp_wasm_interface::wasmtime::Config">Config</a></h4></section></summary><div class="docblock"><p>Allows settings another Cranelift flag defined by a flag name and value. This allows
 fine-tuning of Cranelift settings.</p>
 <p>Since Cranelift flags may be unstable, this method should not be considered to be stable
 either; other <code>Config</code> functions should be preferred for stability.</p>
-<p>Note that this is marked as unsafe, because setting the wrong flag might break invariants,
+<h5 id="safety-1"><a href="#safety-1">Safety</a></h5>
+<p>This is marked as unsafe, because setting the wrong flag might break invariants,
 resulting in execution hazards.</p>
-<h5 id="errors-3"><a href="#errors-3">Errors</a></h5>
-<p>This method can fail if the flag’s name does not exist, or the value is not appropriate for
-the flag type.</p>
+<h5 id="errors-7"><a href="#errors-7">Errors</a></h5>
+<p>The validation of the flags are deferred until the engine is being built, and thus may
+cause <code>Engine::new</code> fail if the flag’s name does not exist, or incompatible with other
+settings.</p>
+<p>For example, feature <code>wasm_backtrace</code> will set <code>unwind_info</code> to <code>true</code>, but if it’s
+manually set to false then it will fail.</p>
 </div></details><details class="rustdoc-toggle method-toggle" open><summary><section id="method.cache_config_load" class="method has-srclink"><h4 class="code-header">pub fn <a href="#method.cache_config_load" class="fnname">cache_config_load</a>(<br>&nbsp;&nbsp;&nbsp;&nbsp;&amp;mut self,<br>&nbsp;&nbsp;&nbsp;&nbsp;path: impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/convert/trait.AsRef.html" title="trait core::convert::AsRef">AsRef</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/std/path/struct.Path.html" title="struct std::path::Path">Path</a>&gt;<br>) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;&amp;mut <a class="struct" href="struct.Config.html" title="struct node_testing::client::sc_executor::sp_wasm_interface::wasmtime::Config">Config</a>, <a class="struct" href="https://docs.rs/anyhow/1.0.38/anyhow/struct.Error.html" title="struct anyhow::Error">Error</a>&gt;</h4></section></summary><div class="docblock"><p>Loads cache configuration specified at <code>path</code>.</p>
 <p>This method will read the file specified by <code>path</code> on the filesystem and
 attempt to load cache configuration from it. This method can also fail
@@ -252,7 +301,7 @@ syntax in the configuration file see the <a href="https://bytecodealliance.githu
 <p>By default cache configuration is not enabled or loaded.</p>
 <p>This method is only available when the <code>cache</code> feature of this crate is
 enabled.</p>
-<h5 id="errors-4"><a href="#errors-4">Errors</a></h5>
+<h5 id="errors-8"><a href="#errors-8">Errors</a></h5>
 <p>This method can fail due to any error that happens when loading the file
 pointed to by <code>path</code> and attempting to load the cache configuration.</p>
 </div></details><details class="rustdoc-toggle method-toggle" open><summary><section id="method.cache_config_load_default" class="method has-srclink"><h4 class="code-header">pub fn <a href="#method.cache_config_load_default" class="fnname">cache_config_load_default</a>(&amp;mut self) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;&amp;mut <a class="struct" href="struct.Config.html" title="struct node_testing::client::sc_executor::sp_wasm_interface::wasmtime::Config">Config</a>, <a class="struct" href="https://docs.rs/anyhow/1.0.38/anyhow/struct.Error.html" title="struct anyhow::Error">Error</a>&gt;</h4></section></summary><div class="docblock"><p>Loads cache configuration from the system default path.</p>
@@ -264,7 +313,7 @@ with the <code>wasmtime config new</code> command.</p>
 <p>By default cache configuration is not enabled or loaded.</p>
 <p>This method is only available when the <code>cache</code> feature of this crate is
 enabled.</p>
-<h5 id="errors-5"><a href="#errors-5">Errors</a></h5>
+<h5 id="errors-9"><a href="#errors-9">Errors</a></h5>
 <p>This method can fail due to any error that happens when loading the
 default system configuration. Note that it is not an error if the
 default config file does not exist, in which case the default settings
@@ -403,10 +452,9 @@ checks.</p>
 allows eliminating almost all bounds checks on loads/stores with an
 immediate offset of less than 2GB. On 32-bit platforms this defaults to
 64KB.</p>
-<h6 id="static-vs-dynamic-guard-size"><a href="#static-vs-dynamic-guard-size">Static vs Dynamic Guard Size</a></h6>
-<p>Note that for now the static memory guard size must be at least as large
-as the dynamic memory guard size, so configuring this property to be
-smaller than the dynamic memory guard size will have no effect.</p>
+<h6 id="errors-10"><a href="#errors-10">Errors</a></h6>
+<p>The <code>Engine::new</code> method will return an error if this option is smaller
+than the value configured for <a href="struct.Config.html#method.dynamic_memory_guard_size" title="Config::dynamic_memory_guard_size"><code>Config::dynamic_memory_guard_size</code></a>.</p>
 </div></details><details class="rustdoc-toggle method-toggle" open><summary><section id="method.dynamic_memory_guard_size" class="method has-srclink"><h4 class="code-header">pub fn <a href="#method.dynamic_memory_guard_size" class="fnname">dynamic_memory_guard_size</a>(&amp;mut self, guard_size: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>) -&gt; &amp;mut <a class="struct" href="struct.Config.html" title="struct node_testing::client::sc_executor::sp_wasm_interface::wasmtime::Config">Config</a></h4></section></summary><div class="docblock"><p>Configures the size, in bytes, of the guard region used at the end of a
 dynamic memory’s address space reservation.</p>
 <p>For the difference between static and dynamic memories, see the
@@ -423,6 +471,9 @@ specified then the static memory guard size will also be automatically
 increased.</p>
 <h6 id="default-2"><a href="#default-2">Default</a></h6>
 <p>This value defaults to 64KB.</p>
+<h6 id="errors-11"><a href="#errors-11">Errors</a></h6>
+<p>The <code>Engine::new</code> method will return an error if this option is larger
+than the value configured for <a href="struct.Config.html#method.static_memory_guard_size" title="Config::static_memory_guard_size"><code>Config::static_memory_guard_size</code></a>.</p>
 </div></details><details class="rustdoc-toggle method-toggle" open><summary><section id="method.dynamic_memory_reserved_for_growth" class="method has-srclink"><h4 class="code-header">pub fn <a href="#method.dynamic_memory_reserved_for_growth" class="fnname">dynamic_memory_reserved_for_growth</a>(<br>&nbsp;&nbsp;&nbsp;&nbsp;&amp;mut self,<br>&nbsp;&nbsp;&nbsp;&nbsp;reserved: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a><br>) -&gt; &amp;mut <a class="struct" href="struct.Config.html" title="struct node_testing::client::sc_executor::sp_wasm_interface::wasmtime::Config">Config</a></h4></section></summary><div class="docblock"><p>Configures the size, in bytes, of the extra virtual memory space
 reserved after a “dynamic” memory for growing into.</p>
 <p>For the difference between static and dynamic memories, see the

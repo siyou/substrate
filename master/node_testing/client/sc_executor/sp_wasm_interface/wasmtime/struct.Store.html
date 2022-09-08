@@ -200,6 +200,9 @@ on a yield if configured via
 this method is invoked, the deadline is reached when
 <a href="struct.Engine.html#method.increment_epoch" title="Engine::increment_epoch()"><code>Engine::increment_epoch()</code></a> has been invoked at least
 <code>ticks_beyond_current</code> times.</p>
+<p>By default a store will trap immediately with an epoch deadline of 0
+(which has always “elapsed”). This method is required to be configured
+for stores with epochs enabled to some future epoch deadline.</p>
 <p>See documentation on
 <a href="struct.Config.html#method.epoch_interruption"><code>Config::epoch_interruption()</code></a>
 for an introduction to epoch-based interruption.</p>
@@ -218,6 +221,9 @@ configured via
 interruption, but not a deterministic deadline of a fixed,
 finite interval. For deterministic interruption, see the
 “fuel” mechanism instead.</p>
+<p>Note that when this is used it’s required to call
+<a href="struct.Store.html#method.set_epoch_deadline" title="Store::set_epoch_deadline"><code>Store::set_epoch_deadline</code></a> or otherwise wasm will always immediately
+trap.</p>
 <p>See documentation on
 <a href="struct.Config.html#method.epoch_interruption"><code>Config::epoch_interruption()</code></a>
 for an introduction to epoch-based interruption.</p>

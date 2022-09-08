@@ -430,6 +430,12 @@
 <span id="424">424</span>
 <span id="425">425</span>
 <span id="426">426</span>
+<span id="427">427</span>
+<span id="428">428</span>
+<span id="429">429</span>
+<span id="430">430</span>
+<span id="431">431</span>
+<span id="432">432</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2020-2022 Parity Technologies (UK) Ltd.</span>
@@ -508,9 +514,11 @@
 	}
 
 	<span class="comment">// Set identity so `set_subs` does not fail.</span>
-	<span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">T::Currency::make_free_balance_be</span>(<span class="ident">who</span>, <span class="ident">BalanceOf</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::max_value</span>() <span class="op">/</span> <span class="number">2u32</span>.<span class="ident">into</span>());
-	<span class="kw">let</span> <span class="ident">info</span> <span class="op">=</span> <span class="ident">create_identity_info</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="number">1</span>);
-	<span class="ident">Identity</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::set_identity</span>(<span class="ident">who_origin</span>.<span class="ident">into</span>(), <span class="ident">Box::new</span>(<span class="ident">info</span>))<span class="question-mark">?</span>;
+	<span class="kw">if</span> <span class="ident">IdentityOf</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::get</span>(<span class="ident">who</span>).<span class="ident">is_none</span>() {
+		<span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">T::Currency::make_free_balance_be</span>(<span class="ident">who</span>, <span class="ident">BalanceOf</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::max_value</span>() <span class="op">/</span> <span class="number">2u32</span>.<span class="ident">into</span>());
+		<span class="kw">let</span> <span class="ident">info</span> <span class="op">=</span> <span class="ident">create_identity_info</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="number">1</span>);
+		<span class="ident">Identity</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::set_identity</span>(<span class="ident">who_origin</span>.<span class="ident">into</span>(), <span class="ident">Box::new</span>(<span class="ident">info</span>))<span class="question-mark">?</span>;
+	}
 
 	<span class="prelude-val">Ok</span>(<span class="ident">subs</span>)
 }
@@ -570,7 +578,7 @@
 
 			<span class="comment">// Add an initial identity</span>
 			<span class="kw">let</span> <span class="ident">initial_info</span> <span class="op">=</span> <span class="ident">create_identity_info</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="number">1</span>);
-			<span class="ident">Identity</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::set_identity</span>(<span class="ident">caller_origin</span>.<span class="ident">clone</span>(), <span class="ident">Box::new</span>(<span class="ident">initial_info</span>))<span class="question-mark">?</span>;
+			<span class="ident">Identity</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::set_identity</span>(<span class="ident">caller_origin</span>.<span class="ident">clone</span>(), <span class="ident">Box::new</span>(<span class="ident">initial_info</span>.<span class="ident">clone</span>()))<span class="question-mark">?</span>;
 
 			<span class="comment">// User requests judgement from all the registrars, and they approve</span>
 			<span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">r</span> {
@@ -579,7 +587,8 @@
 					<span class="ident">RawOrigin::Signed</span>(<span class="ident">account</span>(<span class="string">&quot;registrar&quot;</span>, <span class="ident">i</span>, <span class="ident">SEED</span>)).<span class="ident">into</span>(),
 					<span class="ident">i</span>,
 					<span class="ident">caller_lookup</span>.<span class="ident">clone</span>(),
-					<span class="ident">Judgement::Reasonable</span>
+					<span class="ident">Judgement::Reasonable</span>,
+					<span class="ident">T::Hashing::hash_of</span>(<span class="kw-2">&amp;</span><span class="ident">initial_info</span>),
 				)<span class="question-mark">?</span>;
 			}
 			<span class="ident">caller</span>
@@ -632,13 +641,13 @@
 			<span class="kw">let</span> <span class="ident">caller</span>: <span class="ident">T::AccountId</span> <span class="op">=</span> <span class="ident">whitelisted_caller</span>();
 			<span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">add_sub_accounts</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="ident">caller</span>, <span class="ident">s</span>)<span class="question-mark">?</span>;
 		};
-		<span class="kw">let</span> <span class="ident">x</span> <span class="kw">in</span> <span class="number">1</span> .. <span class="ident">T::MaxAdditionalFields::get</span>() =&gt; {
-			<span class="comment">// Create their main identity with x additional fields</span>
-			<span class="kw">let</span> <span class="ident">info</span> <span class="op">=</span> <span class="ident">create_identity_info</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">x</span>);
-			<span class="kw">let</span> <span class="ident">caller</span>: <span class="ident">T::AccountId</span> <span class="op">=</span> <span class="ident">whitelisted_caller</span>();
-			<span class="kw">let</span> <span class="ident">caller_origin</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">frame_system::Config</span><span class="op">&gt;</span><span class="ident">::Origin::from</span>(<span class="ident">RawOrigin::Signed</span>(<span class="ident">caller</span>));
-			<span class="ident">Identity</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::set_identity</span>(<span class="ident">caller_origin</span>, <span class="ident">Box::new</span>(<span class="ident">info</span>))<span class="question-mark">?</span>;
-		};
+		<span class="kw">let</span> <span class="ident">x</span> <span class="kw">in</span> <span class="number">1</span> .. <span class="ident">T::MaxAdditionalFields::get</span>();
+
+		<span class="comment">// Create their main identity with x additional fields</span>
+		<span class="kw">let</span> <span class="ident">info</span> <span class="op">=</span> <span class="ident">create_identity_info</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">x</span>);
+		<span class="kw">let</span> <span class="ident">caller</span>: <span class="ident">T::AccountId</span> <span class="op">=</span> <span class="ident">whitelisted_caller</span>();
+		<span class="kw">let</span> <span class="ident">caller_origin</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">frame_system::Config</span><span class="op">&gt;</span><span class="ident">::Origin::from</span>(<span class="ident">RawOrigin::Signed</span>(<span class="ident">caller</span>.<span class="ident">clone</span>()));
+		<span class="ident">Identity</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::set_identity</span>(<span class="ident">caller_origin</span>.<span class="ident">clone</span>(), <span class="ident">Box::new</span>(<span class="ident">info</span>.<span class="ident">clone</span>()))<span class="question-mark">?</span>;
 
 		<span class="comment">// User requests judgement from all the registrars, and they approve</span>
 		<span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">r</span> {
@@ -647,7 +656,8 @@
 				<span class="ident">RawOrigin::Signed</span>(<span class="ident">account</span>(<span class="string">&quot;registrar&quot;</span>, <span class="ident">i</span>, <span class="ident">SEED</span>)).<span class="ident">into</span>(),
 				<span class="ident">i</span>,
 				<span class="ident">caller_lookup</span>.<span class="ident">clone</span>(),
-				<span class="ident">Judgement::Reasonable</span>
+				<span class="ident">Judgement::Reasonable</span>,
+				<span class="ident">T::Hashing::hash_of</span>(<span class="kw-2">&amp;</span><span class="ident">info</span>),
 			)<span class="question-mark">?</span>;
 		}
 		<span class="macro">ensure!</span>(<span class="ident">IdentityOf</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::contains_key</span>(<span class="kw-2">&amp;</span><span class="ident">caller</span>), <span class="string">&quot;Identity does not exist.&quot;</span>);
@@ -760,15 +770,16 @@
 		<span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">T::Currency::make_free_balance_be</span>(<span class="kw-2">&amp;</span><span class="ident">caller</span>, <span class="ident">BalanceOf</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::max_value</span>());
 
 		<span class="kw">let</span> <span class="ident">r</span> <span class="kw">in</span> <span class="number">1</span> .. <span class="ident">T::MaxRegistrars::get</span>() <span class="op">-</span> <span class="number">1</span> =&gt; <span class="ident">add_registrars</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">r</span>)<span class="question-mark">?</span>;
-		<span class="kw">let</span> <span class="ident">x</span> <span class="kw">in</span> <span class="number">1</span> .. <span class="ident">T::MaxAdditionalFields::get</span>() =&gt; {
-			<span class="kw">let</span> <span class="ident">info</span> <span class="op">=</span> <span class="ident">create_identity_info</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">x</span>);
-			<span class="ident">Identity</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::set_identity</span>(<span class="ident">user_origin</span>.<span class="ident">clone</span>(), <span class="ident">Box::new</span>(<span class="ident">info</span>))<span class="question-mark">?</span>;
-		};
+		<span class="kw">let</span> <span class="ident">x</span> <span class="kw">in</span> <span class="number">1</span> .. <span class="ident">T::MaxAdditionalFields::get</span>();
+
+		<span class="kw">let</span> <span class="ident">info</span> <span class="op">=</span> <span class="ident">create_identity_info</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">x</span>);
+		<span class="kw">let</span> <span class="ident">info_hash</span> <span class="op">=</span> <span class="ident">T::Hashing::hash_of</span>(<span class="kw-2">&amp;</span><span class="ident">info</span>);
+		<span class="ident">Identity</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::set_identity</span>(<span class="ident">user_origin</span>.<span class="ident">clone</span>(), <span class="ident">Box::new</span>(<span class="ident">info</span>))<span class="question-mark">?</span>;
 
 		<span class="kw">let</span> <span class="ident">registrar_origin</span> <span class="op">=</span> <span class="ident">T::RegistrarOrigin::successful_origin</span>();
 		<span class="ident">Identity</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::add_registrar</span>(<span class="ident">registrar_origin</span>, <span class="ident">caller_lookup</span>)<span class="question-mark">?</span>;
 		<span class="ident">Identity</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::request_judgement</span>(<span class="ident">user_origin</span>, <span class="ident">r</span>, <span class="number">10u32</span>.<span class="ident">into</span>())<span class="question-mark">?</span>;
-	}: <span class="kw">_</span>(<span class="ident">RawOrigin::Signed</span>(<span class="ident">caller</span>), <span class="ident">r</span>, <span class="ident">user_lookup</span>, <span class="ident">Judgement::Reasonable</span>)
+	}: <span class="kw">_</span>(<span class="ident">RawOrigin::Signed</span>(<span class="ident">caller</span>), <span class="ident">r</span>, <span class="ident">user_lookup</span>, <span class="ident">Judgement::Reasonable</span>, <span class="ident">info_hash</span>)
 	<span class="ident">verify</span> {
 		<span class="ident">assert_last_event</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">Event</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::JudgementGiven</span> { <span class="ident">target</span>: <span class="ident">user</span>, <span class="ident">registrar_index</span>: <span class="ident">r</span> }.<span class="ident">into</span>())
 	}
@@ -784,7 +795,7 @@
 		<span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">T::Currency::make_free_balance_be</span>(<span class="kw-2">&amp;</span><span class="ident">target</span>, <span class="ident">BalanceOf</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::max_value</span>());
 
 		<span class="kw">let</span> <span class="ident">info</span> <span class="op">=</span> <span class="ident">create_identity_info</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">x</span>);
-		<span class="ident">Identity</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::set_identity</span>(<span class="ident">target_origin</span>.<span class="ident">clone</span>(), <span class="ident">Box::new</span>(<span class="ident">info</span>))<span class="question-mark">?</span>;
+		<span class="ident">Identity</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::set_identity</span>(<span class="ident">target_origin</span>.<span class="ident">clone</span>(), <span class="ident">Box::new</span>(<span class="ident">info</span>.<span class="ident">clone</span>()))<span class="question-mark">?</span>;
 		<span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">add_sub_accounts</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="ident">target</span>, <span class="ident">s</span>)<span class="question-mark">?</span>;
 
 		<span class="comment">// User requests judgement from all the registrars, and they approve</span>
@@ -794,7 +805,8 @@
 				<span class="ident">RawOrigin::Signed</span>(<span class="ident">account</span>(<span class="string">&quot;registrar&quot;</span>, <span class="ident">i</span>, <span class="ident">SEED</span>)).<span class="ident">into</span>(),
 				<span class="ident">i</span>,
 				<span class="ident">target_lookup</span>.<span class="ident">clone</span>(),
-				<span class="ident">Judgement::Reasonable</span>
+				<span class="ident">Judgement::Reasonable</span>,
+				<span class="ident">T::Hashing::hash_of</span>(<span class="kw-2">&amp;</span><span class="ident">info</span>),
 			)<span class="question-mark">?</span>;
 		}
 		<span class="macro">ensure!</span>(<span class="ident">IdentityOf</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::contains_key</span>(<span class="kw-2">&amp;</span><span class="ident">target</span>), <span class="string">&quot;Identity not set&quot;</span>);
